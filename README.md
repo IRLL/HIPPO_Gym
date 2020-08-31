@@ -46,9 +46,9 @@ HIPPO Gym is designed to be run with distributed services provided by AWS. For i
 
 Once AWS setup is complete, HIPPO Gym can be deployed by completing the config.yml file and then in a terminal running:
 
-'''bash
+```bash
 python3 updateProject.py
-'''
+```
 
 ### Integrating the Agent:
 
@@ -217,9 +217,9 @@ True of False. If True then episode/trial pickle files will be uploaded to S3 fo
 
 Note that the 'dev' flag when running:
 
-'''bash
+```bash
 python3 communication.py dev
-'''
+```
 Will disable s3upload. Allowing for local testing without worrying about changing the config.
 
 ##### actionSpace:
