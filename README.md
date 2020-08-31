@@ -86,6 +86,10 @@ Calls env.reset() function which resets to a new episode.
 
 Calls env.close() which ends a trial. Once the Trial class has called the close() function, then the websocket will be closed and the participant will be moved on to the next step.
 
+### Step Files:
+
+For each step listed in config.yml there must be a file with matching name located in StepFiles/ This file must be an html file. The stepFiles are uploaded to S3 and then delivered by to the website when required for a project. Answers to questions are recorded along with other user information in the S3 bucket /projectId/users/userId
+
 ### Config.yml:
 
 The config.yml file contains 2 root elements: project and trial.
