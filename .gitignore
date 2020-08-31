@@ -2,8 +2,4 @@
 *Trials/*
 *.pem
 *.env
-deploy.sh
-Front
-LambdaFunctions/next_step.py.mturk
 *.swp
-config.yml

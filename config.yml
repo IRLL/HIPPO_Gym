@@ -1,0 +1,66 @@
+project:
+  awsSetup:
+    bucket: # working bucket in AWS
+    region: # working AWS region
+    rootDomain: # a fully qualified domain name without 'https://'
+    cpu: 2 # int 1,2, or 4
+    memory: 10 # int 1-30
+
+  events:
+    startServerStep:  # int
+    stopServerStep:  # int
+  id: # Letters, Numbers and '-' only!
+  live: True # bool
+  maxRuntime: 60 # int in minutes.
+  name: # str
+  researcher: # str
+  ssl:
+    fullchain: SSL/fullchain.pem # path to fullchain.pem file excluding bucket name
+    privkey: SSL/privkey.pem # path to privkey.pem file excluding bucket name
+    sslBucket: # bucket name for resolving paths above
+  steps: # any number of steps needed with corresponding filenames
+    1:
+    2:
+    3:
+    4:
+    5:
+    finalStep: # required, filename can be same as last numbered step
+  teamMembers: # str
+trial:
+  actionBufferLifespan: 1 # int
+  maxEpisodes: 20 # int
+  game: MsPacman-v0 # full environment name
+  dataFile: episode # episode or trial
+  s3upload: True
+  actionSpace: # the appropriate action space for environment. Order matters
+    - noop
+    - up
+    - right
+    - left
+    - down
+    - upright
+    - upleft
+    - downright
+    - downleft
+  frameRateStepSize: 5 # int Optional if allowFrameRateChange = False
+  minFrameRate: 1 # int Optional if allowFrameRateChange = False
+  maxFrameRate: 60 # int Optional if allowFrameRateChange = False
+  allowFrameRateChange: False # bool
+  startingFrameRate: 30 # int Required
+  ui: # to include ui button set to True, False buttons will not be shown
+    left: True
+    right: True
+    up: True
+    down: True
+    start: True
+    stop: True
+    pause: True
+    reset: True
+    trainOffline: False
+    trainOnline: False
+    good: False
+    bad: False
+    fpsSet: False
+    fpsUp: False
+    fpsDown: False
+
