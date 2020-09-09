@@ -6,7 +6,10 @@ load_dotenv()
 def load_config():
     logging.info('Loading Config...')
     with open('config.yml','r') as infile:
-        config = yaml.load(infile, Loader=yaml.FullLoader)
+        try:
+            config = yaml.load(infile, Loader=yaml.FullLoader)
+        except:
+            config = yaml.load(infile) #shim for older versions of pyYaml
     projectConfig = config.get('project')
     projectId = projectConfig.get('id')
     projectConfig['awsSetup']['containerName'] = projectId
