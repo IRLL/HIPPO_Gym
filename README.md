@@ -50,6 +50,25 @@ Defaults for development are:
 ADDRESS = 'localhost'
 PORT = 5000
 
+To run in Docker in development mode add 'dev' to the end of line 3 in App/xvfb.sh to be:
+```bash
+xvfb-run -s "-screen 0 1400x900x24" python3 communicator.py dev
+```
+Then to run the container locally run in the project root directory:
+
+```bash
+python3 updateProject.py # select 'n' when asked if you want to deploy the container
+docker build -t hippo .
+docker run --publish 5000:5000 --rm --name hippo hippo
+```
+You will now be able to connect to the websocket server at localhost:5000
+
+To stop the docker container run:
+
+```bash
+docker stop hippo
+```
+
 ## Instructions:
 
 HIPPO Gym is designed to be run with distributed services provided by AWS. For instructions on setting up the AWS Services from scratch see AWS_README.md

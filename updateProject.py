@@ -144,10 +144,10 @@ def push_image(projectConfig, imageExists):
         push = input('Do you want to deploy docker now? [y/n]').strip().lower()
         if push not in ('y','yes'):
             return
-    with open('Dockerfile', 'r') as infile:
+    with open('App/xvfb.sh', 'r') as infile:
         instructions = infile.read()
         if "python3 communicator.py dev" in instructions:
-            confirm = input('dev flag set in Docker file, ssl and s3uploading dissabled. Do you want to continue? [y/n]').strip().lower()
+            confirm = input('dev flag set in App/xvfb.sh file, ssl and s3uploading dissabled. Do you want to continue? [y/n]').strip().lower()
             if confirm not in ('y','yes'):
                 sys.exit(1)
     imageAddress = projectConfig.get('awsSetup').get('repositoryUri')
