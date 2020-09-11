@@ -24,7 +24,7 @@ def check_steps(projectConfig):
     stepFiles = os.listdir('StepFiles')
     steps = projectConfig.get('steps').values()
     for step in steps:
-        if step != 'game':
+        if step and step != 'game':
             assert step in stepFiles, f'File not found Error: File "{step}" Not Found in ./StepFiles'
     logging.info('StepFiles found.')
     return steps
@@ -47,7 +47,7 @@ def upload_file(file, bucket, projectId):
 def upload_step_files(steps, projectConfig):
     logging.info('Uploading StepFiles...')
     for file in steps:
-        if file != 'game':
+        if file and file != 'game':
             upload_file(file, projectConfig.get('awsSetup').get('bucket'), projectConfig.get('id'))
     logging.info('StepFiles Uploaded')
 
