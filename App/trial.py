@@ -122,8 +122,8 @@ class Trial():
         Reads messages send from websocket, handles commands as priority then 
         actions. Logs entire message in self.nextEntry
         '''
-        if not self.userId and 'userId' in message and message['userId']:
-            self.userId = message['userId']
+        if not self.userId and 'userId' in message:
+            self.userId = message['userId'] or f'user_{shortuuid.uuid()}'
             self.send_ui()
             self.reset()
             render = self.get_render()
