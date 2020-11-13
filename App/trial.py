@@ -288,12 +288,6 @@ class Trial():
         else:
             filename = f'episode_{self.episode}_user_{self.userId}'
         path = 'Trials/'+filename
-        self.outfile = open(path, 'w')
-        if self.config.get('dataFile') == 'trial':
-            self.outfile.write(f'User {self.userId}')
-        else:
-            self.outfile.write(f'User {self.userId} Episode {self.episode}')
-        self.outfile.close()
         self.outfile = open(path, 'ab')
         self.filename = filename
         self.path = path
