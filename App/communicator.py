@@ -66,7 +66,7 @@ async def producer_handler(websocket, pipe):
     of messages.
     '''
     done = False
-    while not done:
+    while True:
         done = await producer(websocket, pipe)
         await asyncio.sleep(0.01)
     return
