@@ -93,13 +93,14 @@ class Trial():
         whole trial memory in self.record, uncomment the call to self.save_record()
         to write the record to file before closing.
         '''
+        self.pipe.send('done')
         agent.close(self.trial)
         if self.config.get('dataFile') == 'trial':
             self.save_record()
         if self.outfile:
             self.outfile.close()
             self.pipe.send({'upload':{'projectId':self.projectId,'userId':self.userId,'file':self.filename,'path':self.path}})
-        self.pipe.send('done')
+        self.play = False
         self.done = True
 
     def check_message(self):
