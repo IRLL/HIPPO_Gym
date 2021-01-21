@@ -2,7 +2,7 @@ import numpy, json, shortuuid, time, base64, yaml, logging
 import _pickle as cPickle
 from PIL import Image
 from io import BytesIO
-import agent # this is the Agent/Environment compo provided by the researcher
+from agent import Agent # this is the Agent/Environment compo provided by the researcher
 
 def load_config():
     logging.info('Loading Config in trial.py')
@@ -18,7 +18,6 @@ class Trial():
         self.pipe = pipe
         self.frameId = 0
         self.humanAction = 0
-        self.actionBuffer = 0
         self.episode = 0
         self.done = False
         self.play = False
@@ -43,7 +42,8 @@ class Trial():
         By default this expects the openAI Gym Environment object to be
         returned. 
         '''
-        self.trial = agent.start(self.config.get('game'))
+        self.agent = Agent()
+        self.agent.start(self.config.get('game'))
 
     def run(self):
         '''
@@ -71,7 +71,7 @@ class Trial():
         if self.check_trial_done():
             self.end()
         else:
-            agent.reset(self.trial)
+            self.agent.reset(self.trial)
             if self.outfile:
                 self.outfile.close()
                 if self.config.get('s3upload'):
@@ -94,7 +94,7 @@ class Trial():
         to write the record to file before closing.
         '''
         self.pipe.send('done')
-        agent.close(self.trial)
+        self.agent.close(self.trial)
         if self.config.get('dataFile') == 'trial':
             self.save_record()
         if self.outfile:
@@ -120,7 +120,7 @@ class Trial():
 
     def handle_message(self, message:dict):
         '''
-        Reads messages send from websocket, handles commands as priority then 
+        Reads messages sent from websocket, handles commands as priority then 
         actions. Logs entire message in self.nextEntry
         '''
         if not self.userId and 'userId' in message:
@@ -191,7 +191,6 @@ class Trial():
             actionCode = 0
         if actionCode != 0:
             self.humanAction = actionCode
-            self.actionBuffer = 0
    
     def update_entry(self, update_dict:dict):
         '''
@@ -205,7 +204,7 @@ class Trial():
         Translates the npArray into a jpeg image and then base64 encodes the 
         image for transmission in json message.
         '''
-        render = agent.render(self.trial)
+        render = self.agent.render(self.trial)
         try:
             img = Image.fromarray(render)
             fp = BytesIO()
@@ -236,19 +235,13 @@ class Trial():
 
     def take_step(self):
         '''
-        Check if actionBuffer is within lifespan and then call Agent/Environment
-        step function passing the appropriate human action.
         Expects a dictionary return with all the values that should be recorded.
         Records return and saves all memory associated with this setp.
-        Iterates actionBuffer, checks for DONE from Agent/Env
+        Checks for DONE from Agent/Env
         '''
-        if self.actionBuffer >= self.config.get('actionBufferLifespan'):
-            self.humanAction = 0
-            self.actionBuffer = 0
-        envState = agent.step(self.trial, self.humanAction)
+        envState = self.agent.step(self.trial, self.humanAction)
         self.update_entry(envState)
         self.save_entry()
-        self.actionBuffer +=1
         if envState['done']:
             self.reset()
 
