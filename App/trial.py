@@ -71,7 +71,7 @@ class Trial():
         if self.check_trial_done():
             self.end()
         else:
-            self.agent.reset(self.trial)
+            self.agent.reset()
             if self.outfile:
                 self.outfile.close()
                 if self.config.get('s3upload'):
@@ -94,7 +94,7 @@ class Trial():
         to write the record to file before closing.
         '''
         self.pipe.send('done')
-        self.agent.close(self.trial)
+        self.agent.close()
         if self.config.get('dataFile') == 'trial':
             self.save_record()
         if self.outfile:
@@ -189,8 +189,7 @@ class Trial():
             actionCode = actionSpace.index(action)
         else:
             actionCode = 0
-        if actionCode != 0:
-            self.humanAction = actionCode
+        self.humanAction = actionCode
    
     def update_entry(self, update_dict:dict):
         '''
@@ -204,7 +203,7 @@ class Trial():
         Translates the npArray into a jpeg image and then base64 encodes the 
         image for transmission in json message.
         '''
-        render = self.agent.render(self.trial)
+        render = self.agent.render()
         try:
             img = Image.fromarray(render)
             fp = BytesIO()
@@ -239,7 +238,7 @@ class Trial():
         Records return and saves all memory associated with this setp.
         Checks for DONE from Agent/Env
         '''
-        envState = self.agent.step(self.trial, self.humanAction)
+        envState = self.agent.step(self.humanAction)
         self.update_entry(envState)
         self.save_entry()
         if envState['done']:

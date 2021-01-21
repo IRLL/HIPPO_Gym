@@ -28,7 +28,7 @@ class Agent():
             Mandatory
         '''
         self.env = gym.make(game)
-        return env
+        return
     
     def step(self, action:int):
         '''
@@ -42,7 +42,7 @@ class Agent():
             - envState (Type: dict containing all information to be recorded for future use)
               change contents of dict as desired, but return must be type dict.
         '''
-        observation, reward, done, info = env.step(action)
+        observation, reward, done, info = self.env.step(action)
         envState = {'observation': observation, 'reward': reward, 'done': done, 'info': info}
         return envState
     
