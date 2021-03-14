@@ -1,4 +1,5 @@
 project:
+  useAWS: false # bool, set to true if using AWS, set false and ignore all AWS entries
   awsSetup:
     bucket: # working bucket in AWS
     region: # working AWS region

@@ -11,12 +11,13 @@ def load_config():
         except:
             config = yaml.load(infile) #shim for older versions of pyYaml
     projectConfig = config.get('project')
-    projectId = projectConfig.get('id')
-    projectConfig['awsSetup']['containerName'] = projectId
-    projectConfig['awsSetup']['repository'] = projectId
-    projectConfig['ecsTask'] = projectId
-    projectConfig['bucket'] = projectConfig.get('awsSetup').get('bucket')
-    logging.info('Config Loaded')
+    if projectConfig.get('useAWS'):
+        projectId = projectConfig.get('id')
+        projectConfig['awsSetup']['containerName'] = projectId
+        projectConfig['awsSetup']['repository'] = projectId
+        projectConfig['ecsTask'] = projectId
+        projectConfig['bucket'] = projectConfig.get('awsSetup').get('bucket')
+        logging.info('Config Loaded')
     return projectConfig, config.get('trial')
 
 def check_steps(projectConfig):
@@ -219,21 +220,22 @@ def set_dotenv():
 def main():
     #logging.basicConfig(filename='Logs/updateProject.log', level=logging.INFO)
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-    check_dependencies()
     projectConfig, trialConfig = load_config()
-    steps = check_steps(projectConfig)
-    upload_step_files(steps, projectConfig)
-    update_project_master_list(projectConfig)
-    repoExists, projectConfig = check_repository(projectConfig)
-    if not repoExists:
-        projectConfig = create_repository(projectConfig)
-    imageExists = check_image(projectConfig)
-    get_ssl_cert(projectConfig)
     trialConfig = set_trial_config(trialConfig, projectConfig)
-    set_dotenv()
-    push_image(projectConfig, imageExists)
-    if not check_task_definition(projectConfig):
-        register_task_definition(projectConfig)
+    if projectConfig.get('useAWS'):
+        check_dependencies()
+        steps = check_steps(projectConfig)
+        upload_step_files(steps, projectConfig)
+        update_project_master_list(projectConfig)
+        repoExists, projectConfig = check_repository(projectConfig)
+        if not repoExists:
+            projectConfig = create_repository(projectConfig)
+        imageExists = check_image(projectConfig)
+        get_ssl_cert(projectConfig)
+        set_dotenv()
+        push_image(projectConfig, imageExists)
+        if not check_task_definition(projectConfig):
+            register_task_definition(projectConfig)
     with open('.projectConfig.yml','w') as outfile:
         yaml.dump({'project':projectConfig,'trial':trialConfig}, outfile)
 
