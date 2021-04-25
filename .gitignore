@@ -4,3 +4,4 @@ App/Trials/*
 *.env
 *.swp
 Logs/*
+.DS_Stoe
