@@ -11,7 +11,7 @@ project:
     startServerStep:  # int
     stopServerStep:  # int
   id: # Letters, Numbers and '-' only!
-  live: True # bool
+  live: false # bool
   maxRuntime: 60 # int in minutes.
   name: # str
   researcher: # str
@@ -30,33 +30,24 @@ project:
 trial:
   actionBufferLifespan: 1 # int
   maxEpisodes: 20 # int
-  game: MsPacman-v0 # full environment name
+  game: fingerprint # full environment name
   dataFile: episode # episode or trial
-  s3upload: True
+  s3upload: false
   actionSpace: # the appropriate action space for environment. Order matters
-    - noop
-    - up
-    - right
-    - left
-    - down
-    - upright
-    - upleft
-    - downright
-    - downleft
   frameRateStepSize: 5 # int Optional if allowFrameRateChange = False
   minFrameRate: 1 # int Optional if allowFrameRateChange = False
   maxFrameRate: 60 # int Optional if allowFrameRateChange = False
   allowFrameRateChange: False # bool
   startingFrameRate: 30 # int Required
   ui: # to include ui button set to True, False buttons will not be shown
-    left: True
-    right: True
-    up: True
-    down: True
-    start: True
-    stop: True
-    pause: True
-    reset: True
+    left: False
+    right: False
+    up: False
+    down: False
+    start: False
+    stop: False
+    pause: False
+    reset: False
     trainOffline: False
     trainOnline: False
     good: False
@@ -64,4 +55,14 @@ trial:
     fpsSet: False
     fpsUp: False
     fpsDown: False
+    brightness: True
+    contrast: True
+    saturation: True
+    hue: True
+    undo: True
+    redo: True
+    addMarker: True
+    resetImage: True
+    submitImage: True
+
 

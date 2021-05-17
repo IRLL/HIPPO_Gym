@@ -1,4 +1,4 @@
-import numpy, json, shortuuid, time, base64, yaml, logging
+import numpy, json, shortuuid, time, base64, yaml, logging, os
 import _pickle as cPickle
 from PIL import Image
 from io import BytesIO
@@ -55,9 +55,10 @@ class Trial():
             if message:
                 self.handle_message(message)
             if self.play:
+                self.take_step()
                 render = self.get_render()
                 self.send_render(render)
-                self.take_step()
+                self.play = False
             time.sleep(1/self.framerate)
 
     def reset(self):
@@ -151,8 +152,10 @@ class Trial():
             self.reset()
         elif command == 'pause':
             self.play = False
-        elif command == 'requestUI':
+        elif command == 'requestui':
             self.send_ui()
+        elif command == 'submitimage':
+            self.play = True
 
     def handle_framerate_change(self, change:str):
         '''
@@ -205,7 +208,7 @@ class Trial():
         '''
         render = self.agent.render()
         try:
-            img = Image.fromarray(render)
+            img = Image.open(render)
             fp = BytesIO()
             img.save(fp,'JPEG')
             frame = base64.b64encode(fp.getvalue()).decode('utf-8')
@@ -243,6 +246,7 @@ class Trial():
         self.save_entry()
         if envState['done']:
             self.reset()
+        self.play = True
 
     def save_entry(self):
         '''
@@ -280,7 +284,11 @@ class Trial():
             filename = f'trial_{self.userId}'
         else:
             filename = f'episode_{self.episode}_user_{self.userId}'
-        path = 'Trials/'+filename
-        self.outfile = open(path, 'ab')
+        try:
+            path = 'Trials/'+filename
+            self.outfile = open(path, 'ab')
+        except:
+            os.makedirs('Trials')
+            self.outfile = open(path, 'ab')
         self.filename = filename
         self.path = path

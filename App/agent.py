@@ -1,14 +1,4 @@
-'''
-This is a demo file to be replaced by the researcher as required.
-This file is imported by trial.py and trial.py will call:
-start()
-step()
-render()
-reset()
-close()
-These functions are mandatory. This file contains minimum working versions 
-of these functions, adapt as required for individual research goals.
-'''
+from PIL import Image
 import gym
 
 class Agent():
@@ -27,7 +17,7 @@ class Agent():
             - env (Type: OpenAI gym Environment as returned by gym.make())
             Mandatory
         '''
-        self.env = gym.make(game)
+        self.count = 0;
         return
     
     def step(self, action:int):
@@ -42,8 +32,9 @@ class Agent():
             - envState (Type: dict containing all information to be recorded for future use)
               change contents of dict as desired, but return must be type dict.
         '''
-        observation, reward, done, info = self.env.step(action)
-        envState = {'observation': observation, 'reward': reward, 'done': done, 'info': info}
+        self.count += 1
+        done = self.count > 5
+        envState = {'done': done}
         return envState
     
     def render(self):
@@ -57,7 +48,8 @@ class Agent():
             - return from env.render('rgb_array') (Type: npArray)
               must return the unchanged rgb_array
         '''
-        return self.env.render('rgb_array')
+        
+        return f'images/num{self.count}.jpg'
     
     def reset(self):
         '''
@@ -69,7 +61,7 @@ class Agent():
         Returns: 
             No Return
         '''
-        self.env.reset()
+        self.count = 1
     
     def close(self):
         '''
@@ -81,4 +73,3 @@ class Agent():
         Returns:
             No Return
         '''
-        self.env.close()

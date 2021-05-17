@@ -1,0 +1,24 @@
+trial:
+  actionBufferLifespan: 1
+  actionSpace: null
+  allowFrameRateChange: false
+  bucket: null
+  dataFile: episode
+  frameRateStepSize: 5
+  game: fingerprint
+  maxEpisodes: 20
+  maxFrameRate: 60
+  minFrameRate: 1
+  projectId: null
+  s3upload: false
+  startingFrameRate: 30
+  ui:
+  - brightness
+  - contrast
+  - saturation
+  - hue
+  - undo
+  - redo
+  - addMarker
+  - resetImage
+  - submitImage
