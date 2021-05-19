@@ -64,5 +64,9 @@ trial:
     addMarker: True
     resetImage: True
     submitImage: True
+  instructions: 
+  - "Select a marker to edit it"
+  - "Scroll (mouse), pinch (touchpad/mousepad), or use arrow keys to zoom"
+  - "Drag or use space + arrow keys to move"
 
 

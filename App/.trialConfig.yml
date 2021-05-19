@@ -6,6 +6,10 @@ trial:
   dataFile: episode
   frameRateStepSize: 5
   game: fingerprint
+  instructions:
+  - Select a marker to edit it
+  - Scroll (mouse), pinch (touchpad/mousepad), or use arrow keys to zoom
+  - Drag or use space + arrow keys to move
   maxEpisodes: 20
   maxFrameRate: 60
   minFrameRate: 1
