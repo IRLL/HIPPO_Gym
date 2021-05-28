@@ -8,8 +8,8 @@ project:
     memory: 10 # int 1-30
 
   events:
-    startServerStep:  # int
-    stopServerStep:  # int
+    startServerStep: # int
+    stopServerStep: # int
   id: # Letters, Numbers and '-' only!
   live: false # bool
   maxRuntime: 60 # int in minutes.
@@ -61,12 +61,10 @@ trial:
     hue: True
     undo: True
     redo: True
-    addMarker: True
+    addMinutia: True
     resetImage: True
     submitImage: True
-  instructions: 
-  - "Select a marker to edit it"
-  - "Scroll (mouse), pinch (touchpad/mousepad), or use arrow keys to zoom"
-  - "Drag or use space + arrow keys to move"
-
-
+  instructions:
+    - "Select a marker to edit it"
+    - "Scroll (mouse), pinch (touchpad/mousepad), or use arrow keys to zoom"
+    - "Drag or use space + arrow keys to move"
