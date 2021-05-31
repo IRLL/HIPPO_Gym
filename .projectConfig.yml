@@ -51,6 +51,6 @@ trial:
   - hue
   - undo
   - redo
-  - addMarker
+  - addMinutia
   - resetImage
   - submitImage
