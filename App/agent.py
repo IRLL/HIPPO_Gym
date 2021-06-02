@@ -17,6 +17,10 @@ class Agent():
             - env (Type: OpenAI gym Environment as returned by gym.make())
             Mandatory
         '''
+        f = open("images/imgnames.txt", "r")
+        self.imgnames = f.read().split("\n")
+        f.close()
+
         self.count = 0;
         return
     
@@ -49,7 +53,7 @@ class Agent():
               must return the unchanged rgb_array
         '''
         
-        return f'images/num{self.count}.jpg'
+        return f'images/{self.imgnames[self.count]}'
     
     def reset(self):
         '''
@@ -61,7 +65,7 @@ class Agent():
         Returns: 
             No Return
         '''
-        self.count = 1
+        self.count = 0
     
     def close(self):
         '''
