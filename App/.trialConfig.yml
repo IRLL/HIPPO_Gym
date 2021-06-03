@@ -26,3 +26,11 @@ trial:
   - addMinutia
   - resetImage
   - submitImage
+  - fingerprint
+  - webcam
+  - webcamViewer
+  - webcamRequired
+  - webcamFps
+  - webcamLeft
+  - wecamRight
+  - webcamCaptureButton
