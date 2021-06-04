@@ -20,7 +20,6 @@ class Agent():
         f = open("images/imgnames.txt", "r")
         self.imgnames = f.read().split("\n")
         f.close()
-
         self.count = 0;
         return
     
@@ -37,7 +36,7 @@ class Agent():
               change contents of dict as desired, but return must be type dict.
         '''
         self.count += 1
-        done = self.count > 5
+        done = self.count > len(self.imgnames)
         envState = {'done': done}
         return envState
     

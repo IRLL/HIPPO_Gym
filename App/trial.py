@@ -1,5 +1,6 @@
-import numpy, json, shortuuid, time, base64, yaml, logging, os
+import numpy, json, shortuuid, time, base64, yaml, logging, os, xml.etree.ElementTree as ET, errno
 import _pickle as cPickle
+from xml.dom import minidom
 from PIL import Image
 from io import BytesIO
 from agent import Agent # this is the Agent/Environment compo provided by the researcher
@@ -30,6 +31,7 @@ class Trial():
         self.projectId = self.config.get('projectId')
         self.filename = None
         self.path = None
+        self.imagename = None # Image name attribute for XML file output
 
         self.start()
         self.run()
@@ -131,7 +133,9 @@ class Trial():
             self.reset()
             render = self.get_render()
             self.send_render(render)
-        if 'command' in message and message['command']:
+        if 'minutiaList' in message and message['minutiaList']:
+            self.handle_minutiae(message['minutiaList'])
+        elif 'command' in message and message['command']:
             self.handle_command(message['command'])
         elif 'changeFrameRate' in message and message['changeFrameRate']:
             self.handle_framerate_change(message['changeFrameRate'])
@@ -208,10 +212,13 @@ class Trial():
         image for transmission in json message.
         '''
         render = self.agent.render()
+        # Get the image name from the rendered image path
+        # from "Images/<filename>.bmp" get "<filename>"
+        self.imagename = render[7: -4]
         try:
             img = Image.open(render)
             fp = BytesIO()
-            img.save(fp,'JPEG')
+            img.save(fp, 'BMP') # Changes filetype to be BMP
             frame = base64.b64encode(fp.getvalue()).decode('utf-8')
             fp.close()
         except: 
@@ -302,3 +309,57 @@ class Trial():
             self.outfile = open(path, 'ab')
         self.filename = filename
         self.path = path
+
+    def handle_minutiae(self, minutiaList:list):
+        '''
+        Creates a new XML file in the in the XML folder
+        using the given minutia list
+        '''
+        XMLstring = self.createXML(minutiaList)
+
+        user = 'Nadeen'
+        filename = f'{self.imagename}_{user}'
+        path = f'XML/{filename}.xml'
+
+        try:
+            XMLfile = open(path, 'x')
+            XMLfile.write(XMLstring)
+            XMLfile.close()
+        except OSError as e:
+            # No such directory
+            if e.errno == errno.ENOENT:
+                os.makedirs('XML') # create "XML" directory
+            # File name already exists
+            elif e.errno == errno.EEXIST:
+                files = [file for file in os.listdir('XML') if filename in file]
+                i = 1
+                while filename + str(i) +".xml" in files:
+                    i += 1
+                path = f'XML/{filename}{str(i)}.xml'
+            
+            XMLfile = open(path, 'x')
+            XMLfile.write(XMLstring)
+            XMLfile.close()
+
+    def createXML(self, minutiae:list):
+        '''
+        Creates and returns an XML string with the following structure:
+            <MinutiaeList>
+                <Minutia X="313" Y="381" Angle="342.0" Type="End" />
+                ...
+            </MinutiaeList>
+        '''
+        minutiaeList = ET.Element('MinutiaeList')
+
+        for minutia in minutiae:
+            ET.SubElement(minutiaeList, 'Minutia',
+                {'X': str(minutia['x']), 
+                'Y': str(minutia['y']),
+                'Angle': str(minutia['orientation']),
+                'Type': str(minutia['type'])})
+        
+        tab_length = " " * 4 # defining tab length to be 4 spaces
+        rough_string = ET.tostring(minutiaeList)
+        reparsed = minidom.parseString(rough_string)
+        
+        return reparsed.toprettyxml(indent=tab_length)
