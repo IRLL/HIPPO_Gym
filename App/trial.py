@@ -5,6 +5,9 @@ from PIL import Image
 from io import BytesIO
 from agent import Agent # this is the Agent/Environment compo provided by the researcher
 
+# for dummy score
+import random
+
 def load_config():
     logging.info('Loading Config in trial.py')
     with open('.trialConfig.yml', 'r') as infile:
@@ -212,9 +215,11 @@ class Trial():
         image for transmission in json message.
         '''
         render = self.agent.render()
+
         # Get the image name from the rendered image path
         # from "Images/<filename>.bmp" get "<filename>"
         self.imagename = render[7: -4]
+        
         try:
             img = Image.open(render)
             fp = BytesIO()
@@ -251,6 +256,19 @@ class Trial():
                 self.pipe.send(json.dumps({'Instructions': instructions}))
             except:
                 return
+    
+    def get_score(self):
+        # Get the score from the windows machine
+
+        # For now, just sleep for 2 seconds and return a random score
+        time.sleep(2)
+        return random.randint(0, 2000)
+    
+    def send_score(self, score):
+        try:
+            self.pipe.send(json.dumps({'Score': score}))
+        except:
+            return
 
     def take_step(self):
         '''
@@ -263,6 +281,9 @@ class Trial():
         self.save_entry()
         if envState['done']:
             self.reset()
+        else:
+            score = self.get_score()
+            self.send_score(score)
         self.play = True
 
     def save_entry(self):
