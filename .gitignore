@@ -1,5 +1,6 @@
 *__pycache__
 App/Trials/*
+App/XML/*
 *.pem
 *.env
 *.swp

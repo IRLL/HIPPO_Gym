@@ -60,7 +60,6 @@ class Trial():
             if message:
                 self.handle_message(message)
             if self.play:
-                print("i am here")
                 self.take_step()
                 render = self.get_render()
                 self.send_render(render)
@@ -362,6 +361,7 @@ class Trial():
             XMLfile = open(path, 'x')
             XMLfile.write(XMLstring)
             XMLfile.close()
+        self.play = True
 
     def createXML(self, minutiae:list):
         '''
