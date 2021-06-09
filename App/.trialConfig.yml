@@ -7,9 +7,11 @@ trial:
   frameRateStepSize: 5
   game: fingerprint
   instructions:
-  - Select a marker to edit it
-  - Scroll (mouse), pinch (touchpad/mousepad), or use arrow keys to zoom
-  - Drag or use space + arrow keys to move
+  - Click on "Add Marker" and select target location on image to add a marker
+  - Scroll (mouse), pinch (touchpad/mousepad), double-click or use control keys to
+    zoom
+  - Click and drag to move
+  - Use sliders to adjust image appearance
   maxEpisodes: 20
   maxFrameRate: 60
   minFrameRate: 1
