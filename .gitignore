@@ -4,3 +4,5 @@ App/Trials/*
 *.env
 *.swp
 Logs/*
+.DS_Store
+server.log
