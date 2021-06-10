@@ -64,6 +64,13 @@ trial:
     addMinutia: True
     resetImage: True
     submitImage: True
+    webcam: True
+    webcamViewer: True
+    webcamRequired: False
+    webcamLeft: True
+    webcamRight: False
+    webcamCaptureButton: True
+    webcamCapture: False
   instructions:
     - "Select a marker to edit it"
     - "Scroll (mouse), pinch (touchpad/mousepad), or use arrow keys to zoom"
