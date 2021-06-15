@@ -2,8 +2,9 @@ trial:
   actionBufferLifespan: 1
   actionSpace: null
   allowFrameRateChange: false
-  bucket: null
+  bucket: projects.irll
   dataFile: episode
+  fingerprint: true
   frameRateStepSize: 5
   game: fingerprint
   instructions:
@@ -14,11 +15,14 @@ trial:
   - Use sliders to adjust image appearance
   maxEpisodes: 20
   maxFrameRate: 60
+  maxScore: 2242
   minFrameRate: 1
-  projectId: null
+  minMinutiae: 1
+  projectId: fingerprint-demo
   s3upload: false
   startingFrameRate: 30
   ui:
+  - stop
   - brightness
   - contrast
   - saturation

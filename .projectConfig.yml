@@ -1,50 +1,59 @@
 project:
   awsSetup:
-    bucket: null
+    bucket: projects.irll
+    containerName: fingerprint-demo
     cpu: 2
     memory: 10
-    region: null
-    rootDomain: null
+    region: ca-central-1
+    repository: fingerprint-demo
+    repositoryUri: 237796709103.dkr.ecr.ca-central-1.amazonaws.com/fingerprint-demo
+    rootDomain: irll.net
+  bucket: projects.irll
+  ecsTask: fingerprint-demo
   events:
-    startServerStep: null
-    stopServerStep: null
-  id: null
-  live: false
-  maxRuntime: 60
-  name: null
-  researcher: null
+    startServerStep: 1
+    stopServerStep: 3
+  id: fingerprint-demo
+  live: true
+  maxRuntime: 30
+  name: fingerprint-demo
+  researcher: Nadeen
   ssl:
     fullchain: SSL/fullchain.pem
     privkey: SSL/privkey.pem
-    sslBucket: null
+    sslBucket: projects.irll
   steps:
-    1: null
-    2: null
-    3: null
-    4: null
-    5: null
-    finalStep: null
+    1: exampleConsent.html
+    2: game
+    3: exampleThank.html
+    finalStep: exampleThank.html
   teamMembers: null
-  useAWS: false
+  useAWS: true
 trial:
   actionBufferLifespan: 1
   actionSpace: null
   allowFrameRateChange: false
-  bucket: null
+  bucket: projects.irll
   dataFile: episode
+  fingerprint: true
   frameRateStepSize: 5
   game: fingerprint
   instructions:
-  - Select a marker to edit it
-  - Scroll (mouse), pinch (touchpad/mousepad), or use arrow keys to zoom
-  - Drag or use space + arrow keys to move
+  - Click on "Add Marker" and select target location on image to add a marker
+  - Scroll (mouse), pinch (touchpad/mousepad), double-click or use control keys to
+    zoom
+  - Click and drag to move
+  - Use sliders to adjust image appearance
   maxEpisodes: 20
   maxFrameRate: 60
+  maxScore: 2242
   minFrameRate: 1
-  projectId: null
+  minMinutiae: 1
+  projectId: fingerprint-demo
   s3upload: false
   startingFrameRate: 30
   ui:
+  - stop
   - brightness
   - contrast
   - saturation

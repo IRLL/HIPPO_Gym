@@ -5,3 +5,4 @@ App/XML/*
 *.env
 *.swp
 Logs/*
+App/server.log

@@ -35,6 +35,7 @@ class Trial():
         self.filename = None
         self.path = None
         self.imagename = None # Image name attribute for XML file output
+        self.fingerprint = self.config.get('fingerprint', False)
 
         self.start()
         self.run()
@@ -133,6 +134,8 @@ class Trial():
             self.userId = message['userId'] or f'user_{shortuuid.uuid()}'
             self.send_ui()
             self.send_instructions(None)
+            if self.fingerprint:
+                self.send_fingerprint_config()
             self.reset()
             render = self.get_render()
             self.send_render(render)
@@ -256,13 +259,19 @@ class Trial():
                 self.pipe.send(json.dumps({'Instructions': instructions}))
             except:
                 return
+
+    def send_fingerprint_config(self):
+        max_score = self.config.get('maxScore')
+        min_minutiae = self.config.get('minMinutiae')
+        self.pipe.send(json.dumps({'Fingerprint': self.fingerprint, 'MaxScore': max_score, 'MinMinutiae': min_minutiae}))
     
     def get_score(self):
         # Get the score from the windows machine
 
         # For now, just sleep for 2 seconds and return a random score
         time.sleep(2)
-        return random.randint(0, 2000)
+        max_score = self.config.get('maxScore')
+        return random.randint(0, max_score)
     
     def send_score(self, score):
         try:

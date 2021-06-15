@@ -5,7 +5,9 @@ RUN apt-get update && apt-get install -y \
 	python-opengl
 
 COPY App/* ./
+COPY App/images/* ./images/
 RUN mkdir ./Trials
+RUN mkdir ./XML
 COPY requirements.txt .
 
 RUN pip3 install --upgrade pip
