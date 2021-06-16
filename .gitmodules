@@ -1,0 +1,3 @@
+[submodule "crafting"]
+	path = crafting
+	url = git@github.com:MathisFederico/Crafting.git
