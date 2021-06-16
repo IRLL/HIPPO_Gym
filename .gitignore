@@ -5,3 +5,6 @@ App/Trials/*
 *.swp
 Logs/*
 .DS_Stoe
+.idea/*
+.projectConfig.yml
+App/.trialConfig.yml
