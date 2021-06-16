@@ -6,3 +6,5 @@ venv
 *.swp
 Logs/*
 .DS_Stoe
+server.log
+.vscode
