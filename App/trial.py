@@ -2,7 +2,7 @@ import numpy, json, shortuuid, time, base64, yaml, logging
 import _pickle as cPickle
 from PIL import Image
 from io import BytesIO
-from agent import Agent # this is the Agent/Environment compo provided by the researcher
+from optionAgent import OptionAgent # this is the Agent/Environment compo provided by the researcher
 
 def load_config():
     logging.info('Loading Config in trial.py')
@@ -42,7 +42,7 @@ class Trial():
         By default this expects the openAI Gym Environment object to be
         returned. 
         '''
-        self.agent = Agent()
+        self.agent = OptionAgent()
         self.agent.start(self.config.get('game'))
 
     def run(self):
