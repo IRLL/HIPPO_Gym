@@ -2,6 +2,7 @@
 App/Trials/*
 *.pem
 *.env
+venv
 *.swp
 Logs/*
 .DS_Stoe
