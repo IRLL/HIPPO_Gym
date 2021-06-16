@@ -6,3 +6,7 @@ App/XML/*
 *.swp
 Logs/*
 App/server.log
+.DS_Stoe
+.idea/*
+.projectConfig.yml
+App/.trialConfig.yml
