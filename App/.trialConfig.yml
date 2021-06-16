@@ -1,0 +1,30 @@
+trial:
+  actionBufferLifespan: 1
+  actionSpace:
+  - noop
+  - up
+  - right
+  - left
+  - down
+  - upright
+  - upleft
+  - downright
+  - downleft
+  allowFrameRateChange: true
+  bucket: null
+  dataFile: episode
+  frameRateStepSize: 5
+  game: MineCrafting
+  maxEpisodes: 20
+  maxFrameRate: 60
+  minFrameRate: 1
+  projectId: null
+  s3upload: false
+  startingFrameRate: 30
+  ui:
+  - start
+  - stop
+  - reset
+  - fpsSet
+  - fpsUp
+  - fpsDown
