@@ -385,7 +385,7 @@ class Trial():
 
         for minutia in minutiae:
             ET.SubElement(minutiaeList, 'Minutia',
-                {'X': str(minutia['x']).spilt('.')[0],
+                {'X': str(minutia['x']).split('.')[0],
                 'Y': str(minutia['y']).split('.')[0],
                 'Angle': str(minutia['orientation']),
                 'Type': str(minutia['type'])})
