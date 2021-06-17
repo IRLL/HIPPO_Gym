@@ -385,12 +385,12 @@ class Trial():
 
         for minutia in minutiae:
             ET.SubElement(minutiaeList, 'Minutia',
-                {'X': str(minutia['x']), 
-                'Y': str(minutia['y']),
+                {'X': str(minutia['x']).spilt('.')[0],
+                'Y': str(minutia['y']).split('.')[0],
                 'Angle': str(minutia['orientation']),
                 'Type': str(minutia['type'])})
         
-        tab_length = " " * 4 # defining tab length to be 4 spaces
+        tab_length = "" # defining tab length to be 4 spaces
         rough_string = ET.tostring(minutiaeList)
         reparsed = minidom.parseString(rough_string)
         
