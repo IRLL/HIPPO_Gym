@@ -23,8 +23,8 @@ RUN rm -rf /mono/wine-mono-4.9.4.msi
 
 COPY App/* ./
 COPY App/images/* ./images/
-COPY App/MtiaeScoreAgent/* ./MtiaeScoreAgent/
-COPY App/MtiaeScoreAgent/Impressions/* ./MtiaeScoreAgent/Impressions/
+COPY App/MtiaeScoreAgent/* ./
+COPY App/MtiaeScoreAgent/Impressions/* ./Impressions/
 RUN mkdir ./Trials
 RUN mkdir ./XML
 COPY requirements.txt .
