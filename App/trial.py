@@ -291,7 +291,7 @@ class Trial():
         if envState['done']:
             self.reset()
         else:
-            score = self.get_score()
+            score = self.agent.get_score(self.xmlFilename)
             self.send_score(score)
         self.play = True
 
@@ -348,8 +348,9 @@ class Trial():
         XMLstring = self.createXML(minutiaList)
 
         user = 'Nadeen'
-        filename = f'{self.imagename}_{user}'
+        filename = f'{self.imagename}'
         path = f'XML/{filename}.xml'
+        self.xmlFilename = path
 
         try:
             XMLfile = open(path, 'x')

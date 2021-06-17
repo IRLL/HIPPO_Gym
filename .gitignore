@@ -10,3 +10,4 @@ App/server.log
 .idea/*
 .projectConfig.yml
 App/.trialConfig.yml
+App/MtiaeScoreAgent/*

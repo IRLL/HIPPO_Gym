@@ -1,5 +1,5 @@
 from PIL import Image
-import gym
+from fingerprint import Fingerprint
 
 class Agent():
     '''
@@ -21,8 +21,9 @@ class Agent():
         self.imgnames = f.read().split("\n")
         f.close()
         self.count = 0;
+        self.checker = Fingerprint()
         return
-    
+
     def step(self, action:int):
         '''
         Takes a game step.
@@ -39,7 +40,7 @@ class Agent():
         done = self.count > len(self.imgnames)
         envState = {'done': done}
         return envState
-    
+
     def render(self):
         '''
         Gets render from gym.
@@ -51,9 +52,9 @@ class Agent():
             - return from env.render('rgb_array') (Type: npArray)
               must return the unchanged rgb_array
         '''
-        
+
         return f'images/{self.imgnames[self.count]}'
-    
+
     def reset(self):
         '''
         Resets the environment to start new episode.
@@ -65,7 +66,7 @@ class Agent():
             No Return
         '''
         self.count = 0
-    
+
     def close(self):
         '''
         Closes the environment at the end of the trial.
@@ -76,3 +77,6 @@ class Agent():
         Returns:
             No Return
         '''
+
+    def get_score(self, filename:str):
+        return self.checker.check_xml(filename)
