@@ -2,7 +2,7 @@ import numpy, json, shortuuid, time, base64, yaml, logging
 import _pickle as cPickle
 from PIL import Image
 from io import BytesIO
-from optionAgent import OptionAgent # this is the Agent/Environment compo provided by the researcher
+from optionAgent import CraftingAgent # this is the Agent/Environment compo provided by the researcher
 
 def load_config():
     logging.info('Loading Config in trial.py')
@@ -17,7 +17,7 @@ class Trial():
         self.config = load_config()
         self.pipe = pipe
         self.frameId = 0
-        self.humanAction = 0
+        self.humanAction = None
         self.episode = 0
         self.done = False
         self.play = False
@@ -42,7 +42,7 @@ class Trial():
         By default this expects the openAI Gym Environment object to be
         returned. 
         '''
-        self.agent = OptionAgent()
+        self.agent = CraftingAgent()
         self.agent.start(self.config.get('game'))
 
     def run(self):
@@ -57,7 +57,9 @@ class Trial():
             if self.play:
                 render = self.get_render()
                 self.send_render(render)
-                self.take_step()
+                if self.humanAction:
+                    self.take_step()
+                    self.humanAction = None
             time.sleep(1/self.framerate)
 
     def reset(self):
@@ -135,6 +137,8 @@ class Trial():
             self.handle_framerate_change(message['changeFrameRate'])
         elif 'action' in message and message['action']:
             self.handle_action(message['action'])
+        elif 'info' in message and message['info'] == 'point clicked':
+            self.handle_coordinates(message['coordinates'])
         self.update_entry(message)
 
     def handle_command(self, command:str):
@@ -188,9 +192,18 @@ class Trial():
         if action in actionSpace:
             actionCode = actionSpace.index(action)
         else:
-            actionCode = 0
+            actionCode = self.config.get('defaultAction')
         self.humanAction = actionCode
-   
+
+    def handle_coordinates(self, coordinates:dict):
+        '''
+        Translates action to int and resets action buffer if action !=0
+        '''
+        if hasattr(self.agent, 'coordinates_to_action'):
+            self.humanAction = self.agent.coordinates_to_action(coordinates)
+        else:
+            raise NotImplementedError('Agent has no way of transforming coordinates_to_action')
+
     def update_entry(self, update_dict:dict):
         '''
         Adds a generic dictionary to the self.nextEntry dictionary.
