@@ -1,31 +1,29 @@
 project:
   useAWS: false # bool, set to true if using AWS, set false and ignore all AWS entries
   awsSetup:
-    bucket: # working bucket in AWS
-    region: # working AWS region
-    rootDomain: # a fully qualified domain name without 'https://'
+    bucket: projects.irll # working bucket in AWS
+    region: ca-central-1 # working AWS region
+    rootDomain: irll.net # a fully qualified domain name without 'https://'
     cpu: 2 # int 1,2, or 4
     memory: 10 # int 1-30
 
   events:
-    startServerStep: # int
-    stopServerStep: # int
-  id: # Letters, Numbers and '-' only!
-  live: false # bool
-  maxRuntime: 60 # int in minutes.
-  name: # str
-  researcher: # str
+    startServerStep: 1 # int
+    stopServerStep: 3 # int
+  id: fingerprint-demo # Letters, Numbers and '-' only!
+  live: true # bool
+  maxRuntime: 30 # int in minutes.
+  name: fingerprint-demo # str
+  researcher: Nadeen # str
   ssl:
     fullchain: SSL/fullchain.pem # path to fullchain.pem file excluding bucket name
     privkey: SSL/privkey.pem # path to privkey.pem file excluding bucket name
-    sslBucket: # bucket name for resolving paths above
+    sslBucket: projects.irll # bucket name for resolving paths above
   steps: # any number of steps needed with corresponding filenames
-    1:
-    2:
-    3:
-    4:
-    5:
-    finalStep: # required, filename can be same as last numbered step
+    1: exampleConsent.html
+    2: game
+    3: exampleThank.html
+    finalStep: exampleThank.html # required, filename can be same as last numbered step
   teamMembers: # str
 trial:
   actionBufferLifespan: 1 # int
@@ -39,13 +37,16 @@ trial:
   maxFrameRate: 60 # int Optional if allowFrameRateChange = False
   allowFrameRateChange: False # bool
   startingFrameRate: 30 # int Required
+  fingerprint: true # if this is a fingerprint marking trial
+  minMinutiae: 1 # minimum number of minutiae required to add per trial
+  maxScore: 2242 # maximum score a participant can get (with reference to number of impressions)
   ui: # to include ui button set to True, False buttons will not be shown
     left: False
     right: False
     up: False
     down: False
     start: False
-    stop: False
+    stop: True
     pause: False
     reset: False
     trainOffline: False
@@ -65,6 +66,7 @@ trial:
     resetImage: True
     submitImage: True
   instructions:
-    - "Select a marker to edit it"
-    - "Scroll (mouse), pinch (touchpad/mousepad), or use arrow keys to zoom"
-    - "Drag or use space + arrow keys to move"
+    - 'Click on "Add Marker" and select target location on image to add a marker'
+    - Scroll (mouse), pinch (touchpad/mousepad), double-click or use control keys to zoom
+    - Click and drag to move
+    - Use sliders to adjust image appearance
