@@ -8,3 +8,4 @@ Logs/*
 .DS_Stoe
 server.log
 .vscode
+.idea*
