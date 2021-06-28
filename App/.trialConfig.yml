@@ -28,3 +28,7 @@ trial:
   - fpsSet
   - fpsUp
   - fpsDown
+  variables:
+    gameWindowHeight: 719
+    gameWindowSize: responsive
+    gameWindowWidth: 1056

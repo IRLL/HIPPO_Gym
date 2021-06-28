@@ -64,4 +64,8 @@ trial:
     fpsSet: True
     fpsUp: True
     fpsDown: True
+  variables:
+    gameWindowWidth: 1056 # int in pixels
+    gameWindowHeight: 719 # int in pixels
+    gameWindowSize: responsive # str options are 'strict' or 'responsive'
 

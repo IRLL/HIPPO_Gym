@@ -126,6 +126,7 @@ class Trial():
         if not self.userId and 'userId' in message:
             self.userId = message['userId'] or f'user_{shortuuid.uuid()}'
             self.send_ui()
+            self.send_variables()
             self.reset()
             render = self.get_render()
             self.send_render(render)
@@ -231,6 +232,13 @@ class Trial():
             self.pipe.send(json.dumps({'UI': self.config.get('ui', defaultUI)}))
         except:
             raise TypeError("Render Dictionary is not JSON serializable")
+
+    def send_variables(self):
+        try:
+            self.pipe.send(json.dumps(self.config.get('variables')))
+        except:
+            return
+
 
     def take_step(self):
         '''
