@@ -1,4 +1,4 @@
-import numpy, json, shortuuid, time, base64, yaml, logging
+import os, numpy, json, shortuuid, time, base64, yaml, logging
 import _pickle as cPickle
 from PIL import Image
 from io import BytesIO
@@ -6,8 +6,12 @@ from optionAgent import CraftingAgent # this is the Agent/Environment compo prov
 
 def load_config():
     logging.info('Loading Config in trial.py')
-    with open('.trialConfig.yml', 'r') as infile:
-        config = yaml.load(infile, Loader=yaml.FullLoader)
+    try:
+        with open('.trialConfig.yml', 'r') as infile:
+            config = yaml.load(infile, Loader=yaml.FullLoader)
+    except FileNotFoundError:
+        with open(os.path.join('App', '.trialConfig.yml'), 'r') as infile:
+            config = yaml.load(infile, Loader=yaml.FullLoader)
     logging.info('Config loaded in trial.py')
     return config.get('trial')
 
@@ -54,6 +58,7 @@ class Trial():
             message = self.check_message()
             if message:
                 self.handle_message(message)
+                print(message)
             if self.play:
                 render = self.get_render()
                 self.send_render(render)
@@ -301,7 +306,9 @@ class Trial():
             filename = f'trial_{self.userId}'
         else:
             filename = f'episode_{self.episode}_user_{self.userId}'
-        path = 'Trials/'+filename
+        path = 'Trials/' + filename
+        if not os.path.exists('Trials'):
+            os.makedirs('Trials')
         self.outfile = open(path, 'ab')
         self.filename = filename
         self.path = path
