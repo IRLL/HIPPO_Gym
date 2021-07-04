@@ -25,7 +25,8 @@ class CraftingAgent(Agent):
         self.env = MineCraftingEnv()
 
     def coordinates_to_action(self, coords):
-        coords = (int(coords['x']), int(coords['y']))
+        w, h = self.env.render_variables['screen'].get_size()
+        coords = (int(coords['xRel'] * w), int(coords['yRel'] * h))
         events = self.coords_to_pygame_events(coords)
         action = get_human_action(self.env, additional_events=events,
             can_be_none=True, **self.env.render_variables)

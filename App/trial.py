@@ -58,7 +58,6 @@ class Trial():
             message = self.check_message()
             if message:
                 self.handle_message(message)
-                print(message)
             if self.play:
                 render = self.get_render()
                 self.send_render(render)
@@ -188,7 +187,6 @@ class Trial():
             except:
                 pass
 
-
     def handle_action(self, action:str):
         '''
         Translates action to int and resets action buffer if action !=0
@@ -208,7 +206,7 @@ class Trial():
         if hasattr(self.agent, 'coordinates_to_action'):
             self.humanAction = self.agent.coordinates_to_action(coordinates)
         else:
-            raise NotImplementedError('Agent has no way of transforming coordinates_to_action')
+            raise NotImplementedError('Agent has no member coordinates_to_action')
 
     def update_entry(self, update_dict:dict):
         '''
