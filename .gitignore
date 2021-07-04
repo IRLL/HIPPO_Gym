@@ -9,3 +9,5 @@ Logs/*
 server.log
 .vscode
 .idea*
+.projectConfig.yml
+App/.trialConfig.yml
