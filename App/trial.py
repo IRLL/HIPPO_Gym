@@ -139,6 +139,8 @@ class Trial():
             self.reset()
             render = self.get_render()
             self.send_render(render)
+            if self.fingerprint:
+                self.send_expert()
         if 'minutiaList' in message and message['minutiaList']:
             self.handle_minutiae(message['minutiaList'])
         elif 'command' in message and message['command']:
@@ -278,6 +280,17 @@ class Trial():
             self.pipe.send(json.dumps({'Score': score}))
         except:
             return
+    
+    def send_expert(self):
+        try:
+            #Try to load in the first xml
+            expert_1 = xmlToArray(f'Fingerprints/{self.imagename}.FingerNet.xml')
+            #Try to load in the second xml
+            expert_2 = xmlToArray(f'Fingerprints/{self.imagename}.MinutiaNet.xml')
+            #Try to send it to front end
+            self.pipe.send(json.dumps({'ExpertMarks1': expert_1, 'ExpertMarks2': expert_2}))
+        except:
+            return
 
     def take_step(self):
         '''
@@ -394,3 +407,11 @@ class Trial():
         reparsed = minidom.parseString(rough_string)
         
         return reparsed.toprettyxml(indent=tab_length)
+
+def xmlToArray(path):
+    tree = ET.parse(path)
+    root = tree.getroot()
+    minutiae = []
+    for child in root:
+        minutiae.append({'x': int(child.attrib['X']), 'y': int(child.attrib['Y']), 'orientation': float(child.attrib['Angle'].replace(',', '.'))})
+    return minutiae
