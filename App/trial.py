@@ -61,7 +61,7 @@ class Trial():
             if self.play:
                 render = self.get_render()
                 self.send_render(render)
-                if self.humanAction:
+                if self.humanAction is not None:
                     self.take_step()
                     self.humanAction = None
             time.sleep(1/self.framerate)
@@ -189,7 +189,7 @@ class Trial():
 
     def handle_action(self, action:str):
         '''
-        Translates action to int and resets action buffer if action !=0
+        Translates action to int and resets action buffer
         '''
         action = action.strip().lower()
         actionSpace = self.config.get('actionSpace')
@@ -201,7 +201,7 @@ class Trial():
 
     def handle_coordinates(self, coordinates:dict):
         '''
-        Translates action to int and resets action buffer if action !=0
+        Translates action to int and resets action buffer
         '''
         if hasattr(self.agent, 'coordinates_to_action'):
             self.humanAction = self.agent.coordinates_to_action(coordinates)
