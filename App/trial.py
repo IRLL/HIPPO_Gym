@@ -1,5 +1,6 @@
 import numpy, json, shortuuid, time, base64, yaml, logging
 import _pickle as cPickle
+from grid import Grid
 from PIL import Image
 from io import BytesIO
 from agent import Agent # this is the Agent/Environment compo provided by the researcher
@@ -42,6 +43,7 @@ class Trial():
         By default this expects the openAI Gym Environment object to be
         returned. 
         '''
+        self.create_grid()
         self.agent = Agent()
         self.agent.start(self.config.get('game'))
 
@@ -56,7 +58,8 @@ class Trial():
                 self.handle_message(message)
             if self.play:
                 render = self.get_render()
-                self.send_render(render)
+                # self.send_render(render)
+                self.send_grid()
                 self.take_step()
             time.sleep(1/self.framerate)
 
@@ -127,8 +130,9 @@ class Trial():
             self.userId = message['userId'] or f'user_{shortuuid.uuid()}'
             self.send_ui()
             self.reset()
-            render = self.get_render()
-            self.send_render(render)
+            # render = self.get_render()
+            # self.send_render(render)
+            self.send_grid()
         if 'command' in message and message['command']:
             self.handle_command(message['command'])
         elif 'changeFrameRate' in message and message['changeFrameRate']:
@@ -225,9 +229,32 @@ class Trial():
         except:
             raise TypeError("Render Dictionary is not JSON serializable")
 
+    def create_grid(self):
+        self.grid = Grid(self.config.get('rows'), self.config.get('columns') )
+        
+        #add start tile
+        self.grid.add_tile(0, 0, "text", "S")
+
+        #add lavas
+        self.grid.add_tile(1, 1, "color", "orange")
+        self.grid.add_tile(2, 1, "color", "orange")
+        self.grid.add_tile(3, 1, "color", "orange")
+
+        #add target tile
+        self.grid.add_tile(5, 8, "text", "T")
+
+    def send_grid(self):
+        grid_dict = self.grid.stringify()
+
+        try:
+            self.pipe.send(json.dumps({'Grid': grid_dict}))
+        except:
+            return
+
     def send_ui(self):
         defaultUI = ['left','right','up','down','start','pause']
         try:
+            # Send UI list and the width and height of the grid
             self.pipe.send(json.dumps({'UI': self.config.get('ui', defaultUI)}))
         except:
             raise TypeError("Render Dictionary is not JSON serializable")
