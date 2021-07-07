@@ -8,8 +8,8 @@ project:
     memory: 10 # int 1-30
 
   events:
-    startServerStep:  # int
-    stopServerStep:  # int
+    startServerStep: # int
+    stopServerStep: # int
   id: # Letters, Numbers and '-' only!
   live: True # bool
   maxRuntime: 60 # int in minutes.
@@ -48,14 +48,16 @@ trial:
   maxFrameRate: 60 # int Optional if allowFrameRateChange = False
   allowFrameRateChange: False # bool
   startingFrameRate: 30 # int Required
+  columns: 9
+  rows: 6
   ui: # to include ui button set to True, False buttons will not be shown
-    left: True
-    right: True
-    up: True
-    down: True
+    left: False
+    right: False
+    up: False
+    down: False
     start: True
     stop: True
-    pause: True
+    pause: False
     reset: True
     trainOffline: False
     trainOnline: False
@@ -64,4 +66,5 @@ trial:
     fpsSet: False
     fpsUp: False
     fpsDown: False
-
+    width: 9
+    height: 6
