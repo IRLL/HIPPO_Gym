@@ -13,7 +13,7 @@ def load_config():
     return config.get('trial')
 
 class Trial():
-    
+
     def __init__(self, pipe):
         self.config = load_config()
         self.pipe = pipe
@@ -37,11 +37,11 @@ class Trial():
 
     def start(self):
         '''
-        Call the function in the Agent/Environment combo required to start 
+        Call the function in the Agent/Environment combo required to start
         a trial. By default passes the environment name that will be passed
-        to gym.make(). 
+        to gym.make().
         By default this expects the openAI Gym Environment object to be
-        returned. 
+        returned.
         '''
         self.create_grid()
         self.agent = Agent()
@@ -49,7 +49,7 @@ class Trial():
 
     def run(self):
         '''
-        This is the main event controlling function for a Trial. 
+        This is the main event controlling function for a Trial.
         It handles the render-step loop
         '''
         while not self.done:
@@ -68,7 +68,7 @@ class Trial():
         Resets the OpenAI gym environment to start a new episode.
         By default this function will create a new log file for every
         episode, if the intention is to log only full trials then
-        comment the 3 lines below contianing self.outfile and 
+        comment the 3 lines below contianing self.outfile and
         self.create_file.
         '''
         if self.check_trial_done():
@@ -92,7 +92,7 @@ class Trial():
     def end(self):
         '''
         Closes the environment through the agent, closes any remaining outfile
-        and sends the 'done' message to the websocket pipe. If logging the 
+        and sends the 'done' message to the websocket pipe. If logging the
         whole trial memory in self.record, uncomment the call to self.save_record()
         to write the record to file before closing.
         '''
@@ -123,7 +123,7 @@ class Trial():
 
     def handle_message(self, message:dict):
         '''
-        Reads messages sent from websocket, handles commands as priority then 
+        Reads messages sent from websocket, handles commands as priority then
         actions. Logs entire message in self.nextEntry
         '''
         if not self.userId and 'userId' in message:
@@ -160,7 +160,7 @@ class Trial():
 
     def handle_framerate_change(self, change:str):
         '''
-        Changes the framerate in either increments of step, or to a requested 
+        Changes the framerate in either increments of step, or to a requested
         value within a minimum and maximum bound.
         '''
         if not self.config.get('allowFrameRateChange'):
@@ -194,7 +194,7 @@ class Trial():
         else:
             actionCode = 0
         self.humanAction = actionCode
-   
+
     def update_entry(self, update_dict:dict):
         '''
         Adds a generic dictionary to the self.nextEntry dictionary.
@@ -204,7 +204,7 @@ class Trial():
     def get_render(self):
         '''
         Calls the Agent/Environment render function which must return a npArray.
-        Translates the npArray into a jpeg image and then base64 encodes the 
+        Translates the npArray into a jpeg image and then base64 encodes the
         image for transmission in json message.
         '''
         render = self.agent.render()
@@ -214,7 +214,7 @@ class Trial():
             img.save(fp,'JPEG')
             frame = base64.b64encode(fp.getvalue()).decode('utf-8')
             fp.close()
-        except: 
+        except:
             raise TypeError("Render failed. Is env.render('rgb_array') being called\
                             With the correct arguement?")
         self.frameId += 1
@@ -224,25 +224,28 @@ class Trial():
         '''
         Attempts to send render message to websocket
         '''
-        try: 
+        try:
             self.pipe.send(json.dumps(render))
         except:
             raise TypeError("Render Dictionary is not JSON serializable")
 
     def create_grid(self):
-        self.grid = Grid(self.config.get('rows'), self.config.get('columns') )
-        
+        rows = self.config.get('rows')
+        columns = self.config.get('columns')
+        blockedStates = self.config.get('blockedStates')
+
+        self.grid = Grid(rows, columns)
+
         # add start tile
         # add_tile(row, col, color, text = "")
         self.grid.add_tile(0, 0, "white", "S")
 
         # add lavas
-        self.grid.add_tile(1, 1, "orange")
-        self.grid.add_tile(2, 1, "orange")
-        self.grid.add_tile(3, 1, "orange")
+        for state in blockedStates:
+            self.grid.add_tile(state['x'], state['y'], "orange")
 
         # add target tile
-        self.grid.add_tile(5, 8, "white", "T")
+        self.grid.add_tile(rows-1, columns-1, "white", "T")
 
     def send_grid(self):
         grid_dict = self.grid.stringify()
@@ -277,9 +280,9 @@ class Trial():
         Either saves step memory to self.record list or pickles the memory and
         writes it to file, or both.
         Note that observation and render objects can get large, an episode can
-        have several thousand steps, holding all the steps for an episode in 
+        have several thousand steps, holding all the steps for an episode in
         memory can cause performance issues if the os needs to grow the heap.
-        The program can also crash if the Server runs out of memory. 
+        The program can also crash if the Server runs out of memory.
         It is recommended to write each step to file and not maintain it in
         memory if the full observation is being saved.
         comment/uncomment the below lines as desired.
@@ -301,7 +304,7 @@ class Trial():
 
     def create_file(self):
         '''
-        Creates a file to record records to. comment/uncomment as desired 
+        Creates a file to record records to. comment/uncomment as desired
         for episode or full-trial logging.
         '''
         if self.config.get('dataFile') == 'trial':

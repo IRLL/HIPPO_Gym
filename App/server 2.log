@@ -1,23 +1,4 @@
 INFO:root:Loading Config in trial.py
-INFO:root:Loading Config in trial.py
-INFO:root:Config loaded in trial.py
-INFO:root:Loading Config in trial.py
-INFO:root:Config loaded in trial.py
-INFO:root:Loading Config in trial.py
-INFO:root:Config loaded in trial.py
-INFO:root:Loading Config in trial.py
-INFO:root:Config loaded in trial.py
-INFO:root:Loading Config in trial.py
-INFO:root:Config loaded in trial.py
-INFO:root:Loading Config in trial.py
-INFO:root:Config loaded in trial.py
-INFO:root:Loading Config in trial.py
-INFO:root:Config loaded in trial.py
-INFO:root:Loading Config in trial.py
-INFO:root:Config loaded in trial.py
-INFO:root:Loading Config in trial.py
-INFO:root:Config loaded in trial.py
-INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
@@ -87,12 +68,16 @@ INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
+INFO:root:True
+INFO:root:Dev set... Not uploading to s3.
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
+INFO:root:True
+INFO:root:Dev set... Not uploading to s3.
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
@@ -141,6 +126,8 @@ INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
+INFO:root:True
+INFO:root:Dev set... Not uploading to s3.
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
@@ -241,10 +228,6 @@ INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:True
 INFO:root:Dev set... Not uploading to s3.
-INFO:root:True
-INFO:root:Dev set... Not uploading to s3.
-INFO:root:True
-INFO:root:Dev set... Not uploading to s3.
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
@@ -255,16 +238,6 @@ INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
-INFO:root:True
-INFO:root:Dev set... Not uploading to s3.
-INFO:root:True
-INFO:root:Dev set... Not uploading to s3.
-INFO:root:True
-INFO:root:Dev set... Not uploading to s3.
-INFO:root:True
-INFO:root:Dev set... Not uploading to s3.
-INFO:root:True
-INFO:root:Dev set... Not uploading to s3.
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
@@ -287,10 +260,6 @@ INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
-INFO:root:True
-INFO:root:Dev set... Not uploading to s3.
-INFO:root:True
-INFO:root:Dev set... Not uploading to s3.
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
@@ -339,12 +308,8 @@ INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
-INFO:root:True
-INFO:root:Dev set... Not uploading to s3.
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
-INFO:root:True
-INFO:root:Dev set... Not uploading to s3.
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
@@ -383,8 +348,6 @@ INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
-INFO:root:True
-INFO:root:Dev set... Not uploading to s3.
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
@@ -395,35 +358,6 @@ INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
-ERROR:asyncio:Task exception was never retrieved
-future: <Task finished name='Task-548' coro=<consumer_handler() done, defined at communicator.py:50> exception=ConnectionClosedError('code = 1006 (connection closed abnormally [internal]), no reason')>
-Traceback (most recent call last):
-  File "/opt/anaconda3/lib/python3.8/site-packages/websockets/protocol.py", line 827, in transfer_data
-    message = await self.read_message()
-  File "/opt/anaconda3/lib/python3.8/site-packages/websockets/protocol.py", line 895, in read_message
-    frame = await self.read_data_frame(max_size=self.max_size)
-  File "/opt/anaconda3/lib/python3.8/site-packages/websockets/protocol.py", line 971, in read_data_frame
-    frame = await self.read_frame(max_size)
-  File "/opt/anaconda3/lib/python3.8/site-packages/websockets/protocol.py", line 1047, in read_frame
-    frame = await Frame.read(
-  File "/opt/anaconda3/lib/python3.8/site-packages/websockets/framing.py", line 105, in read
-    data = await reader(2)
-  File "/opt/anaconda3/lib/python3.8/asyncio/streams.py", line 721, in readexactly
-    raise exceptions.IncompleteReadError(incomplete, n)
-asyncio.exceptions.IncompleteReadError: 0 bytes read on a total of 2 expected bytes
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "communicator.py", line 54, in consumer_handler
-    async for message in websocket:
-  File "/opt/anaconda3/lib/python3.8/site-packages/websockets/protocol.py", line 439, in __aiter__
-    yield await self.recv()
-  File "/opt/anaconda3/lib/python3.8/site-packages/websockets/protocol.py", line 509, in recv
-    await self.ensure_open()
-  File "/opt/anaconda3/lib/python3.8/site-packages/websockets/protocol.py", line 803, in ensure_open
-    raise self.connection_closed_exc()
-websockets.exceptions.ConnectionClosedError: code = 1006 (connection closed abnormally [internal]), no reason
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
@@ -486,8 +420,6 @@ INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
-INFO:root:True
-INFO:root:Dev set... Not uploading to s3.
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
@@ -504,10 +436,76 @@ INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
-INFO:root:True
-INFO:root:Dev set... Not uploading to s3.
-INFO:root:True
-INFO:root:Dev set... Not uploading to s3.
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
