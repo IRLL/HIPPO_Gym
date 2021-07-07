@@ -232,16 +232,17 @@ class Trial():
     def create_grid(self):
         self.grid = Grid(self.config.get('rows'), self.config.get('columns') )
         
-        #add start tile
-        self.grid.add_tile(0, 0, "text", "S")
+        # add start tile
+        # add_tile(row, col, color, text = "")
+        self.grid.add_tile(0, 0, "white", "S")
 
-        #add lavas
-        self.grid.add_tile(1, 1, "color", "orange")
-        self.grid.add_tile(2, 1, "color", "orange")
-        self.grid.add_tile(3, 1, "color", "orange")
+        # add lavas
+        self.grid.add_tile(1, 1, "orange")
+        self.grid.add_tile(2, 1, "orange")
+        self.grid.add_tile(3, 1, "orange")
 
-        #add target tile
-        self.grid.add_tile(5, 8, "text", "T")
+        # add target tile
+        self.grid.add_tile(5, 8, "white", "T")
 
     def send_grid(self):
         grid_dict = self.grid.stringify()
