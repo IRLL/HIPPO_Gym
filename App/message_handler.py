@@ -81,6 +81,6 @@ class MessageHandler():
 
     def handle_mouse_event(self, message:dict):
         '''
-        Translates action to int and resets action buffer
+        Translates mouse events into a custom behavior
         '''
         pass

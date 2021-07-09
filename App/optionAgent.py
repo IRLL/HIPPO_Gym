@@ -19,7 +19,7 @@ class CraftingAgent(Agent):
             - env (Type: OpenAI gym Environment as returned by gym.make())
             Mandatory
         '''
-        self.env = MineCraftingEnv(tasks=['obtain_enchanting_table'], tasks_can_end=True)
+        self.env = MineCraftingEnv(tasks=['obtain_enchanting_table'], tasks_can_end=[True])
 
     def handle_events(self, events):
         action = get_human_action(self.env, additional_events=events,
