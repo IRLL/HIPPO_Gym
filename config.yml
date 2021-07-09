@@ -20,12 +20,11 @@ project:
     privkey: SSL/privkey.pem # path to privkey.pem file excluding bucket name
     sslBucket: # bucket name for resolving paths above
   steps: # any number of steps needed with corresponding filenames
-    1:
+    1: StepFiles/exampleConsent.html
     2:
-    3:
-    4:
-    5:
-    finalStep: # required, filename can be same as last numbered step
+    3: StepFiles/exampleQuiz.html
+    4: StepFiles/exampleSurvey.html
+    finalStep: StepFiles/exampleThank.html # required, filename can be same as last numbered step
   teamMembers: # str
 trial:
   actionBufferLifespan: 1 # int
@@ -46,24 +45,26 @@ trial:
   frameRateStepSize: 5 # int Optional if allowFrameRateChange = False
   minFrameRate: 1 # int Optional if allowFrameRateChange = False
   maxFrameRate: 60 # int Optional if allowFrameRateChange = False
-  allowFrameRateChange: True # bool
+  allowFrameRateChange: False # bool
   startingFrameRate: 30 # int Required
+  defaultStart: True
+  defaultAction:
   ui: # to include ui button set to True, False buttons will not be shown
     left: False
     right: False
     up: False
     down: False
-    start: True
-    stop: True
+    start: False
+    stop: False
     pause: False
-    reset: True
+    reset: False
     trainOffline: False
     trainOnline: False
     good: False
     bad: False
-    fpsSet: True
-    fpsUp: True
-    fpsDown: True
+    fpsSet: False
+    fpsUp: False
+    fpsDown: False
   variables:
     gameWindowWidth: 1056 # int in pixels
     gameWindowHeight: 719 # int in pixels

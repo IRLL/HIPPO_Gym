@@ -23,10 +23,10 @@ class Trial():
         self.config = load_config()
         self.pipe = pipe
         self.frameId = 0
-        self.humanAction = None
+        self.humanAction = self.config.get('defaultAction')
         self.episode = 0
         self.done = False
-        self.play = False
+        self.play = self.config.get('defaultStart', False)
         self.record = []
         self.nextEntry = {}
         self.trialId = shortuuid.uuid()

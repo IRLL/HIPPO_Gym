@@ -18,12 +18,11 @@ project:
     privkey: SSL/privkey.pem
     sslBucket: null
   steps:
-    1: null
+    1: StepFiles/exampleConsent.html
     2: null
-    3: null
-    4: null
-    5: null
-    finalStep: null
+    3: StepFiles/exampleQuiz.html
+    4: StepFiles/exampleSurvey.html
+    finalStep: StepFiles/exampleThank.html
   teamMembers: null
   useAWS: false
 trial:
@@ -38,9 +37,11 @@ trial:
   - upleft
   - downright
   - downleft
-  allowFrameRateChange: true
+  allowFrameRateChange: false
   bucket: null
   dataFile: episode
+  defaultAction: null
+  defaultStart: true
   frameRateStepSize: 5
   game: MineCrafting
   maxEpisodes: 20
@@ -49,13 +50,7 @@ trial:
   projectId: null
   s3upload: false
   startingFrameRate: 30
-  ui:
-  - start
-  - stop
-  - reset
-  - fpsSet
-  - fpsUp
-  - fpsDown
+  ui: []
   variables:
     gameWindowHeight: 719
     gameWindowSize: responsive

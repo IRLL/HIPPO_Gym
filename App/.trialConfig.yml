@@ -10,9 +10,11 @@ trial:
   - upleft
   - downright
   - downleft
-  allowFrameRateChange: true
+  allowFrameRateChange: false
   bucket: null
   dataFile: episode
+  defaultAction: null
+  defaultStart: true
   frameRateStepSize: 5
   game: MineCrafting
   maxEpisodes: 20
@@ -21,13 +23,7 @@ trial:
   projectId: null
   s3upload: false
   startingFrameRate: 30
-  ui:
-  - start
-  - stop
-  - reset
-  - fpsSet
-  - fpsUp
-  - fpsDown
+  ui: []
   variables:
     gameWindowHeight: 719
     gameWindowSize: responsive
