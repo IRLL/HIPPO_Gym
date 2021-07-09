@@ -3,6 +3,7 @@ import _pickle as cPickle
 from PIL import Image
 from io import BytesIO
 from optionAgent import CraftingAgent # this is the Agent/Environment compo provided by the researcher
+from hippo_pygame import PyGameMessageHandler
 
 def load_config():
     logging.info('Loading Config in trial.py')
@@ -15,8 +16,9 @@ def load_config():
     logging.info('Config loaded in trial.py')
     return config.get('trial')
 
+
 class Trial():
-    
+
     def __init__(self, pipe):
         self.config = load_config()
         self.pipe = pipe
@@ -47,6 +49,7 @@ class Trial():
         returned. 
         '''
         self.agent = CraftingAgent()
+        self.message_handler = PyGameMessageHandler(self)
         self.agent.start(self.config.get('game'))
 
     def run(self):
@@ -57,13 +60,14 @@ class Trial():
         while not self.done:
             message = self.check_message()
             if message:
-                self.handle_message(message)
+                self.message_handler.handle_message(message)
+                self.update_entry(message)
             if self.play:
                 render = self.get_render()
                 self.send_render(render)
                 if self.humanAction is not None:
                     self.take_step()
-                    self.humanAction = None
+                    self.humanAction = self.config.get('defaultAction')
             time.sleep(1/self.framerate)
 
     def reset(self):
@@ -81,7 +85,11 @@ class Trial():
             if self.outfile:
                 self.outfile.close()
                 if self.config.get('s3upload'):
-                    self.pipe.send({'upload':{'projectId':self.projectId ,'userId':self.userId,'file':self.filename,'path':self.path, 'bucket': self.config.get('bucket')}})
+                    self.pipe.send({
+                        'upload': {'projectId':self.projectId, 'userId':self.userId,
+                            'file':self.filename, 'path':self.path,
+                            'bucket': self.config.get('bucket')}
+                    })
             self.create_file()
             self.episode += 1
 
@@ -105,7 +113,9 @@ class Trial():
             self.save_record()
         if self.outfile:
             self.outfile.close()
-            self.pipe.send({'upload':{'projectId':self.projectId,'userId':self.userId,'file':self.filename,'path':self.path}})
+            self.pipe.send({'upload':{
+                'projectId':self.projectId,'userId':self.userId,
+                'file':self.filename,'path':self.path}})
         self.play = False
         self.done = True
 
@@ -123,90 +133,6 @@ class Trial():
                 message = {'error': 'unable to parse message', 'frameId': self.frameId}
             return message
         return None
-
-    def handle_message(self, message:dict):
-        '''
-        Reads messages sent from websocket, handles commands as priority then 
-        actions. Logs entire message in self.nextEntry
-        '''
-        if not self.userId and 'userId' in message:
-            self.userId = message['userId'] or f'user_{shortuuid.uuid()}'
-            self.send_ui()
-            self.send_variables()
-            self.reset()
-            render = self.get_render()
-            self.send_render(render)
-        if 'command' in message and message['command']:
-            self.handle_command(message['command'])
-        elif 'changeFrameRate' in message and message['changeFrameRate']:
-            self.handle_framerate_change(message['changeFrameRate'])
-        elif 'action' in message and message['action']:
-            self.handle_action(message['action'])
-        elif 'info' in message and message['info'] == 'point clicked':
-            self.handle_coordinates(message['coordinates'])
-        self.update_entry(message)
-
-    def handle_command(self, command:str):
-        '''
-        Deals with allowable commands from user. To add other functionality
-        add commands.
-        '''
-        command = command.strip().lower()
-        if command == 'start':
-            self.play = True
-        elif command == 'stop':
-            self.end()
-        elif command == 'reset':
-            self.reset()
-        elif command == 'pause':
-            self.play = False
-        elif command == 'requestUI':
-            self.send_ui()
-
-    def handle_framerate_change(self, change:str):
-        '''
-        Changes the framerate in either increments of step, or to a requested 
-        value within a minimum and maximum bound.
-        '''
-        if not self.config.get('allowFrameRateChange'):
-            return
-
-        step = self.config.get('frameRateStepSize', 5)
-        minFR = self.config.get('minFrameRate', 1)
-        maxFR = self.config.get('maxFrameRate', 90)
-        change = change.strip().lower()
-        if change == 'faster' and self.framerate + step < maxFR:
-            self.framerate += step
-        elif change == 'slower' and self.framerate - step > minFR:
-            self.framerate -= step
-        else:
-            try:
-                requested = int(change)
-                if requested > minFR and requested < maxFR:
-                    self.framerate = requested
-            except:
-                pass
-
-    def handle_action(self, action:str):
-        '''
-        Translates action to int and resets action buffer
-        '''
-        action = action.strip().lower()
-        actionSpace = self.config.get('actionSpace')
-        if action in actionSpace:
-            actionCode = actionSpace.index(action)
-        else:
-            actionCode = self.config.get('defaultAction')
-        self.humanAction = actionCode
-
-    def handle_coordinates(self, coordinates:dict):
-        '''
-        Translates action to int and resets action buffer
-        '''
-        if hasattr(self.agent, 'coordinates_to_action'):
-            self.humanAction = self.agent.coordinates_to_action(coordinates)
-        else:
-            raise NotImplementedError('Agent has no member coordinates_to_action')
 
     def update_entry(self, update_dict:dict):
         '''
@@ -233,10 +159,12 @@ class Trial():
         self.frameId += 1
         return {'frame': frame, 'frameId': self.frameId}
 
-    def send_render(self, render:dict):
+    def send_render(self, render:dict=None):
         '''
         Attempts to send render message to websocket
         '''
+        if render is None:
+            render = self.get_render()
         try: 
             self.pipe.send(json.dumps(render))
         except:
@@ -254,7 +182,6 @@ class Trial():
             self.pipe.send(json.dumps(self.config.get('variables')))
         except:
             return
-
 
     def take_step(self):
         '''

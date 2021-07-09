@@ -3,9 +3,6 @@ from agent import Agent
 from crafting import MineCraftingEnv
 from crafting.examples.minecraft.rendering import get_human_action
 
-from pygame.event import Event
-from pygame.locals import MOUSEBUTTONDOWN, MOUSEBUTTONUP
-
 class CraftingAgent(Agent):
     '''
     Use this class as a convenient place to store agent state.
@@ -22,22 +19,14 @@ class CraftingAgent(Agent):
             - env (Type: OpenAI gym Environment as returned by gym.make())
             Mandatory
         '''
-        self.env = MineCraftingEnv()
+        self.env = MineCraftingEnv(tasks=['obtain_enchanting_table'], tasks_can_end=True)
 
-    def coordinates_to_action(self, coords):
-        w, h = self.env.render_variables['screen'].get_size()
-        coords = (int(coords['xRel'] * w), int(coords['yRel'] * h))
-        events = self.coords_to_pygame_events(coords)
+    def handle_events(self, events):
         action = get_human_action(self.env, additional_events=events,
             can_be_none=True, **self.env.render_variables)
         if action:
             action = self.env.action(*action)
         return action
-
-    @staticmethod
-    def coords_to_pygame_events(coords):
-        return [Event(MOUSEBUTTONDOWN, pos=coords, button=1),
-            Event(MOUSEBUTTONUP, pos=coords, button=1)]
 
     def step(self, action:int):
         '''
