@@ -5178,3 +5178,335 @@ INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
 INFO:root:Loading Config in trial.py
 INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:True
+INFO:root:Dev set... Not uploading to s3.
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-8' coro=<consumer_handler() done, defined at /Users/nadeen/dev/HIPPO_Gym/App/communicator.py:50> exception=ConnectionClosedError('code = 1002 (protocol error), reason = WebSocket Protocol Error')>
+Traceback (most recent call last):
+  File "/Users/nadeen/dev/HIPPO_Gym/App/communicator.py", line 54, in consumer_handler
+    async for message in websocket:
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 439, in __aiter__
+    yield await self.recv()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 509, in recv
+    await self.ensure_open()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 803, in ensure_open
+    raise self.connection_closed_exc()
+websockets.exceptions.ConnectionClosedError: code = 1002 (protocol error), reason = WebSocket Protocol Error
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-17' coro=<consumer_handler() done, defined at /Users/nadeen/dev/HIPPO_Gym/App/communicator.py:50> exception=ConnectionClosedError('code = 1002 (protocol error), reason = WebSocket Protocol Error')>
+Traceback (most recent call last):
+  File "/Users/nadeen/dev/HIPPO_Gym/App/communicator.py", line 54, in consumer_handler
+    async for message in websocket:
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 439, in __aiter__
+    yield await self.recv()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 509, in recv
+    await self.ensure_open()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 803, in ensure_open
+    raise self.connection_closed_exc()
+websockets.exceptions.ConnectionClosedError: code = 1002 (protocol error), reason = WebSocket Protocol Error
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-17' coro=<consumer_handler() done, defined at /Users/nadeen/dev/HIPPO_Gym/App/communicator.py:50> exception=ConnectionClosedError('code = 1002 (protocol error), reason = WebSocket Protocol Error')>
+Traceback (most recent call last):
+  File "/Users/nadeen/dev/HIPPO_Gym/App/communicator.py", line 54, in consumer_handler
+    async for message in websocket:
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 439, in __aiter__
+    yield await self.recv()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 509, in recv
+    await self.ensure_open()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 803, in ensure_open
+    raise self.connection_closed_exc()
+websockets.exceptions.ConnectionClosedError: code = 1002 (protocol error), reason = WebSocket Protocol Error
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-8' coro=<consumer_handler() done, defined at /Users/nadeen/dev/HIPPO_Gym/App/communicator.py:50> exception=ConnectionClosedError('code = 1002 (protocol error), reason = WebSocket Protocol Error')>
+Traceback (most recent call last):
+  File "/Users/nadeen/dev/HIPPO_Gym/App/communicator.py", line 54, in consumer_handler
+    async for message in websocket:
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 439, in __aiter__
+    yield await self.recv()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 509, in recv
+    await self.ensure_open()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 803, in ensure_open
+    raise self.connection_closed_exc()
+websockets.exceptions.ConnectionClosedError: code = 1002 (protocol error), reason = WebSocket Protocol Error
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-8' coro=<consumer_handler() done, defined at /Users/nadeen/dev/HIPPO_Gym/App/communicator.py:50> exception=ConnectionClosedError('code = 1002 (protocol error), reason = WebSocket Protocol Error')>
+Traceback (most recent call last):
+  File "/Users/nadeen/dev/HIPPO_Gym/App/communicator.py", line 54, in consumer_handler
+    async for message in websocket:
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 439, in __aiter__
+    yield await self.recv()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 509, in recv
+    await self.ensure_open()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 803, in ensure_open
+    raise self.connection_closed_exc()
+websockets.exceptions.ConnectionClosedError: code = 1002 (protocol error), reason = WebSocket Protocol Error
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-8' coro=<consumer_handler() done, defined at /Users/nadeen/dev/HIPPO_Gym/App/communicator.py:50> exception=ConnectionClosedError('code = 1002 (protocol error), reason = WebSocket Protocol Error')>
+Traceback (most recent call last):
+  File "/Users/nadeen/dev/HIPPO_Gym/App/communicator.py", line 54, in consumer_handler
+    async for message in websocket:
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 439, in __aiter__
+    yield await self.recv()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 509, in recv
+    await self.ensure_open()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 803, in ensure_open
+    raise self.connection_closed_exc()
+websockets.exceptions.ConnectionClosedError: code = 1002 (protocol error), reason = WebSocket Protocol Error
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-8' coro=<consumer_handler() done, defined at /Users/nadeen/dev/HIPPO_Gym/App/communicator.py:50> exception=ConnectionClosedError('code = 1002 (protocol error), reason = WebSocket Protocol Error')>
+Traceback (most recent call last):
+  File "/Users/nadeen/dev/HIPPO_Gym/App/communicator.py", line 54, in consumer_handler
+    async for message in websocket:
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 439, in __aiter__
+    yield await self.recv()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 509, in recv
+    await self.ensure_open()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 803, in ensure_open
+    raise self.connection_closed_exc()
+websockets.exceptions.ConnectionClosedError: code = 1002 (protocol error), reason = WebSocket Protocol Error
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-17' coro=<consumer_handler() done, defined at /Users/nadeen/dev/HIPPO_Gym/App/communicator.py:50> exception=ConnectionClosedError('code = 1002 (protocol error), reason = WebSocket Protocol Error')>
+Traceback (most recent call last):
+  File "/Users/nadeen/dev/HIPPO_Gym/App/communicator.py", line 54, in consumer_handler
+    async for message in websocket:
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 439, in __aiter__
+    yield await self.recv()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 509, in recv
+    await self.ensure_open()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 803, in ensure_open
+    raise self.connection_closed_exc()
+websockets.exceptions.ConnectionClosedError: code = 1002 (protocol error), reason = WebSocket Protocol Error
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-26' coro=<consumer_handler() done, defined at /Users/nadeen/dev/HIPPO_Gym/App/communicator.py:50> exception=ConnectionClosedError('code = 1002 (protocol error), reason = WebSocket Protocol Error')>
+Traceback (most recent call last):
+  File "/Users/nadeen/dev/HIPPO_Gym/App/communicator.py", line 54, in consumer_handler
+    async for message in websocket:
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 439, in __aiter__
+    yield await self.recv()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 509, in recv
+    await self.ensure_open()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/websockets/protocol.py", line 803, in ensure_open
+    raise self.connection_closed_exc()
+websockets.exceptions.ConnectionClosedError: code = 1002 (protocol error), reason = WebSocket Protocol Error
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py
+INFO:root:Loading Config in trial.py
+INFO:root:Config loaded in trial.py

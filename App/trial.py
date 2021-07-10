@@ -5,6 +5,9 @@ from PIL import Image
 from io import BytesIO
 from agent import Agent # this is the Agent/Environment compo provided by the researcher
 
+# Get the score change from score_change
+from predict import get_score_change
+
 # for dummy score
 import random
 
@@ -141,8 +144,8 @@ class Trial():
             self.send_render(render)
             if self.fingerprint:
                 self.send_expert()
-        if 'minutiaList' in message and message['minutiaList']:
-            self.handle_minutiae(message['minutiaList'])
+        if 'minutiaList' in message and message['minutiaList'] and message['command']:
+            self.handle_minutiae(message['command'], message['minutiaList'])
         elif 'command' in message and message['command']:
             self.handle_command(message['command'])
         elif 'changeFrameRate' in message and message['changeFrameRate']:
@@ -194,7 +197,6 @@ class Trial():
             except:
                 pass
 
-
     def handle_action(self, action:str):
         '''
         Translates action to int and resets action buffer if action !=0
@@ -231,7 +233,7 @@ class Trial():
             img.save(fp, 'BMP') # Changes filetype to be BMP
             frame = base64.b64encode(fp.getvalue()).decode('utf-8')
             fp.close()
-        except: 
+        except:
             raise TypeError("Render failed. Is env.render('rgb_array') being called\
                             With the correct arguement?")
         self.frameId += 1
@@ -353,7 +355,7 @@ class Trial():
         self.filename = filename
         self.path = path
 
-    def handle_minutiae(self, minutiaList:list):
+    def handle_minutiae(self, command:str, minutiaList:list):
         '''
         Creates a new XML file in the in the XML folder
         using the given minutia list
@@ -383,6 +385,11 @@ class Trial():
             XMLfile = open(path, 'x')
             XMLfile.write(XMLstring)
             XMLfile.close()
+
+        if command == "getFeedback":
+            score_change = get_score_change(path)
+            self.pipe.send(json.dumps({'ScoreChange': score_change}))
+        
         self.play = True
 
     def createXML(self, minutiae:list):

@@ -65,8 +65,11 @@ trial:
     addMinutia: True
     resetImage: True
     submitImage: True
+    getFeedback: True
   instructions:
-    - 'Click on "Add Marker" and select target location on image to add a marker'
     - Scroll (mouse), pinch (touchpad/mousepad), double-click or use control keys to zoom
-    - Click and drag to move
+    - Click and drag the canvas to pan around the canvas
+    - Click and drag a marker to move it
     - Use sliders to adjust image appearance
+    - 'Click on "Add Marker" and select target location on image to add a marker, or right-click on the image'
+    - 'Click on "Get Feedback" to get feedback on your image. Green means that removing it will decrease your score, and red means that removing it will increase your score.'
