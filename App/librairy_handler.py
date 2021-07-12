@@ -9,7 +9,7 @@ from utils import array_to_b64, alpha_to_color
 
 class LibraryHandler(MessageHandler):
 
-    def __init__(self, trial, options:list=None) -> None:
+    def __init__(self, trial) -> None:
         super().__init__(trial)
         self.library_on = False
 
@@ -30,7 +30,7 @@ class LibraryHandler(MessageHandler):
 
     def reset(self):
         self.start_time = time.time()
-        self.history = [('start', self.start_time)]
+        self.history = []
 
     def send_render(self):
         self.trial.frameId += 1
