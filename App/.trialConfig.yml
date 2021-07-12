@@ -23,7 +23,8 @@ trial:
   projectId: null
   s3upload: false
   startingFrameRate: 30
-  ui: []
+  ui:
+  - librairy
   variables:
     gameWindowHeight: 719
     gameWindowSize: responsive

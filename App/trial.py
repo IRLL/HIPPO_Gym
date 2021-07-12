@@ -1,20 +1,9 @@
-import os, numpy, json, shortuuid, time, base64, yaml, logging
+import os, json, shortuuid, time
 import _pickle as cPickle
-from PIL import Image
-from io import BytesIO
-from optionAgent import CraftingAgent # this is the Agent/Environment compo provided by the researcher
-from hippo_pygame import PyGameMessageHandler
+from utils import array_to_b64, load_config
 
-def load_config():
-    logging.info('Loading Config in trial.py')
-    try:
-        with open('.trialConfig.yml', 'r') as infile:
-            config = yaml.load(infile, Loader=yaml.FullLoader)
-    except FileNotFoundError:
-        with open(os.path.join('App', '.trialConfig.yml'), 'r') as infile:
-            config = yaml.load(infile, Loader=yaml.FullLoader)
-    logging.info('Config loaded in trial.py')
-    return config.get('trial')
+from my_agent import CraftingAgent
+from my_handler import PyGameLibrairyHandler
 
 
 class Trial():
@@ -49,7 +38,7 @@ class Trial():
         returned. 
         '''
         self.agent = CraftingAgent()
-        self.message_handler = PyGameMessageHandler(self)
+        self.message_handler = PyGameLibrairyHandler(self)
         self.agent.start(self.config.get('game'))
 
     def run(self):
@@ -82,6 +71,7 @@ class Trial():
             self.end()
         else:
             self.agent.reset()
+            self.message_handler.reset()
             if self.outfile:
                 self.outfile.close()
                 if self.config.get('s3upload'):
@@ -147,15 +137,7 @@ class Trial():
         image for transmission in json message.
         '''
         render = self.agent.render()
-        try:
-            img = Image.fromarray(render)
-            fp = BytesIO()
-            img.save(fp,'JPEG')
-            frame = base64.b64encode(fp.getvalue()).decode('utf-8')
-            fp.close()
-        except: 
-            raise TypeError("Render failed. Is env.render('rgb_array') being called\
-                            With the correct arguement?")
+        frame = array_to_b64(render)
         self.frameId += 1
         return {'frame': frame, 'frameId': self.frameId}
 
@@ -170,10 +152,12 @@ class Trial():
         except:
             raise TypeError("Render Dictionary is not JSON serializable")
 
-    def send_ui(self):
-        defaultUI = ['left','right','up','down','start','pause']
+    def send_ui(self, ui=None):
+        if ui is None:
+            defaultUI = ['left','right','up','down','start','pause']
+            ui = self.config.get('ui', defaultUI)
         try:
-            self.pipe.send(json.dumps({'UI': self.config.get('ui', defaultUI)}))
+            self.pipe.send(json.dumps({'UI': ui}))
         except:
             raise TypeError("Render Dictionary is not JSON serializable")
 

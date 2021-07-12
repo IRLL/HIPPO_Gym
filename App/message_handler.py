@@ -5,6 +5,9 @@ class MessageHandler():
     def __init__(self, trial) -> None:
         self.trial = trial
 
+    def reset(self) -> None:
+        pass
+
     def handle_message(self, message:dict):
         '''
         Reads messages sent from websocket, handles commands as priority then 
@@ -42,6 +45,7 @@ class MessageHandler():
             self.trial.play = False
         elif command == 'requestUI':
             self.trial.send_ui()
+        return command
 
     def handle_framerate_change(self, change:str):
         '''

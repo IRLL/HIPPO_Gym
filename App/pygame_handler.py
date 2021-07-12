@@ -1,8 +1,8 @@
-from message_handler import MessageHandler
-
 import pygame
 from pygame.event import Event
 from pygame.locals import MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION
+
+from message_handler import MessageHandler
 
 def convert_relative_coordinates(x_rel, y_rel):
     screen = pygame.display.get_surface()
