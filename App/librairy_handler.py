@@ -15,12 +15,9 @@ class LibraryHandler(MessageHandler):
 
         graphs_path = os.path.join('images', 'options_graphs')
         options_filenames = os.listdir(graphs_path)
-        filtered_names = np.array([ [name.split('-')[1], name.split('-')[2].split('.')[0]]
-                                    for name in options_filenames])
-        complexities = filtered_names[:, 0].astype(np.int64)
+        complexities = np.array([name.split('-')[1] for name in options_filenames], dtype=np.float32)
         ranks = np.argsort(complexities)
         options_filenames = np.array(options_filenames)[ranks]
-        print(options_filenames)
 
         self.images = [
             array_to_b64(np.array(
