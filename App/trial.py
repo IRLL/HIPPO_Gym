@@ -38,7 +38,14 @@ class Trial():
         returned. 
         '''
         self.agent = CraftingAgent()
-        self.message_handler = PyGameLibrairyHandler(self)
+        self.filter_by_utility = True
+        self.task_number = 5
+        self.rank_by_complexity = True
+        self.message_handler = PyGameLibrairyHandler(
+            self, filter_by_utility=self.filter_by_utility,
+            task_number=self.task_number,
+            rank_by_complexity=self.rank_by_complexity
+        )
         self.agent.start(self.config.get('game'))
 
     def run(self):

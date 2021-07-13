@@ -9,15 +9,28 @@ from utils import array_to_b64, alpha_to_color
 
 class LibraryHandler(MessageHandler):
 
-    def __init__(self, trial) -> None:
+    def __init__(self, trial, filter_by_utility:bool=True, rank_by_complexity:bool=True,
+            task_number:int=None) -> None:
         super().__init__(trial)
         self.library_on = False
 
         graphs_path = os.path.join('images', 'options_graphs')
-        options_filenames = os.listdir(graphs_path)
-        complexities = np.array([name.split('-')[1] for name in options_filenames], dtype=np.float32)
-        ranks = np.argsort(complexities)
-        options_filenames = np.array(options_filenames)[ranks]
+        options_filenames = np.array(os.listdir(graphs_path))
+
+        if filter_by_utility:
+            if task_number is None:
+                raise ValueError("Argument 'task_number' should be specified "
+                                 "when 'filter_by_utility'=True.")
+            is_useful = np.array(
+                [int(name.split('-')[2][task_number]) for name in options_filenames], dtype=bool)
+            options_filenames = options_filenames[is_useful]
+
+        if rank_by_complexity:
+            complexities = np.array(
+                [name.split('-')[1] for name in options_filenames], dtype=np.float32)
+            options_filenames = options_filenames[np.argsort(complexities)]
+        else:
+            options_filenames = np.random.permutation(options_filenames)
 
         self.images = [
             array_to_b64(np.array(
