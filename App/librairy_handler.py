@@ -51,25 +51,25 @@ class LibraryHandler(MessageHandler):
 
     def handle_command(self, command: str):
         command = super().handle_command(command)
-        if command in ('librairy', 'back to game'):
+        if command in ('library', 'back to game'):
             if self.library_on:
                 self.trial.play = True
                 self.trial.send_ui()
             else:
                 self.trial.play = False
                 self.send_render()
-                ui = ['next librairy item', 'previous librairy item', 'back to game']
+                ui = ['next library item', 'previous library item', 'back to game']
                 self.trial.send_ui(ui)
             self.library_on = not self.library_on
 
-        if command == 'next librairy item':
+        if command == 'next library item':
             self.cursor = (self.cursor + 1) % len(self.images)
             self.send_render()
-        elif command == 'previous librairy item':
+        elif command == 'previous library item':
             self.cursor = (self.cursor - 1) % len(self.images)
             self.send_render()
 
-        if command in ('librairy', 'back to game', 'next librairy item', 'previous librairy item'):
+        if command in ('library', 'back to game', 'next library item', 'previous library item'):
             command_time = time.time() - self.start_time
             self.history.append((command, command_time))
 
