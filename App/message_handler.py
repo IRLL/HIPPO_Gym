@@ -26,8 +26,7 @@ class MessageHandler():
         elif 'action' in message and message['action']:
             self.handle_action(message['action'])
         elif 'info' in message:
-            if message['info'] in ('point clicked', 'mouse motion'):
-                self.handle_mouse_event(message)
+            self.handle_mouse_event(message)
 
     def handle_command(self, command:str):
         '''

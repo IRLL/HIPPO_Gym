@@ -19,32 +19,19 @@ class PyGameMessageHandler(MessageHandler):
 
         if hasattr(self.trial.agent, 'handle_events'):
 
-            if event_type == 'point clicked':
+            pos = message['pos']
+            pos = convert_relative_coordinates(pos['xRel'], pos['yRel'])
 
-                coords = message['coordinates']
-                coords = convert_relative_coordinates(coords['xRel'], coords['yRel'])
+            if event_type == 'mouse up':
+                events = [Event(MOUSEBUTTONUP, pos=pos, button=1)]
+            elif event_type == 'mouse down':
+                events = [Event(MOUSEBUTTONDOWN, pos=pos, button=1)]
+            elif event_type == 'mouse move':
+                rel = message['rel']
+                rel = convert_relative_coordinates(rel['xRelMovement'], rel['yRelMovement'])
+                events = [Event(MOUSEMOTION, pos=pos, rel=rel)]
 
-                events = [
-                    Event(MOUSEBUTTONDOWN, pos=coords, button=1),
-                    Event(MOUSEBUTTONUP, pos=coords, button=1)
-                ]
-
-                self.trial.humanAction = self.trial.agent.handle_events(events)
-
-            elif event_type == 'mouse motion':
-
-                print(message)
-                # raise NotImplementedError
-
-                # pos = (
-                #     int(message['coordinates']['xRel'] * w),
-                #     int(message['coordinates']['yRel'] * h)
-                # )
-
-                # events = [
-                #     Event(MOUSEMOTION, pos=pos, rel=rel)
-                # ]
-                
+            self.trial.humanAction = self.trial.agent.handle_events(events)
 
         else:
             raise NotImplementedError('Agent has no member handle_events')
