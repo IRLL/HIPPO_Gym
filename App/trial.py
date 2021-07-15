@@ -415,7 +415,6 @@ class Trial():
         reparsed = minidom.parseString(rough_string)
         
         return reparsed.toprettyxml(indent=tab_length)
-<<<<<<< HEAD
 
 def xmlToArray(path):
     tree = ET.parse(path)
@@ -424,5 +423,3 @@ def xmlToArray(path):
     for child in root:
         minutiae.append({'x': int(child.attrib['X']), 'y': int(child.attrib['Y']), 'orientation': float(child.attrib['Angle'].replace(',', '.'))})
     return minutiae
-=======
->>>>>>> fingerprint
