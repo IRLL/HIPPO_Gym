@@ -306,7 +306,7 @@ class Trial():
         if envState['done']:
             self.reset()
         else:
-            score = self.get_score()
+            score = self.agent.get_score(self.xmlFilename)
             self.send_score(score)
         self.play = True
 
@@ -363,8 +363,9 @@ class Trial():
         XMLstring = self.createXML(minutiaList)
 
         user = 'Nadeen'
-        filename = f'{self.imagename}_{user}'
+        filename = f'{self.imagename}'
         path = f'XML/{filename}.xml'
+        self.xmlFilename = path
 
         try:
             XMLfile = open(path, 'x')
@@ -404,16 +405,17 @@ class Trial():
 
         for minutia in minutiae:
             ET.SubElement(minutiaeList, 'Minutia',
-                {'X': str(minutia['x']), 
-                'Y': str(minutia['y']),
+                {'X': str(minutia['x']).split('.')[0],
+                'Y': str(minutia['y']).split('.')[0],
                 'Angle': str(minutia['orientation']),
                 'Type': str(minutia['type'])})
         
-        tab_length = " " * 4 # defining tab length to be 4 spaces
+        tab_length = "" # defining tab length to be 4 spaces
         rough_string = ET.tostring(minutiaeList)
         reparsed = minidom.parseString(rough_string)
         
         return reparsed.toprettyxml(indent=tab_length)
+<<<<<<< HEAD
 
 def xmlToArray(path):
     tree = ET.parse(path)
@@ -422,3 +424,5 @@ def xmlToArray(path):
     for child in root:
         minutiae.append({'x': int(child.attrib['X']), 'y': int(child.attrib['Y']), 'orientation': float(child.attrib['Angle'].replace(',', '.'))})
     return minutiae
+=======
+>>>>>>> fingerprint
