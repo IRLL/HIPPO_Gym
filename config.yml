@@ -1,5 +1,5 @@
 project:
-  useAWS: false # bool, set to true if using AWS, set false and ignore all AWS entries
+  useAWS: true # bool, set to true if using AWS, set false and ignore all AWS entries
   awsSetup:
     bucket: projects.irll # working bucket in AWS
     region: ca-central-1 # working AWS region

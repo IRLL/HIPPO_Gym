@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
 
 COPY App/* ./
 COPY App/images/* ./images/
+COPY App/Fingerprints/* ./Fingerprints/
 RUN mkdir ./Trials
 RUN mkdir ./XML
 COPY requirements.txt .
