@@ -1,15 +1,10 @@
 project:
   awsSetup:
     bucket: projects.irll
-    containerName: fingerprint-demo
     cpu: 2
     memory: 10
     region: ca-central-1
-    repository: fingerprint-demo
-    repositoryUri: 237796709103.dkr.ecr.ca-central-1.amazonaws.com/fingerprint-demo
     rootDomain: irll.net
-  bucket: projects.irll
-  ecsTask: fingerprint-demo
   events:
     startServerStep: 1
     stopServerStep: 3
@@ -28,7 +23,7 @@ project:
     3: exampleThank.html
     finalStep: exampleThank.html
   teamMembers: null
-  useAWS: true
+  useAWS: false
 trial:
   actionBufferLifespan: 1
   actionSpace: null
