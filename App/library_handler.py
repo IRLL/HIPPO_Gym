@@ -49,8 +49,23 @@ class LibraryHandler(MessageHandler):
         self.trial.frameId += 1
         self.trial.send_render({'frame': self.images[self.cursor], 'frameId': self.trial.frameId})
 
+    def _prev_item(self):
+        return (self.cursor - 1) % len(self.images)
+
+    def _next_item(self):
+        return (self.cursor + 1) % len(self.images)
+
+    def send_ui(self):
+        ui = [
+            f'next library item ({self._next_item() + 1}/{len(self.images)})',
+            f'previous library item ({self._prev_item() + 1}/{len(self.images)})',
+            'back to game'
+        ]
+        self.trial.send_ui(ui)
+
     def handle_command(self, command: str):
         command = super().handle_command(command)
+        
         if command in ('library', 'back to game'):
             if self.library_on:
                 self.trial.play = True
@@ -58,16 +73,17 @@ class LibraryHandler(MessageHandler):
             else:
                 self.trial.play = False
                 self.send_render()
-                ui = ['next library item', 'previous library item', 'back to game']
-                self.trial.send_ui(ui)
+                self.send_ui()
             self.library_on = not self.library_on
 
-        if command == 'next library item':
-            self.cursor = (self.cursor + 1) % len(self.images)
+        if command.startswith('next library item'):
+            self.cursor = self._next_item()
             self.send_render()
-        elif command == 'previous library item':
-            self.cursor = (self.cursor - 1) % len(self.images)
+            self.send_ui()
+        elif command.startswith('previous library item'):
+            self.cursor = self._prev_item()
             self.send_render()
+            self.send_ui()
 
         if command in ('library', 'back to game', 'next library item', 'previous library item'):
             command_time = time.time() - self.start_time

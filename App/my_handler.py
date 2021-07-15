@@ -1,4 +1,4 @@
-from librairy_handler import LibraryHandler
+from library_handler import LibraryHandler
 from pygame_handler import PyGameMessageHandler
 
 class PyGameLibrairyHandler(LibraryHandler, PyGameMessageHandler):
