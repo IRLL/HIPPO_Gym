@@ -1,7 +1,7 @@
 from agent import Agent
 
 from crafting import MineCraftingEnv
-from crafting.examples.minecraft.rendering import get_human_action
+from crafting.render.render import get_human_action
 
 class CraftingAgent(Agent):
     '''
