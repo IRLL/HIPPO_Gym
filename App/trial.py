@@ -1,5 +1,7 @@
 import json, shortuuid, time
 
+from multiprocessing.connection import Connection
+
 from App.agents.my_agent import CraftingAgent
 from App.message_handlers.my_handler import PyGameLibrairyHandler
 from App.recorders import Recorder
@@ -7,7 +9,7 @@ from App.utils import array_to_b64, load_config
 
 class Trial():
 
-    def __init__(self, pipe):
+    def __init__(self, pipe:Connection):
         self.config = load_config()
         self.pipe = pipe
         self.frameId = 0

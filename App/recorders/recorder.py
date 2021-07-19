@@ -1,3 +1,5 @@
+# pyright: reportMissingImports=false
+
 from __future__ import annotations
 
 import os
@@ -68,7 +70,7 @@ class Recorder():
         memory if the full observation is being saved.
         comment/uncomment the below lines as desired.
         '''
-        if self.config.get('dataFile') == 'trial':
+        if self.trial.config.get('dataFile') == 'trial':
             self.record.append(self.nextEntry)
         else:
             cPickle.dump(self.nextEntry, self.outfile)
