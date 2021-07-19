@@ -28,25 +28,16 @@ project:
   teamMembers: # str
 trial:
   actionBufferLifespan: 1 # int
-  maxEpisodes: 20 # int
+  maxEpisodes: 2 # int
   game: MineCrafting # full environment name
   dataFile: episode # episode or trial
   s3upload: False
-  actionSpace: # the appropriate action space for environment. Order matters
-    - noop
-    - up
-    - right
-    - left
-    - down
-    - upright
-    - upleft
-    - downright
-    - downleft
+  actionSpace: []
   frameRateStepSize: 5 # int Optional if allowFrameRateChange = False
   minFrameRate: 1 # int Optional if allowFrameRateChange = False
   maxFrameRate: 60 # int Optional if allowFrameRateChange = False
   allowFrameRateChange: False # bool
-  startingFrameRate: 30 # int Required
+  startingFrameRate: 15 # int Required
   defaultStart: True
   defaultAction:
   ui: # to include ui button set to True, False buttons will not be shown

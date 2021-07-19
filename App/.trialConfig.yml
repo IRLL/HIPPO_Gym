@@ -1,15 +1,6 @@
 trial:
   actionBufferLifespan: 1
-  actionSpace:
-  - noop
-  - up
-  - right
-  - left
-  - down
-  - upright
-  - upleft
-  - downright
-  - downleft
+  actionSpace: []
   allowFrameRateChange: false
   bucket: null
   dataFile: episode
@@ -17,12 +8,12 @@ trial:
   defaultStart: true
   frameRateStepSize: 5
   game: MineCrafting
-  maxEpisodes: 20
+  maxEpisodes: 2
   maxFrameRate: 60
   minFrameRate: 1
   projectId: null
   s3upload: false
-  startingFrameRate: 30
+  startingFrameRate: 15
   ui:
   - library
   variables:
