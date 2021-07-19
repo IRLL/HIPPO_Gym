@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import time
 from typing import TYPE_CHECKING
 
 import _pickle as cPickle
@@ -22,6 +23,7 @@ class Recorder():
 
         self.record = []
         self.nextEntry = {}
+        self.initial_time = time.time()
 
     def reset(self) -> None:
         if self.outfile:
@@ -33,6 +35,7 @@ class Recorder():
                         'bucket': self.trial.config.get('bucket')}
                 })
         self.create_file()
+        self.initial_time = time.time()
 
     def close(self) -> None:
         if self.trial.config.get('dataFile') == 'trial':
@@ -56,6 +59,7 @@ class Recorder():
         '''
         Adds a generic dictionary to the self.nextEntry dictionary.
         '''
+        update_dict.update({'timestamp': time.time() - self.initial_time})
         self.nextEntry.update(update_dict)
 
     def save_entry(self) -> None:
