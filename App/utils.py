@@ -6,7 +6,7 @@ import logging
 from PIL import Image
 from io import BytesIO
 
-def load_config():
+def load_config() -> dict:
     logging.info('Loading Config in trial.py')
     try:
         with open('.trialConfig.yml', 'r') as infile:

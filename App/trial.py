@@ -1,8 +1,8 @@
-import os, json, shortuuid, time
-import _pickle as cPickle
+import json, shortuuid, time
 
 from App.agents.my_agent import CraftingAgent
 from App.message_handlers.my_handler import PyGameLibrairyHandler
+from App.recorders import Recorder
 from App.utils import array_to_b64, load_config
 
 class Trial():
@@ -16,7 +16,6 @@ class Trial():
         self.done = False
         self.play = self.config.get('defaultStart', False)
         self.record = []
-        self.nextEntry = {}
         self.trialId = shortuuid.uuid()
         self.outfile = None
         self.framerate = self.config.get('startingFrameRate', 30)
@@ -36,15 +35,18 @@ class Trial():
         By default this expects the openAI Gym Environment object to be
         returned. 
         '''
+        self.config['filter_by_utility'] = True
+        self.config['task_number'] = 5
+        self.config['rank_by_complexity'] = True
+
         self.agent = CraftingAgent()
-        self.filter_by_utility = True
-        self.task_number = 5
-        self.rank_by_complexity = True
         self.message_handler = PyGameLibrairyHandler(
-            self, filter_by_utility=self.filter_by_utility,
-            task_number=self.task_number,
-            rank_by_complexity=self.rank_by_complexity
+            self,
+            filter_by_utility=self.config.get('filter_by_utility'),
+            task_number=self.config.get('task_number'),
+            rank_by_complexity=self.config.get('rank_by_complexity')
         )
+        self.recorder = Recorder(self)
         self.agent.start(self.config.get('game'))
 
     def run(self):
@@ -56,13 +58,17 @@ class Trial():
             message = self.check_message()
             if message:
                 self.message_handler.handle_message(message)
-                self.update_entry(message)
+                self.recorder.record_message(message)
             if self.play:
                 render = self.get_render()
                 self.send_render(render)
+                self.recorder.record_render(render)
                 if self.humanAction is not None:
-                    self.take_step()
+                    env_state = self.agent.step(self.humanAction)
+                    self.recorder.record_step(env_state)
                     self.humanAction = self.config.get('defaultAction')
+                    if env_state['done']:
+                        self.reset()
             time.sleep(1/self.framerate)
 
     def reset(self):
@@ -78,15 +84,7 @@ class Trial():
         else:
             self.agent.reset()
             self.message_handler.reset()
-            if self.outfile:
-                self.outfile.close()
-                if self.config.get('s3upload'):
-                    self.pipe.send({
-                        'upload': {'projectId':self.projectId, 'userId':self.userId,
-                            'file':self.filename, 'path':self.path,
-                            'bucket': self.config.get('bucket')}
-                    })
-            self.create_file()
+            self.recorder.reset()
             self.episode += 1
 
     def check_trial_done(self):
@@ -105,14 +103,8 @@ class Trial():
         '''
         self.pipe.send('done')
         self.agent.close()
-        if self.config.get('dataFile') == 'trial':
-            self.save_record()
-        if self.outfile:
-            self.outfile.close()
-            self.pipe.send({'upload':{
-                'projectId':self.projectId,'userId':self.userId,
-                'file':self.filename,'path':self.path}})
-        self.play = False
+        self.recorder.close()
+        self.play = self.config.get('defaultStart', False)
         self.done = True
 
     def check_message(self):
@@ -130,13 +122,7 @@ class Trial():
             return message
         return None
 
-    def update_entry(self, update_dict:dict):
-        '''
-        Adds a generic dictionary to the self.nextEntry dictionary.
-        '''
-        self.nextEntry.update(update_dict)
-
-    def get_render(self):
+    def get_render(self) -> dict:
         '''
         Calls the Agent/Environment render function which must return a npArray.
         Translates the npArray into a jpeg image and then base64 encodes the 
@@ -172,58 +158,3 @@ class Trial():
             self.pipe.send(json.dumps(self.config.get('variables')))
         except:
             return
-
-    def take_step(self):
-        '''
-        Expects a dictionary return with all the values that should be recorded.
-        Records return and saves all memory associated with this setp.
-        Checks for DONE from Agent/Env
-        '''
-        envState = self.agent.step(self.humanAction)
-        self.update_entry(envState)
-        self.save_entry()
-        if envState['done']:
-            self.reset()
-
-    def save_entry(self):
-        '''
-        Either saves step memory to self.record list or pickles the memory and
-        writes it to file, or both.
-        Note that observation and render objects can get large, an episode can
-        have several thousand steps, holding all the steps for an episode in 
-        memory can cause performance issues if the os needs to grow the heap.
-        The program can also crash if the Server runs out of memory. 
-        It is recommended to write each step to file and not maintain it in
-        memory if the full observation is being saved.
-        comment/uncomment the below lines as desired.
-        '''
-        if self.config.get('dataFile') == 'trial':
-            self.record.append(self.nextEntry)
-        else:
-            cPickle.dump(self.nextEntry, self.outfile)
-            self.nextEntry = {}
-
-    def save_record(self):
-        '''
-        Saves the self.record object to file. Is only called if uncommented in
-        self.end(). To record full trial records a line must also be uncommented
-        in self.save_entry() and self.create_file()
-        '''
-        cPickle.dump(self.record, self.outfile)
-        self.record = []
-
-    def create_file(self):
-        '''
-        Creates a file to record records to. comment/uncomment as desired 
-        for episode or full-trial logging.
-        '''
-        if self.config.get('dataFile') == 'trial':
-            filename = f'trial_{self.userId}'
-        else:
-            filename = f'episode_{self.episode}_user_{self.userId}'
-        path = 'Trials/' + filename
-        if not os.path.exists('Trials'):
-            os.makedirs('Trials')
-        self.outfile = open(path, 'ab')
-        self.filename = filename
-        self.path = path

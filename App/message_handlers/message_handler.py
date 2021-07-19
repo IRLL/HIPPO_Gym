@@ -1,8 +1,15 @@
+from __future__ import annotations
+
 import shortuuid
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from App.trial import Trial
+
 
 class MessageHandler():
 
-    def __init__(self, trial) -> None:
+    def __init__(self, trial:Trial) -> None:
         self.trial = trial
 
     def reset(self) -> None:
@@ -10,8 +17,7 @@ class MessageHandler():
 
     def handle_message(self, message:dict):
         '''
-        Reads messages sent from websocket, handles commands as priority then 
-        actions. Logs entire message in self.nextEntry
+        Reads messages sent from websocket, handles commands as priority then actions and infos.
         '''
         if not self.trial.userId and 'userId' in message:
             self.userId = message['userId'] or f'user_{shortuuid.uuid()}'
@@ -29,10 +35,7 @@ class MessageHandler():
             self.handle_mouse_event(message)
 
     def handle_command(self, command:str):
-        '''
-        Deals with allowable commands from user. To add other functionality
-        add commands.
-        '''
+        ''' Deals with allowable commands from user. '''
         command = command.strip().lower()
         if command == 'start':
             self.trial.play = True
