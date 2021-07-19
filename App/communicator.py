@@ -1,8 +1,9 @@
-import asyncio, websockets, json, sys, pathlib, ssl
-from trial import Trial
+import asyncio, websockets, sys, ssl
 from multiprocessing import Process, Pipe
-from s3upload import Uploader
 import logging
+
+from App.s3upload import Uploader
+from App.trial import Trial
 
 ADDRESS = None # set desired IP for development 
 PORT = 5000 # if port is changed here it must also be changed in Dockerfile

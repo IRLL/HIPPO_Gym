@@ -1,10 +1,9 @@
 import os, json, shortuuid, time
 import _pickle as cPickle
-from utils import array_to_b64, load_config
 
-from my_agent import CraftingAgent
-from my_handler import PyGameLibrairyHandler
-
+from App.agents.my_agent import CraftingAgent
+from App.message_handlers.my_handler import PyGameLibrairyHandler
+from App.utils import array_to_b64, load_config
 
 class Trial():
 

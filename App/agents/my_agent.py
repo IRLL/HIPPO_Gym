@@ -1,7 +1,7 @@
-from agent import Agent
-
 from crafting import MineCraftingEnv
 from crafting.render.render import get_human_action
+
+from App.agents import Agent
 
 class CraftingAgent(Agent):
     '''
@@ -14,8 +14,8 @@ class CraftingAgent(Agent):
         Caller:
             - Trial.start()
         Inputs:
-            -   game (Type: str corresponding to allowable gym environments)
-        Returs:
+            - game (Type: str corresponding to allowable gym environments)
+        Returns:
             - env (Type: OpenAI gym Environment as returned by gym.make())
             Mandatory
         '''

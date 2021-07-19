@@ -4,8 +4,8 @@ import numpy as np
 from PIL import Image
 import _pickle as cPickle
 
-from message_handler import MessageHandler
-from utils import array_to_b64, alpha_to_color
+from App.message_handlers import MessageHandler
+from App.utils import array_to_b64, alpha_to_color
 
 class LibraryHandler(MessageHandler):
 
