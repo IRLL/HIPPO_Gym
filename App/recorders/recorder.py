@@ -16,11 +16,33 @@ class Recorder():
     def __init__(self, trial:Trial) -> None:
         self.trial = trial
 
+    def reset(self) -> None:
+        raise NotImplementedError
+
+    def close(self) -> None:
+        raise NotImplementedError
+
+    def record_message(self, message:dict) -> None:
+        pass
+
+    def record_render(self, render:dict) -> None:
+        pass
+
+    def record_step(self, env_state:dict) -> None:
+        pass
+
+
+class LegacyRecorder(Recorder):
+
+    def __init__(self, trial:Trial) -> None:
+        super().__init__(trial=trial)
+
         # File data
         self.outfile = None
         self.filename = None
         self.path = None
 
+        # Record buffers
         self.record = []
         self.nextEntry = {}
         self.initial_time = time.time()
@@ -63,16 +85,16 @@ class Recorder():
         self.nextEntry.update(update_dict)
 
     def save_entry(self) -> None:
-        '''
-        Either saves step memory to self.record list or pickles the memory and
-        writes it to file, or both.
+        ''' Either saves step memory to self.record list or pickles the memory and
+        writes it to file.
+
         Note that observation and render objects can get large, an episode can
         have several thousand steps, holding all the steps for an episode in 
         memory can cause performance issues if the os needs to grow the heap.
+
         The program can also crash if the Server runs out of memory. 
         It is recommended to write each step to file and not maintain it in
         memory if the full observation is being saved.
-        comment/uncomment the below lines as desired.
         '''
         if self.trial.config.get('dataFile') == 'trial':
             self.record.append(self.nextEntry)
@@ -81,19 +103,12 @@ class Recorder():
             self.nextEntry = {}
 
     def save_record(self) -> None:
-        '''
-        Saves the self.record object to file. Is only called if uncommented in
-        self.end(). To record full trial records a line must also be uncommented
-        in self.save_entry() and self.create_file()
-        '''
+        ''' Saves the self.record object to the outfile. '''
         cPickle.dump(self.record, self.outfile)
         self.record = []
 
     def create_file(self) -> None:
-        '''
-        Creates a file to record records to. comment/uncomment as desired 
-        for episode or full-trial logging.
-        '''
+        ''' Creates a file to record records to. '''
         if self.trial.config.get('dataFile') == 'trial':
             filename = f'trial_{self.trial.userId}'
         else:

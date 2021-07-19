@@ -4,7 +4,7 @@ from multiprocessing.connection import Connection
 
 from App.agents.my_agent import CraftingAgent
 from App.message_handlers.my_handler import PyGameLibrairyHandler
-from App.recorders import Recorder
+from App.recorders import LegacyRecorder
 from App.utils import array_to_b64, load_config
 
 class Trial():
@@ -48,7 +48,7 @@ class Trial():
             task_number=self.config.get('task_number'),
             rank_by_complexity=self.config.get('rank_by_complexity')
         )
-        self.recorder = Recorder(self)
+        self.recorder = LegacyRecorder(self)
         self.agent.start(self.config.get('game'))
 
     def run(self):
