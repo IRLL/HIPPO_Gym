@@ -22,7 +22,7 @@ def array_to_b64(img_array) -> str:
     try:
         img = Image.fromarray(img_array, mode='RGB')
         fp = BytesIO()
-        img.save(fp,'JPEG')
+        img.save(fp, format='JPEG', quality='web_high')
         frame = base64.b64encode(fp.getvalue()).decode('utf-8')
         fp.close()
     except: 
