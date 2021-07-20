@@ -306,7 +306,8 @@ class Trial():
         if envState['done']:
             self.reset()
         else:
-            score = self.agent.get_score(self.xmlFilename)
+            # score = self.agent.get_score(self.xmlFilename)
+            score = self.get_score()
             self.send_score(score)
         self.play = True
 
