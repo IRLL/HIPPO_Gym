@@ -34,7 +34,7 @@ class Recorder():
 
 class LegacyRecorder(Recorder):
 
-    def __init__(self, trial:Trial) -> None:
+    def __init__(self, trial:Trial, save_path='trials') -> None:
         super().__init__(trial=trial)
 
         # File data
@@ -46,6 +46,10 @@ class LegacyRecorder(Recorder):
         self.record = []
         self.nextEntry = {}
         self.initial_time = time.time()
+
+        self.save_path = save_path
+        if not os.path.exists(self.save_path):
+            os.makedirs(self.save_path)
 
     def reset(self) -> None:
         if self.outfile:
@@ -113,9 +117,8 @@ class LegacyRecorder(Recorder):
             filename = f'trial_{self.trial.userId}'
         else:
             filename = f'episode_{self.trial.episode}_user_{self.trial.userId}'
-        path = os.path.join('Trials', filename)
-        if not os.path.exists('Trials'):
-            os.makedirs('Trials')
+
+        path = os.path.join(self.save_path, filename)
         self.outfile = open(path, 'ab')
         self.filename = filename
         self.path = path
