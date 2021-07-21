@@ -16,19 +16,13 @@ class Agent():
     Use this class as a convenient place to store agent state.
     '''
 
-    def start(self, game:str):
+    def start(self, config:dict) -> None:
+        ''' Starts the Agent's environment.
+        Args:
+            config: trial config.
         '''
-        Starts an OpenAI gym environment.
-        Caller:
-            - Trial.start()
-        Inputs:
-            -   game (Type: str corresponding to allowable gym environments)
-        Returs:
-            - env (Type: OpenAI gym Environment as returned by gym.make())
-            Mandatory
-        '''
+        game = config.get('game')
         self.env = gym.make(game)
-        return
     
     def step(self, action:int):
         '''

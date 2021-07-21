@@ -20,9 +20,9 @@ class LibraryHandler(MessageHandler):
         filter_by_utility = self.trial.config.get('filter_by_utility')
         rank_by_complexity = self.trial.config.get('rank_by_complexity')
         task_number = self.trial.config.get('task_number')
-        domain = self.trial.config.get('domain')
+        game = self.trial.config.get('game')
 
-        images_path = os.path.join('images', domain, library_mode)
+        images_path = os.path.join('images', game, library_mode)
         images_filenames = np.array(os.listdir(images_path))
 
         if filter_by_utility:

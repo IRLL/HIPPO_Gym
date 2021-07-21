@@ -1,5 +1,6 @@
 from crafting import MineCraftingEnv
 from crafting.render.render import get_human_action
+from crafting.examples.minecraft.tasks import TASKS
 
 from App.agents import Agent
 
@@ -8,18 +9,15 @@ class CraftingAgent(Agent):
     Use this class as a convenient place to store agent state.
     '''
 
-    def start(self, game:str):
+    def start(self, config:dict) -> None:
+        ''' Starts the Agent's environment.
+        Args:
+            config: trial config.
         '''
-        Starts an OpenAI gym environment.
-        Caller:
-            - Trial.start()
-        Inputs:
-            - game (Type: str corresponding to allowable gym environments)
-        Returns:
-            - env (Type: OpenAI gym Environment as returned by gym.make())
-            Mandatory
-        '''
-        self.env = MineCraftingEnv(tasks=['obtain_enchanting_table'], tasks_can_end=[True])
+        game = config.get('game')
+        if game == 'minecrafting':
+            task_name = list(TASKS.keys())[config.get('task_number')]
+            self.env = MineCraftingEnv(tasks=[task_name], tasks_can_end=[True])
 
     def handle_events(self, events):
         action = get_human_action(self.env, additional_events=events,
