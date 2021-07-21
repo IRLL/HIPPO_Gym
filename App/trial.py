@@ -1,4 +1,5 @@
 import json, shortuuid, time
+import numpy as np
 
 from multiprocessing.connection import Connection
 
@@ -37,17 +38,27 @@ class Trial():
         By default this expects the openAI Gym Environment object to be
         returned. 
         '''
-        self.config['filter_by_utility'] = True
-        self.config['task_number'] = 5
-        self.config['rank_by_complexity'] = True
+
+        lib_modes = (None, 'requirements_graph', 'options_graphs')
+        self.config['library_mode'] = np.random.choice(lib_modes)
+
+        domains = ('minecrafting',)
+        self.config['domain'] = np.random.choice(domains)
+
+        if self.config['library_mode'] == 'options_graphs':
+            self.config['filter_by_utility'] = np.random.choice((True, False))
+            self.config['task_number'] = np.random.randint(6)
+            self.config['rank_by_complexity'] = np.random.choice((True, False))
+
+        print(
+            self.config.get('library_mode'),
+            self.config.get('filter_by_utility'),
+            self.config.get('task_number'),
+            self.config.get('rank_by_complexity')
+        )
 
         self.agent = CraftingAgent()
-        self.message_handler = PyGameLibrairyHandler(
-            self,
-            filter_by_utility=self.config.get('filter_by_utility'),
-            task_number=self.config.get('task_number'),
-            rank_by_complexity=self.config.get('rank_by_complexity')
-        )
+        self.message_handler = PyGameLibrairyHandler(self)
         self.recorder = LegacyRecorder(self)
         self.agent.start(self.config.get('game'))
 
