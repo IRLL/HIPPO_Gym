@@ -7,10 +7,6 @@ class HippoGym:
         self.control_panel = None
         self.grid = None
 
-    def create_game_window(self, width=None, height=None, image=None):
-        self.game_window =  GameWindow(pipe, width, height, image)
-        return self.game_window
-
     def create_info_panel(self):
         self.info_panel = InfoPanel()
         return self.info_panel

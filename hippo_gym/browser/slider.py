@@ -1,14 +1,14 @@
 class Slider:
-    def __init__(self, title, key, low, high, value):
-        self.title = title
+    def __init__(self, id, key, low, high, value):
+        self.id = id
         self.key = key
-        self.low = low
-        self.high = high
+        self.min = low
+        self.max = high
         self.value = value
 
-    def update(self, title=None, key=None, low=None, high=None, value=None):
-        if title:
-            self.title = title
+    def update(self, id=None, key=None, low=None, high=None, value=None):
+        if id:
+            self.id = id
         if key:
             self.key = key
         if low:

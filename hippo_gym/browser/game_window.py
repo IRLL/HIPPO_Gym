@@ -1,40 +1,59 @@
 import base64
-import json
 import logging
 from PIL import Image
 from io import BytesIO
 
+
 class GameWindow:
 
-    def __init__(self, pipe, width, height, image):
+    def __init__(self, pipe, width=700, height=600, mode='responsive', image=None, text=None):
         self.width = width
         self.height = height
+        self.mode = mode
         self.frame = image
+        self.text = text
         self.frameId = 0
         self.pipe = pipe
         self.send_window_size()
         self.send_frame()
 
-    def update(self, width=None, height=None, image=None):
+    def update(self, width=None, height=None, mode=None, image=None, text=None):
         if width:
             self.width = width
         if height:
             self.height = height
-        if width or height:
+        if mode:
+            self.mode = mode
+        if width or height or mode:
             self.send_window_size()
+        if text:
+            self.text = text
+            self.frame = None
         if image:
             if type(image) != str:
                 self.frame = self.convert_numpy_array_to_base64(image)
             else:
                 self.frame = image
+            self.text = None
+        if text or image:
             self.send_frame()
 
     def send_window_size(self):
-        self.pipe.send(json.dumps({'gameWindowSize': (self.width, self.height)}))
+        message = {"GameWindow": {"size": (self.width, self.height), "mode": self.mode}}
+        self.send(message)
 
     def send_frame(self):
-        self.pipe.send(json.dumps({'frame': self.frame, 'frameId': self.frameId}))
-        self.frameId += 1
+        message = None
+        if self.frame:
+            message = {"GameWindow": {"frame": self.frame, "frameId": self.frameId}}
+        elif self.text:
+            message = {"GameWindow": {"text": self.text, "frameId": self.frameId}}
+        if message:
+            self.send(message)
+            self.frameId += 1
+
+    def send(self, message):
+        self.pipe.send(message)
 
     # TODO: add functionality for RGBA array not just RGB
     def convert_numpy_array_to_base64(self, array):
