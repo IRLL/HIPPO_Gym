@@ -2,7 +2,7 @@ import json
 import logging
 
 class Grid:
-    def __init__(self, pipe, rows, columns):
+    def __init__(self, pipe, rows=10, columns=10):
         self.pipe = pipe
         self.rows = rows
         self.columns = columns

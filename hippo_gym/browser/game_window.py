@@ -55,6 +55,10 @@ class GameWindow:
     def send(self, message):
         self.pipe.send(message)
 
+    def set_size(self, size):
+        self.width = size[0]
+        self.height = size[1]
+
     # TODO: add functionality for RGBA array not just RGB
     def convert_numpy_array_to_base64(self, array):
         try:

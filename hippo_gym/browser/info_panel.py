@@ -1,4 +1,3 @@
-
 class InfoPanel:
-    def __init__(self):
-        self.stuff
+    def __init__(self, pipe):
+        self.pipe = pipe

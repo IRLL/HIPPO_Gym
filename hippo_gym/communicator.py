@@ -2,22 +2,17 @@ import asyncio
 import logging
 import ssl
 import websockets
+import json
 from multiprocessing import Process, Pipe
 
+from hippo_gym import HippoGym
 
-class Communicator:
 
-    def __int__(
-            self,
-            entry,
-            address=None,
-            port=5000,
-            use_ssl=True,
-            force_ssl=False,
-            fullchain_path='SSL/fullchain.pem',
-            privkey_path='SSL/privkey.pem'
-    ):
-        self.entry = entry
+class Comunicator:
+
+    def __init__(self, address=None, port=5000, use_ssl=True, force_ssl=False, fullchain_path='SSL/fullchain.pem',
+                 privkey_path='SSL/privkey.pem'):
+        self.entry = 'entry'
         self.address = address
         self.port = port
         self.ssl = use_ssl
@@ -28,7 +23,7 @@ class Communicator:
     @staticmethod
     async def producer(websocket, pipe):
         if pipe.poll():
-            message = pipe.recv()
+            message = json.dumps(pipe.recv())
             if message == 'done':
                 await websocket.send('done')
                 return True
@@ -39,7 +34,11 @@ class Communicator:
     @staticmethod
     async def consumer_handler(websocket, pipe):
         async for message in websocket:
-            pipe.send(message)
+            try:
+                message = json.loads(message)
+                pipe.send(message)
+            except Exception as e:
+                print(e)
 
     async def producer_handler(self, websocket, pipe):
         done = False
@@ -48,9 +47,9 @@ class Communicator:
             await asyncio.sleep(0.01)
         return
 
-    async def handler(self, websocket):
+    async def handler(self, websocket, path):
         up_pipe, down_pipe = Pipe()
-        user_session = Process(target=self.entry, args=(down_pipe,))
+        user_session = Process(target=HippoGym, args=(down_pipe,))
         user_session.start()
         consumer_task = asyncio.ensure_future(self.consumer_handler(websocket, up_pipe))
         producer_task = asyncio.ensure_future(self.producer_handler(websocket, up_pipe))
@@ -86,3 +85,11 @@ class Communicator:
         except Exception as e:
             logging.info('SSL failed to initialize')
             logging.error(f'SSL failed with error: {e}')
+
+
+def runner():
+    com = Comunicator()
+    com.start()
+
+
+runner()
