@@ -26,7 +26,7 @@ class MessageHandler():
             self.trial.reset()
             self.trial.send_render()
         if 'command' in message and message['command']:
-            self.handle_command(message['command'])
+            self.handle_command(str(message['command']))
         elif 'changeFrameRate' in message and message['changeFrameRate']:
             self.handle_framerate_change(message['changeFrameRate'])
         elif 'action' in message and message['action']:
