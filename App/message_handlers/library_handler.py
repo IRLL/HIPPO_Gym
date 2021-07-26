@@ -70,35 +70,29 @@ class LibraryHandler(MessageHandler):
         return (self.cursor + 1) % len(self.images)
 
     def reset_ui(self):
-        self.trial.send_ui()
         ui_navigation = {
-            'previousBlock': {},
-            'currentBlock': {},
-            'nextBlock': {},
+            'previousBlock': None,
+            'currentBlock': None,
+            'nextBlock': None
         }
         self.trial.pipe.send(json.dumps(ui_navigation))
+        self.trial.send_ui()
 
     def send_ui(self):
-        ui = []
         if len(self.images) > 1:
-            ui += [
-                f'next library item ({self._next_item() + 1}/{len(self.images)})',
-                f'previous library item ({self._prev_item() + 1}/{len(self.images)})',
-            ]
-        ui_navigation = {
-            'previousBlock': {
-                'image': self.images_icons[self._prev_item()],
-                'value': -1, "name": f'{self._prev_item() + 1}/{len(self.images)}'},
-            'currentBlock': {
-                'image': self.images_icons[self.cursor],
-                'value': 0, "name": f'{self.cursor + 1}/{len(self.images)}'},
-            'nextBlock': {
-                'image': self.images_icons[self._next_item()],
-                'value': 1, "name": f'{self._next_item() + 1}/{len(self.images)}'}
-        }
-        self.trial.pipe.send(json.dumps(ui_navigation))
-        ui += ['back to game']
-        self.trial.send_ui(ui)
+            ui_navigation = {
+                'previousBlock': {
+                    'image': self.images_icons[self._prev_item()],
+                    'value': 'previous library item', "name": f'{self._prev_item() + 1}/{len(self.images)}'},
+                'currentBlock': {
+                    'image': self.images_icons[self.cursor],
+                    'value': 'current library item', "name": f'{self.cursor + 1}/{len(self.images)}'},
+                'nextBlock': {
+                    'image': self.images_icons[self._next_item()],
+                    'value': "next library item", "name": f'{self._next_item() + 1}/{len(self.images)}'}
+            }
+            self.trial.pipe.send(json.dumps(ui_navigation))
+        self.trial.send_ui(['back to game'])
 
     def handle_command(self, command: str):
         command = super().handle_command(command)
