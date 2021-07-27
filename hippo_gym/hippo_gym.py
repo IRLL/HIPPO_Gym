@@ -11,7 +11,7 @@ from browser.info_panel import InfoPanel
 class HippoGym:
 
     def __init__(self, pipe):
-        self.game_window = None
+        self.game_windows = []
         self.info_panel = None
         self.control_panel = None
         self.grid = None
@@ -26,16 +26,23 @@ class HippoGym:
         self.control_panel = ControlPanel(self.pipe, buttons=buttons, keys=True)
         sliders = [{"Slider":{"title": "slide me"}}]
         self.control_panel.update(sliders=sliders)
-        self.game_window = GameWindow(self.pipe, width=300)
+        self.add_game_window()
         self.control_panel.update()
         for i in range(20):
             print(self.event_handler.get())
             time.sleep(2)
 
-    def get_game_window(self):
-        if not self.game_window:
-            self.game_window = GameWindow(self.pipe)
-        return self.game_window
+    def add_game_window(self, game_window=None):
+        if not type(game_window) == GameWindow:
+            game_window = GameWindow(self.pipe, idx=len(self.game_windows))
+        self.game_windows.append(game_window)
+
+    def get_game_window(self, index):
+        if len(self.game_windows) < index:
+            game_window = None
+        else:
+            game_window = self.game_windows[index]
+        return game_window
 
     def get_info_panel(self):
         if not self.info_panel:
@@ -55,9 +62,11 @@ class HippoGym:
     def get_event_handler(self):
         return self.event_handler
 
-    def set_game_window(self, new_game_window):
-        if type(new_game_window) == GameWindow:
-            self.game_window = new_game_window
+    def set_game_window(self, new_game_window, index):
+        if type(new_game_window) == GameWindow and len(self.game_windows) <= index + 1:
+            new_game_window.update(id=index)
+            self.game_windows[index] = new_game_window
+
 
     def set_info_panel(self, new_info_panel):
         if type(new_info_panel) == InfoPanel:
@@ -80,9 +89,9 @@ class HippoGym:
     def stop(self):
         self.run = False
 
-    def set_window_size(self, new_size):
-        if self.game_window:
-            self.game_window.set_size(new_size)
+    def set_window_size(self, new_size, index):
+        if len(self.game_windows) > index:
+            self.game_windows[index].set_size(new_size)
 
 def get_ids(pipe):
     message = pipe.recv()

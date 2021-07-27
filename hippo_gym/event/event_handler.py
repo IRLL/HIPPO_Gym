@@ -65,7 +65,8 @@ class EventHandler:
             self.pressed_keys.discard(keyup[0])
 
     def handle_mouse_event(self, message):
-        pass
+        index = message.get('windowId', 0)
+        self.hippo.get_game_window(index).add_event(message)
 
     def handle_button_event(self, message):
         button = message.get('BUTTONPRESSED', None)
@@ -78,5 +79,6 @@ class EventHandler:
 
     def handle_window_event(self, message):
         size = message.get('WINDOWRESIZED', None)
+        index = message.get('windowId', 0)
         if size:
-            self.hippo.set_window_size(size)
+            self.hippo.set_window_size(size, index)

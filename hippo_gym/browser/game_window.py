@@ -1,12 +1,14 @@
 import base64
 import logging
+from queue import Queue
 from PIL import Image
 from io import BytesIO
 
 
 class GameWindow:
 
-    def __init__(self, pipe, width=700, height=600, mode='responsive', image=None, text=None):
+    def __init__(self, pipe, idx=0, width=700, height=600, mode='responsive', image=None, text=None):
+        self.id = idx
         self.width = width
         self.height = height
         self.mode = mode
@@ -14,10 +16,13 @@ class GameWindow:
         self.text = text
         self.frameId = 0
         self.pipe = pipe
+        self.events = Queue(maxsize=10)
         self.send_window_size()
         self.send_frame()
 
-    def update(self, width=None, height=None, mode=None, image=None, text=None):
+    def update(self, idx=None, width=None, height=None, mode=None, image=None, text=None):
+        if idx is not None:
+            self.id = idx
         if width:
             self.width = width
         if height:
@@ -39,15 +44,15 @@ class GameWindow:
             self.send_frame()
 
     def send_window_size(self):
-        message = {"GameWindow": {"size": (self.width, self.height), "mode": self.mode}}
+        message = {"GameWindow": {"id": self.id, "size": (self.width, self.height), "mode": self.mode}}
         self.send(message)
 
     def send_frame(self):
         message = None
         if self.frame:
-            message = {"GameWindow": {"frame": self.frame, "frameId": self.frameId}}
+            message = {"GameWindow": {"id": self.id, "frame": self.frame, "frameId": self.frameId}}
         elif self.text:
-            message = {"GameWindow": {"text": self.text, "frameId": self.frameId}}
+            message = {"GameWindow": {"id": self.id, "text": self.text, "frameId": self.frameId}}
         if message:
             self.send(message)
             self.frameId += 1
@@ -58,6 +63,21 @@ class GameWindow:
     def set_size(self, size):
         self.width = size[0]
         self.height = size[1]
+
+    def add_event(self, event):
+        if self.events.full():
+            self.get_event()
+        self.events.put(event)
+
+    def get_event(self):
+        event = None
+        if not self.events.empty():
+            event = self.events.get()
+        return event
+
+    def clear_events(self):
+        if not self.events.empty():
+            self.events.get()
 
     # TODO: add functionality for RGBA array not just RGB
     def convert_numpy_array_to_base64(self, array):
