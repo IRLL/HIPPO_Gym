@@ -51,19 +51,19 @@ trial:
   columns: 9
   rows: 6
   blockedStates: # self.blocked_states= [(1,2), (2,2),(3,2),(4,5), (0,7),(1,7), (2,7)]
-    - {x: 1, y: 2}
-    - {x: 2, y: 2}
-    - {x: 3, y: 2}
-    - {x: 4, y: 5}
-    - {x: 0, y: 7}
-    - {x: 1, y: 7}
-    - {x: 2, y: 7}
+    - { x: 1, y: 2 }
+    - { x: 2, y: 2 }
+    - { x: 3, y: 2 }
+    - { x: 4, y: 5 }
+    - { x: 0, y: 7 }
+    - { x: 1, y: 7 }
+    - { x: 2, y: 7 }
   ui: # to include ui button set to True, False buttons will not be shown
     left: False
     right: False
     up: False
     down: False
-    start: True
+    start: False
     stop: True
     pause: False
     reset: True
@@ -74,4 +74,3 @@ trial:
     fpsSet: False
     fpsUp: False
     fpsDown: False
-

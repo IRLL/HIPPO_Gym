@@ -4,7 +4,8 @@ App/Trials/*
 *.env
 *.swp
 Logs/*
-.DS_Stoe
+.DS_Store
 .idea/*
 .projectConfig.yml
 App/.trialConfig.yml
+App/server.log
