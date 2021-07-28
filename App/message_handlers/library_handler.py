@@ -45,15 +45,17 @@ class LibraryHandler(MessageHandler):
             img_path = os.path.join(images_path, library_mode, graph_name)
             self.images.append(load_to_b64(img_path))
 
-        options_names = [name.split('-')[3] for name in images_filenames]
-        self.images_icons = []
-        for options_name in options_names:
-            img_path = os.path.join(images_path, 'options_icons', options_name)
-            self.images_icons.append(load_to_b64(img_path))
+        if library_mode == 'options_graphs':
+            options_names = [name.split('-')[3] for name in images_filenames]
+            self.images_icons = []
+            for options_name in options_names:
+                img_path = os.path.join(images_path, 'options_icons', options_name)
+                self.images_icons.append(load_to_b64(img_path))
 
         self.library_on = False
         self.cursor = 0
         self.reset()
+        self.reset_ui()
 
     def reset(self):
         self.start_time = time.time()
@@ -71,32 +73,38 @@ class LibraryHandler(MessageHandler):
 
     def reset_ui(self):
         ui_navigation = {
-            'previousBlock': None,
-            'currentBlock': None,
-            'nextBlock': None
+            'previousBlock': 'none',
+            'currentBlock': 'none',
+            'nextBlock': 'none',
         }
         self.trial.pipe.send(json.dumps(ui_navigation))
-        self.trial.send_ui()
+        default_ui = self.trial.config.get('ui')
+        if "library" not in default_ui:
+            default_ui += ["library"]
+        self.trial.send_ui(default_ui)
 
     def send_ui(self):
         if len(self.images) > 1:
             ui_navigation = {
                 'previousBlock': {
                     'image': self.images_icons[self._prev_item()],
-                    'value': 'previous library item', "name": f'{self._prev_item() + 1}/{len(self.images)}'},
+                    'value': 'previous library item',
+                    "name": f'{self._prev_item() + 1}/{len(self.images)}'},
                 'currentBlock': {
                     'image': self.images_icons[self.cursor],
-                    'value': 'current library item', "name": f'{self.cursor + 1}/{len(self.images)}'},
+                    'value': 'current library item',
+                    "name": f'{self.cursor + 1}/{len(self.images)}'},
                 'nextBlock': {
                     'image': self.images_icons[self._next_item()],
-                    'value': "next library item", "name": f'{self._next_item() + 1}/{len(self.images)}'}
+                    'value': "next library item",
+                    "name": f'{self._next_item() + 1}/{len(self.images)}'}
             }
             self.trial.pipe.send(json.dumps(ui_navigation))
         self.trial.send_ui(['back to game'])
 
     def handle_command(self, command: str):
         command = super().handle_command(command)
-        
+
         if command in ('library', 'back to game'):
             if self.library_on:
                 self.trial.play = True

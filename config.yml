@@ -51,7 +51,6 @@ trial:
     reset: False
     trainOffline: False
     trainOnline: False
-    library: True
     good: False
     bad: False
     fpsSet: False

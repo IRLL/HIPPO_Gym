@@ -32,15 +32,16 @@ class Trial():
 
     def start(self):
         '''
-        Call the function in the Agent/Environment combo required to start 
+        Call the function in the Agent/Environment combo required to start
         a trial. By default passes the environment name that will be passed
-        to gym.make(). 
+        to gym.make().
         By default this expects the openAI Gym Environment object to be
-        returned. 
+        returned.
         '''
 
         lib_modes = (None, 'requirements_graph', 'options_graphs')
         self.config['library_mode'] = np.random.choice(lib_modes)
+        print('library_mode: ', self.config['library_mode'])
 
         games = ('minecrafting',)
         self.config['game'] = np.random.choice(games)
@@ -49,6 +50,8 @@ class Trial():
         if self.config['library_mode'] == 'options_graphs':
             self.config['filter_by_utility'] = np.random.choice((True, False))
             self.config['rank_by_complexity'] = np.random.choice((True, False))
+            print('filter_by_utility: ', self.config['filter_by_utility'])
+            print('rank_by_complexity: ', self.config['rank_by_complexity'])
 
         self.agent = CraftingAgent()
         self.message_handler = PyGameLibrairyHandler(self)
