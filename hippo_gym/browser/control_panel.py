@@ -12,7 +12,7 @@ class ControlPanel:
             'Sliders': self.sliders,
             'Keys': self.keys
         }}
-        self.pipe.send(control_panel)
+        self.pipe.put_nowait(control_panel)
 
     def get_buttons(self):
         return self.buttons

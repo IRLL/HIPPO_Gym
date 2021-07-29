@@ -1,9 +1,13 @@
+import logging
+
 class EventHandler:
 
-    def __init__(self, pipe, hippo):
-        self.pipe = pipe
-        self.pressed_keys = set()
-        self.hippo = hippo
+    def __init__(self, **kwargs)
+        self.keyboard_q = kwargs.get('keyboard_q', None)
+        self.button_q = kwargs.get('button_q', None)
+        self.game_window_queues = [kwargs.get('window_1_q', None), kwargs.get('window_2_q', None), kwargs.get('window_3_q', None)]
+        self.standard_q = kwargs.get('standard_q', None)
+        self.flow_q = kwargs.get('flow_q', None)
 
     def get(self):
         # return all events from queue
@@ -37,14 +41,14 @@ class EventHandler:
         while self.pipe.poll():
             self.pipe.recv()
 
-    def parse_event(self, message):
+    def parse(self, message):
         event = message.get('KeyboardEvent', None)
         if event:
             self.handle_keyboard_event(event)
             return event
         event = message.get('MouseEvent', None)
         if event:
-            self.handle_mouse_event(event)
+            self.handle_window_event(event)
             return event
         event = message.get('ButtonEvent', None)
         if event:
@@ -57,28 +61,33 @@ class EventHandler:
         return None
 
     def handle_keyboard_event(self, message):
-        keydown = message.get('KEYDOWN', None)
-        if keydown:
-            self.pressed_keys.add(tuple(keydown[0]))
-        keyup = message.get('KEYUP', None)
-        if keyup:
-            self.pressed_keys.discard(keyup[0])
+        put_in_queue(message, self.keyboard_q)
+        # check for common keys to add to standard_q events
+        #keydown = message.get('KEYDOWN', None)
+        #if keydown:
 
-    def handle_mouse_event(self, message):
-        index = message.get('windowId', 0)
-        self.hippo.get_game_window(index).add_event(message)
+
 
     def handle_button_event(self, message):
-        button = message.get('BUTTONPRESSED', None)
-        if button == 'start':
-            self.hippo.start()
-        if button == 'pause':
-            self.hippo.pause()
-        if button == 'stop':
-            self.hippo.stop()
+        put_in_queue(message, self.button_q)
+        # check for flow control messages for the flow_q
+        #button = message.get('BUTTONPRESSED', None)
+        #if button == 'start':
+            #self.hippo.start()
+        #if button == 'pause':
+            #self.hippo.pause()
+        #if button == 'stop':
+            #self.hippo.stop()
 
-    def handle_window_event(self, message):
-        size = message.get('WINDOWRESIZED', None)
-        index = message.get('windowId', 0)
-        if size:
-            self.hippo.set_window_size(size, index)
+     def handle_window_event(self, message):
+         index = message.get('windowId', 0)
+         if len(self.game_window_queues) > index:
+             put_in_queue(message, self.game_window_queues[index])
+
+def put_in_queue(message, queue):
+    try:
+        if queue.full():
+            queue.get_nowait()
+        queue.put_nowait(message)
+    except Exception as e:
+        logging.error(e)

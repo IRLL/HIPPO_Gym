@@ -3,56 +3,54 @@ import logging
 import ssl
 import websockets
 import json
-from multiprocessing import Process, Pipe
 
-from hippo_gym import HippoGym
+from hippo_gym.event.event_handler import EventHandler
 
 
-class Comunicator:
+class Communicator:
 
-    def __init__(self, address=None, port=5000, use_ssl=True, force_ssl=False, fullchain_path='SSL/fullchain.pem',
+    def __init__(self, in_queue, out_queue, address=None, port=5000, use_ssl=True, force_ssl=False, fullchain_path='SSL/fullchain.pem',
                  privkey_path='SSL/privkey.pem'):
-        self.entry = 'entry'
+        self.out_queue = out_queue
+        self.in_queue = in_queue
         self.address = address
         self.port = port
         self.ssl = use_ssl
         self.force_ssl = force_ssl
         self.fullchain = fullchain_path
         self.privkey = privkey_path
+        self.event_handler = EventHandler(out_queue)
+        self.start()
 
-    @staticmethod
-    async def producer(websocket, pipe):
-        if pipe.poll():
-            message = json.dumps(pipe.recv())
-            if message == 'done':
-                await websocket.send('done')
-                return True
-            else:
-                await websocket.send(message)
-        return False
-
-    @staticmethod
-    async def consumer_handler(websocket, pipe):
+    async def consumer_handler(self, websocket):
         async for message in websocket:
             try:
                 message = json.loads(message)
-                pipe.send(message)
+                self.event_handler.parse(message)
             except Exception as e:
                 print(e)
 
-    async def producer_handler(self, websocket, pipe):
+    async def producer_handler(self, websocket):
         done = False
         while not done:
-            done = await self.producer(websocket, pipe)
+            message = await self.producer(websocket)
+            if message:
+                if message == 'done':
+                    done = True
+                await websocket.send(json.dumps(message))
             await asyncio.sleep(0.01)
         return
 
+    async def producer(self):
+        message = None
+        if not self.in_queue.empty():
+            message = self.in_queue.get()
+            message = json.dumps(message)
+        return message
+
     async def handler(self, websocket, path):
-        up_pipe, down_pipe = Pipe()
-        user_session = Process(target=HippoGym, args=(down_pipe,))
-        user_session.start()
-        consumer_task = asyncio.ensure_future(self.consumer_handler(websocket, up_pipe))
-        producer_task = asyncio.ensure_future(self.producer_handler(websocket, up_pipe))
+        consumer_task = asyncio.ensure_future(self.consumer_handler(websocket))
+        producer_task = asyncio.ensure_future(self.producer_handler(websocket))
         done, pending = await asyncio.wait(
             [consumer_task, producer_task],
             return_when=asyncio.FIRST_COMPLETED
@@ -85,11 +83,3 @@ class Comunicator:
         except Exception as e:
             logging.info('SSL failed to initialize')
             logging.error(f'SSL failed with error: {e}')
-
-
-def runner():
-    com = Comunicator()
-    com.start()
-
-
-runner()

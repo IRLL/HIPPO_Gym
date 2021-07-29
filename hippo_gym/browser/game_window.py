@@ -58,7 +58,7 @@ class GameWindow:
             self.frameId += 1
 
     def send(self, message):
-        self.pipe.send(message)
+        self.pipe.put_nowait(message)
 
     def set_size(self, size):
         self.width = size[0]
