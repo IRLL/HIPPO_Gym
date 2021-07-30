@@ -61,15 +61,15 @@ class MessageHandler():
         minFR = self.trial.config.get('minFrameRate', 1)
         maxFR = self.trial.config.get('maxFrameRate', 90)
         change = change.strip().lower()
-        if change == 'faster' and self.framerate + step < maxFR:
-            self.framerate += step
-        elif change == 'slower' and self.framerate - step > minFR:
-            self.framerate -= step
+        if change == 'faster' and self.trial.framerate + step < maxFR:
+            self.trial.framerate += step
+        elif change == 'slower' and self.trial.framerate - step > minFR:
+            self.trial.framerate -= step
         else:
             try:
                 requested = int(change)
                 if requested > minFR and requested < maxFR:
-                    self.framerate = requested
+                    self.trial.framerate = requested
             except:
                 pass
 
