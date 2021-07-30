@@ -1,11 +1,12 @@
 import logging
 
+
 class EventHandler:
 
-    def __init__(self, **kwargs)
+    def __init__(self, **kwargs):
         self.keyboard_q = kwargs.get('keyboard_q', None)
         self.button_q = kwargs.get('button_q', None)
-        self.game_window_queues = [kwargs.get('window_1_q', None), kwargs.get('window_2_q', None), kwargs.get('window_3_q', None)]
+        self.window_q = kwargs.get('window_q', None)
         self.standard_q = kwargs.get('standard_q', None)
         self.flow_q = kwargs.get('flow_q', None)
 
@@ -42,47 +43,59 @@ class EventHandler:
             self.pipe.recv()
 
     def parse(self, message):
+        new_user = False
+        user_id = message.get('userId', None)
+        if user_id:
+            project_id = message.get('projectId', None)
+            self.handle_user_id(user_id, project_id)
+            return new_user
         event = message.get('KeyboardEvent', None)
         if event:
             self.handle_keyboard_event(event)
-            return event
+            return new_user
         event = message.get('MouseEvent', None)
         if event:
             self.handle_window_event(event)
-            return event
+            return new_user
         event = message.get('ButtonEvent', None)
         if event:
             self.handle_button_event(event)
-            return event
+            return new_user
         event = message.get('WindowEvent', None)
         if event:
             self.handle_window_event(event)
-            return event
-        return None
+            return new_user
+        return new_user
+
+    def handle_user_id(self, user_id, project_id):
+        message = {'userId': user_id, 'projectId': project_id}
+        put_in_queue(message, self.flow_q)
 
     def handle_keyboard_event(self, message):
         put_in_queue(message, self.keyboard_q)
         # check for common keys to add to standard_q events
-        #keydown = message.get('KEYDOWN', None)
-        #if keydown:
-
-
+        keydown = message.get('KEYDOWN', None)
+        if keydown:
+            key = keydown.get('KEWDOWN', None)
+            if key:
+                key = key[0]
+                standard_message = get_standard_message(key)
+                if standard_message:
+                    put_in_queue(standard_message, self.standard_q)
 
     def handle_button_event(self, message):
         put_in_queue(message, self.button_q)
-        # check for flow control messages for the flow_q
-        #button = message.get('BUTTONPRESSED', None)
-        #if button == 'start':
-            #self.hippo.start()
-        #if button == 'pause':
-            #self.hippo.pause()
-        #if button == 'stop':
-            #self.hippo.stop()
+        button = message.get('BUTTONPRESSED', None)
+        if button == 'start':
+            put_in_queue(message, self.flow_q)
+        if button == 'pause':
+            put_in_queue(message, self.flow_q)
+        if button == 'stop':
+            put_in_queue(message, self.flow_q)
 
-     def handle_window_event(self, message):
-         index = message.get('windowId', 0)
-         if len(self.game_window_queues) > index:
-             put_in_queue(message, self.game_window_queues[index])
+    def handle_window_event(self, message):
+        put_in_queue(message, self.widow_q)
+
 
 def put_in_queue(message, queue):
     try:
@@ -91,3 +104,20 @@ def put_in_queue(message, queue):
         queue.put_nowait(message)
     except Exception as e:
         logging.error(e)
+
+
+def get_standard_message(event):
+    action = None
+    if event == 'w' or event == 'UpArrow' or event == 'up':
+        action = 'up'
+    if event == 's' or event == 'DownArrow' or event == 'down':
+        action = 'down'
+    if event == 'a' or event == 'LeftArrow' or event == 'left':
+        action = 'left'
+    if event == 'd' or event == 'RightArrow' or event == 'right':
+        action = 'right'
+    if event == 'Space' or event == 'fire':
+        action = 'fire'
+    if action:
+        return {'ACTION': action}
+    return None

@@ -1,13 +1,12 @@
 import time
-import asyncio
 
 from browser.control_panel import ControlPanel
 from browser.game_window import GameWindow
-from event.event_handler import EventHandler
 from browser.grid import Grid
 from browser.info_panel import InfoPanel
 from multiprocessing import Process, Queue
 from communicator.communicator import Communicator
+from queue_handler import check_queue, check_all_queues
 
 
 class HippoGym:
@@ -18,27 +17,12 @@ class HippoGym:
         self.control_panel = None
         self.grid = None
         self.run = False
-        self.userId = None
-        self.projectId = None
+        self.user_id = None
+        self.project_id = None
         self.queues = create_queues()
-        self.communicator = Process(target=Communicator, args=(self.queues,))
+        self.out_q = Queue()
+        self.communicator = Process(target=Communicator, args=(self.out_q, self.queues,))
         self.communicator.start()
-        self.event_handler = EventHandler(self.pipe, self)
-
-    async def go(self):
-        print("starting")
-        #while not self.userId:
-            #print('waiting')
-            #time.sleep(2)
-        buttons = [{"Button": {"text": "start"}}]
-        self.control_panel = ControlPanel(self.pipe, buttons=buttons, keys=True)
-        sliders = [{"Slider": {"title": "slide me"}}]
-        self.control_panel.update(sliders=sliders)
-        self.add_game_window()
-        self.control_panel.update()
-        for i in range(20):
-            # print(self.event_handler.get())
-            time.sleep(2)
 
     def add_game_window(self, game_window=None):
         if not type(game_window) == GameWindow:
@@ -100,34 +84,44 @@ class HippoGym:
         if len(self.game_windows) > index:
             self.game_windows[index].set_size(new_size)
 
+    def poll(self):
+        check_all_queues(self.queues)
 
-async def get_ids(pipe):
+
+def get_ids(flow_q):
     print("getting ids")
-    message = pipe.get()
+    message = check_queue(flow_q)
     print(message)
-    print('fidget')
-    userId = message.get("userId", None)
-    projectId = message.get("projectId", None)
-    return userId, projectId
+    if message:
+        user_id = message.get("userId", None)
+        project_id = message.get("projectId", None)
+        return user_id, project_id
+    return None, None
 
-async def doit(hg):
-    print("doit")
-    print(hg.userId)
-    hg.userId, hg.projectId = await get_ids(hg.idQ)
-    print(hg.userId)
 
 def main():
     hg = HippoGym()
-    time.sleep(10)
-    asyncio.get_event_loop().run_until_complete(doit(hg))
-    asyncio.get_event_loop().run_forever()
-    asyncio.get_event_loop().run_until_complete(hg.go())
-    asyncio.get_event_loop().run_forever()
+    while not hg.user_id:
+        time.sleep(0.1)
+        hg.user_id, hg.project_id = get_ids(hg.queues['flow_q'])
+    print(f'starting with user: {hg.user_id}')
+    buttons = [{"Button": {"text": "start"}}]
+    hg.control_panel = ControlPanel(self.pipe, buttons=buttons, keys=True)
+    sliders = [{"Slider": {"title": "slide me"}}]
+    hg.control_panel.update(sliders=sliders)
+    hg.add_game_window()
+    hg.control_panel.update()
+    for i in range(2000):
+        hg.poll()
+        time.sleep(0.01)
+
 
 def create_queues():
-    keys = ['up_q', 'keyboard_q', 'window_1_q', 'window_2_q', 'window_3_q', 'button_q', 'standard_q', 'flow_q']
+    keys = ['keyboard_q', 'window_q', 'button_q', 'standard_q', 'flow_q']
     queues = {}
     for key in keys:
         queues[key] = Queue()
     return queues
+
+
 main()

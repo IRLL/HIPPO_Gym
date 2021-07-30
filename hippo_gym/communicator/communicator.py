@@ -4,22 +4,22 @@ import ssl
 import websockets
 import json
 
-from hippo_gym.event.event_handler import EventHandler
+from event.event_handler import EventHandler
 
 
 class Communicator:
 
-    def __init__(self, in_queue, out_queue, address=None, port=5000, use_ssl=True, force_ssl=False, fullchain_path='SSL/fullchain.pem',
-                 privkey_path='SSL/privkey.pem'):
-        self.out_queue = out_queue
-        self.in_queue = in_queue
+    def __init__(self, out_q, address=None, port=5000, use_ssl=True, force_ssl=False, fullchain_path='SSL/fullchain.pem',
+                 privkey_path='SSL/privkey.pem', **queues):
+        self.out_q = out_q
         self.address = address
         self.port = port
         self.ssl = use_ssl
         self.force_ssl = force_ssl
         self.fullchain = fullchain_path
         self.privkey = privkey_path
-        self.event_handler = EventHandler(out_queue)
+        self.event_handler = EventHandler(**queues)
+        self.users = set()
         self.start()
 
     async def consumer_handler(self, websocket):
@@ -27,6 +27,7 @@ class Communicator:
             try:
                 message = json.loads(message)
                 self.event_handler.parse(message)
+
             except Exception as e:
                 print(e)
 
@@ -71,6 +72,7 @@ class Communicator:
         asyncio.get_event_loop().run_until_complete(server)
         asyncio.get_event_loop().run_forever()
         logging.info('Non-SSL websocket started')
+        print('NON SSL UP')
 
     def start_ssl_server(self):
         try:
@@ -80,6 +82,8 @@ class Communicator:
             asyncio.get_event_loop().run_until_complete(ssl_server)
             asyncio.get_event_loop().run_forever()
             logging.info('SSL websocket started')
+            print('SSL UP')
         except Exception as e:
             logging.info('SSL failed to initialize')
             logging.error(f'SSL failed with error: {e}')
+            print(f'SSL Failed: {e}')
