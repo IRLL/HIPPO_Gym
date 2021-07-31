@@ -1,0 +1,125 @@
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 60%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+th{
+  text-align: center;
+}
+
+td:not(:first-child) {
+  text-align: center;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+p {
+	font-size: 20px
+}
+</style>
+<h1>Evaluating Options Importance Post-survey</h1>
+<h3>Please answer the following questions to the best of your ability.<br>
+  You may leave any answer blank that you do not want to answer.<br></h3>
+
+<table>
+  <tbody>
+    <tr>
+      <th>Question</th>
+      <th>Strongly disagree</th>
+      <th>Disagree</th>
+      <th>Neither agree nor disagree</th>
+      <th>Agree</th>
+      <th>Strongly Agree</th>
+    </tr>
+    <tr>
+      <td>I found the tutorial useful</td>
+      <td><input type="radio" id="useful1" name="useful" value="1">1</td>
+      <td><input type="radio" id="useful2" name="useful" value="2">2</td>
+      <td><input type="radio" id="useful3" name="useful" value="3">3</td>
+      <td><input type="radio" id="useful4" name="useful" value="4">4</td>
+      <td><input type="radio" id="useful5" name="useful" value="5">5</td>
+    </tr>
+    <tr>
+      <td>I found the tutorial easy to use</td>
+      <td><input type="radio" id="difficulty1" name="difficulty" value="1">1</td>
+      <td><input type="radio" id="difficulty2" name="difficulty" value="2">2</td>
+      <td><input type="radio" id="difficulty3" name="difficulty" value="3">3</td>
+      <td><input type="radio" id="difficulty4" name="difficulty" value="4">4</td>
+      <td><input type="radio" id="difficulty5" name="difficulty" value="5">5</td>
+    </tr>
+    <tr>
+      <td>I found the tutorial unecessarily complex</td>
+      <td><input type="radio" id="complex1" name="complex" value="1">1</td>
+      <td><input type="radio" id="complex2" name="complex" value="2">2</td>
+      <td><input type="radio" id="complex3" name="complex" value="3">3</td>
+      <td><input type="radio" id="complex4" name="complex" value="4">4</td>
+      <td><input type="radio" id="complex5" name="complex" value="5">5</td>
+    </tr>
+    <tr>
+      <td>I think that I would need assistance to be able to use this tutorial</td>
+      <td><input type="radio" id="assistance1" name="assistance" value="1">1</td>
+      <td><input type="radio" id="assistance2" name="assistance" value="2">2</td>
+      <td><input type="radio" id="assistance3" name="assistance" value="3">3</td>
+      <td><input type="radio" id="assistance4" name="assistance" value="4">4</td>
+      <td><input type="radio" id="assistance5" name="assistance" value="5">5</td>
+    </tr>
+    <tr>
+      <td>I found the tutorial fun to use</td>
+      <td><input type="radio" id="fun1" name="fun" value="1">1</td>
+      <td><input type="radio" id="fun2" name="fun" value="2">2</td>
+      <td><input type="radio" id="fun3" name="fun" value="3">3</td>
+      <td><input type="radio" id="fun4" name="fun" value="4">4</td>
+      <td><input type="radio" id="fun5" name="fun" value="5">5</td>
+    </tr>
+    <tr>
+      <td>I found the tutorial cumbersome to use</td>
+      <td><input type="radio" id="cumbersome1" name="cumbersome" value="1">1</td>
+      <td><input type="radio" id="cumbersome2" name="cumbersome" value="2">2</td>
+      <td><input type="radio" id="cumbersome3" name="cumbersome" value="3">3</td>
+      <td><input type="radio" id="cumbersome4" name="cumbersome" value="4">4</td>
+      <td><input type="radio" id="cumbersome5" name="cumbersome" value="5">5</td>
+    </tr>
+    <tr>
+      <td>I found the game fun to play</td>
+      <td><input type="radio" id="game1" name="game" value="1">1</td>
+      <td><input type="radio" id="game2" name="game" value="2">2</td>
+      <td><input type="radio" id="game3" name="game" value="3">3</td>
+      <td><input type="radio" id="game4" name="game" value="4">4</td>
+      <td><input type="radio" id="game5" name="game" value="5">5</td>
+    </tr>
+    <tr>
+      <td>I felt confident using this tutorial</td>
+      <td><input type="radio" id="confident1" name="confident" value="1">1</td>
+      <td><input type="radio" id="confident2" name="confident" value="2">2</td>
+      <td><input type="radio" id="confident3" name="confident" value="3">3</td>
+      <td><input type="radio" id="confident4" name="confident" value="4">4</td>
+      <td><input type="radio" id="confident5" name="confident" value="5">5</td>
+    </tr>
+    <tr>
+      <td>I found the tutorial confusing to use</td>
+      <td><input type="radio" id="confusing1" name="confusing" value="1">1</td>
+      <td><input type="radio" id="confusing2" name="confusing" value="2">2</td>
+      <td><input type="radio" id="confusing3" name="confusing" value="3">3</td>
+      <td><input type="radio" id="confusing4" name="confusing" value="4">4</td>
+      <td><input type="radio" id="confusing5" name="confusing" value="5">5</td>
+    </tr>
+    <tr>
+      <td>I think this tutorial is helpful</td>
+      <td><input type="radio" id="helpful1" name="helpful" value="1">1</td>
+      <td><input type="radio" id="helpful2" name="helpful" value="2">2</td>
+      <td><input type="radio" id="helpful3" name="helpful" value="3">3</td>
+      <td><input type="radio" id="helpful4" name="helpful" value="4">4</td>
+      <td><input type="radio" id="helpful5" name="helpful" value="5">5</td>
+    </tr>
+</tbody>
+</table>

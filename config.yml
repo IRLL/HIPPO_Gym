@@ -12,7 +12,7 @@ project:
     stopServerStep:  # int
   id: # Letters, Numbers and '-' only!
   live: True # bool
-  maxRuntime: 60 # int in minutes.
+  maxRuntime: 90 # int in minutes.
   name: # str
   researcher: # str
   ssl:
@@ -20,11 +20,11 @@ project:
     privkey: SSL/privkey.pem # path to privkey.pem file excluding bucket name
     sslBucket: # bucket name for resolving paths above
   steps: # any number of steps needed with corresponding filenames
-    1: StepFiles/exampleConsent.html
-    2:
-    3: StepFiles/exampleQuiz.html
-    4: StepFiles/exampleSurvey.html
-    finalStep: StepFiles/exampleThank.html # required, filename can be same as last numbered step
+    1: StepFiles/Consent.html
+    2: StepFiles/PreSurvey.html
+    3: 
+    4: StepFiles/PostSurvey.html
+    finalStep: StepFiles/Thank.html # required, filename can be same as last numbered step
   teamMembers: # str
 trial:
   actionBufferLifespan: 1 # int

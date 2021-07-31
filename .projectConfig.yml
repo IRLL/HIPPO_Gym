@@ -10,7 +10,7 @@ project:
     stopServerStep: null
   id: null
   live: true
-  maxRuntime: 60
+  maxRuntime: 90
   name: null
   researcher: null
   ssl:
@@ -18,11 +18,11 @@ project:
     privkey: SSL/privkey.pem
     sslBucket: null
   steps:
-    1: StepFiles/exampleConsent.html
-    2: null
-    3: StepFiles/exampleQuiz.html
-    4: StepFiles/exampleSurvey.html
-    finalStep: StepFiles/exampleThank.html
+    1: StepFiles/Consent.html
+    2: StepFiles/PreSurvey.html
+    3: null
+    4: StepFiles/PostSurvey.html
+    finalStep: StepFiles/Thank.html
   teamMembers: null
   useAWS: false
 trial:
