@@ -63,7 +63,11 @@ class LibraryHandler(MessageHandler):
 
     def send_render(self):
         self.trial.frameId += 1
-        self.trial.send_render({'frame': self.images[self.cursor], 'frameId': self.trial.frameId})
+        self.trial.send_render({
+            'frame': self.images[self.cursor],
+            'frameId': self.trial.frameId,
+            'borderColor': 'orange',
+        })
 
     def _prev_item(self):
         return (self.cursor - 1) % len(self.images)
@@ -90,15 +94,21 @@ class LibraryHandler(MessageHandler):
                 'previousBlock': {
                     'image': self.images_icons[self._prev_item()],
                     'value': 'previous library item',
-                    'name': f'{self._prev_item() + 1}/{len(self.images)}'},
+                    'name': f'{self._prev_item() + 1}/{len(self.images)}',
+                    'borderColor': 'orange',
+                },
                 'currentBlock': {
                     'image': self.images_icons[self.cursor],
                     'value': 'current library item',
-                    'name': f'{self.cursor + 1}/{len(self.images)}'},
+                    'name': f'{self.cursor + 1}/{len(self.images)}',
+                    'borderColor': 'orange',
+                },
                 'nextBlock': {
                     'image': self.images_icons[self._next_item()],
                     'value': "next library item",
-                    'name': f'{self._next_item() + 1}/{len(self.images)}'}
+                    'name': f'{self._next_item() + 1}/{len(self.images)}',
+                    'borderColor': 'orange',
+                },
             }
             self.trial.pipe.send(json.dumps(ui_navigation))
         self.trial.send_ui(['back to game'])
