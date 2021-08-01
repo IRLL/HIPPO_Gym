@@ -8,3 +8,4 @@ Logs/*
 .idea/*
 .projectConfig.yml
 App/.trialConfig.yml
+App/server.log
