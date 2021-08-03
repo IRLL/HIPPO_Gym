@@ -4,13 +4,13 @@ import ssl
 import websockets
 import json
 
-from event.event_handler import EventHandler
+from hippo_gym.event.event_handler import EventHandler
 
 
 class Communicator:
 
-    def __init__(self, out_q, address=None, port=5000, use_ssl=True, force_ssl=False, fullchain_path='SSL/fullchain.pem',
-                 privkey_path='SSL/privkey.pem', **queues):
+    def __init__(self, out_q, queues, address=None, port=5000, use_ssl=True, force_ssl=False, fullchain_path='SSL/fullchain.pem',
+                 privkey_path='SSL/privkey.pem'):
         self.out_q = out_q
         self.address = address
         self.port = port
@@ -18,7 +18,7 @@ class Communicator:
         self.force_ssl = force_ssl
         self.fullchain = fullchain_path
         self.privkey = privkey_path
-        self.event_handler = EventHandler(**queues)
+        self.event_handler = EventHandler(queues)
         self.users = set()
         self.start()
 
@@ -34,7 +34,7 @@ class Communicator:
     async def producer_handler(self, websocket):
         done = False
         while not done:
-            message = await self.producer(websocket)
+            message = await self.producer()
             if message:
                 if message == 'done':
                     done = True
@@ -44,8 +44,8 @@ class Communicator:
 
     async def producer(self):
         message = None
-        if not self.in_queue.empty():
-            message = self.in_queue.get()
+        if not self.out_q.empty():
+            message = self.out_q.get()
             message = json.dumps(message)
         return message
 
@@ -87,3 +87,15 @@ class Communicator:
             logging.info('SSL failed to initialize')
             logging.error(f'SSL failed with error: {e}')
             print(f'SSL Failed: {e}')
+
+async def handler(websocket, path):
+    consumer_task = asyncio.ensure_future(self.consumer_handler(websocket))
+    producer_task = asyncio.ensure_future(self.producer_handler(websocket))
+    done, pending = await asyncio.wait(
+        [consumer_task, producer_task],
+        return_when=asyncio.FIRST_COMPLETED
+    )
+    for task in pending:
+        task.cancel()
+    await websocket.close()
+    return

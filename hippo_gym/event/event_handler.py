@@ -3,12 +3,22 @@ import logging
 
 class EventHandler:
 
-    def __init__(self, **kwargs):
-        self.keyboard_q = kwargs.get('keyboard_q', None)
-        self.button_q = kwargs.get('button_q', None)
-        self.window_q = kwargs.get('window_q', None)
-        self.standard_q = kwargs.get('standard_q', None)
-        self.flow_q = kwargs.get('flow_q', None)
+    def __init__(self, queues):
+        self.keyboard_q = queues.get('keyboard_q', None)
+        self.button_q = queues.get('button_q', None)
+        self.window_q = queues.get('window_q', None)
+        self.standard_q = queues.get('standard_q', None)
+        self.flow_q = queues.get('flow_q', None)
+        if not self.flow_q:
+            logging.debug("no flow_q in EventHandler")
+        if not self.keyboard_q:
+            logging.debug("no keyboard_q in EventHandler")
+        if not self.button_q:
+            logging.debug("no button_q in EventHandler")
+        if not self.window_q:
+            logging.debug("no window_q in EventHandler")
+        if not self.standard_q:
+            logging.debug("no standard_q in EventHandler")
 
     def get(self):
         # return all events from queue
@@ -76,12 +86,10 @@ class EventHandler:
         # check for common keys to add to standard_q events
         keydown = message.get('KEYDOWN', None)
         if keydown:
-            key = keydown.get('KEWDOWN', None)
-            if key:
-                key = key[0]
-                standard_message = get_standard_message(key)
-                if standard_message:
-                    put_in_queue(standard_message, self.standard_q)
+            keydown = keydown[0]
+            standard_message = get_standard_message(keydown)
+            if standard_message:
+                put_in_queue(standard_message, self.standard_q)
 
     def handle_button_event(self, message):
         put_in_queue(message, self.button_q)
@@ -94,7 +102,7 @@ class EventHandler:
             put_in_queue(message, self.flow_q)
 
     def handle_window_event(self, message):
-        put_in_queue(message, self.widow_q)
+        put_in_queue(message, self.window_q)
 
 
 def put_in_queue(message, queue):

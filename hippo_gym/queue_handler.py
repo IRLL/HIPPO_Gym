@@ -8,7 +8,7 @@ def check_queue(queue):
 def check_all_queues(queues):
     response = []
     for q in queues:
-        message = check_queue(q)
+        message = check_queue(queues[q])
         if message:
             response.append(message)
     return response
