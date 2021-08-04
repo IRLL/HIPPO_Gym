@@ -39,7 +39,7 @@ class Trial():
         returned.
         '''
 
-        lib_modes = (None, 'requirements_graph', 'options_graphs')
+        lib_modes = (None, 'options_graphs')
         self.config['library_mode'] = np.random.choice(lib_modes)
         print('library_mode: ', self.config['library_mode'])
 
