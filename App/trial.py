@@ -5,6 +5,9 @@ from PIL import Image
 from io import BytesIO
 from agent import Agent # this is the Agent/Environment compo provided by the researcher
 
+# Get the score change from score_change
+from predict import get_score_change
+
 # for dummy score
 import random
 
@@ -139,8 +142,10 @@ class Trial():
             self.reset()
             render = self.get_render()
             self.send_render(render)
-        if 'minutiaList' in message and message['minutiaList']:
-            self.handle_minutiae(message['minutiaList'])
+            if self.fingerprint:
+                self.send_expert()
+        if 'minutiaList' in message and message['minutiaList'] and message['command']:
+            self.handle_minutiae(message['command'], message['minutiaList'])
         elif 'command' in message and message['command']:
             self.handle_command(message['command'])
         elif 'changeFrameRate' in message and message['changeFrameRate']:
@@ -192,7 +197,6 @@ class Trial():
             except:
                 pass
 
-
     def handle_action(self, action:str):
         '''
         Translates action to int and resets action buffer if action !=0
@@ -229,7 +233,7 @@ class Trial():
             img.save(fp, 'BMP') # Changes filetype to be BMP
             frame = base64.b64encode(fp.getvalue()).decode('utf-8')
             fp.close()
-        except: 
+        except:
             raise TypeError("Render failed. Is env.render('rgb_array') being called\
                             With the correct arguement?")
         self.frameId += 1
@@ -276,6 +280,17 @@ class Trial():
     def send_score(self, score):
         try:
             self.pipe.send(json.dumps({'Score': score}))
+        except:
+            return
+    
+    def send_expert(self):
+        try:
+            #Try to load in the first xml
+            expert_1 = xmlToArray(f'Fingerprints/{self.imagename}.FingerNet.xml')
+            #Try to load in the second xml
+            expert_2 = xmlToArray(f'Fingerprints/{self.imagename}.MinutiaNet.xml')
+            #Try to send it to front end
+            self.pipe.send(json.dumps({'ExpertMarks1': expert_1, 'ExpertMarks2': expert_2}))
         except:
             return
 
@@ -340,7 +355,7 @@ class Trial():
         self.filename = filename
         self.path = path
 
-    def handle_minutiae(self, minutiaList:list):
+    def handle_minutiae(self, command:str, minutiaList:list):
         '''
         Creates a new XML file in the in the XML folder
         using the given minutia list
@@ -371,6 +386,11 @@ class Trial():
             XMLfile = open(path, 'x')
             XMLfile.write(XMLstring)
             XMLfile.close()
+
+        if command == "getFeedback":
+            score_change = get_score_change(path)
+            self.pipe.send(json.dumps({'ScoreChange': score_change}))
+        
         self.play = True
 
     def createXML(self, minutiae:list):
@@ -395,3 +415,11 @@ class Trial():
         reparsed = minidom.parseString(rough_string)
         
         return reparsed.toprettyxml(indent=tab_length)
+
+def xmlToArray(path):
+    tree = ET.parse(path)
+    root = tree.getroot()
+    minutiae = []
+    for child in root:
+        minutiae.append({'x': int(child.attrib['X']), 'y': int(child.attrib['Y']), 'orientation': float(child.attrib['Angle'].replace(',', '.'))})
+    return minutiae
