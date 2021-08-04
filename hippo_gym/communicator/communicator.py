@@ -88,14 +88,3 @@ class Communicator:
             logging.error(f'SSL failed with error: {e}')
             print(f'SSL Failed: {e}')
 
-async def handler(websocket, path):
-    consumer_task = asyncio.ensure_future(self.consumer_handler(websocket))
-    producer_task = asyncio.ensure_future(self.producer_handler(websocket))
-    done, pending = await asyncio.wait(
-        [consumer_task, producer_task],
-        return_when=asyncio.FIRST_COMPLETED
-    )
-    for task in pending:
-        task.cancel()
-    await websocket.close()
-    return
