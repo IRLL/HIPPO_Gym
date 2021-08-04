@@ -237,15 +237,25 @@ class Trial():
         self.grid = Grid(rows, columns)
 
         # add start tile
-        # add_tile(row, col, color, text = "")
-        self.grid.add_tile(0, 0, "white", "S")
+        self.grid.add_tile(0, 0, {"color": "white", "text": "S"})
+
+        # ---- Sample for adding an image ----
+        # image = open('images/image_name.png', 'rb')
+        # image_read = image.read()
+        # image_string = base64.b64encode(image_read).decode('utf-8')
+        # image.close()
+
+        # self.grid.add_tile(1, 1, {"image": image_string})
+        
+        # ---- Sample for adding an icon ----
+        self.grid.add_tile(1, 1, {"icon": "left"})
 
         # add lavas
         for state in blockedStates:
-            self.grid.add_tile(state['x'], state['y'], "orange")
+            self.grid.add_tile(state['x'], state['y'], {"color": "orange"})
 
         # add target tile
-        self.grid.add_tile(rows-1, columns-1, "white", "T")
+        self.grid.add_tile(rows-1, columns-1, {"color": "white", "text": "T"})
 
     def send_grid(self):
         grid_dict = self.grid.stringify()

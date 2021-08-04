@@ -12,6 +12,6 @@ class Grid():
         }
         return grid
     
-    def add_tile(self, row, col, color, text = ""):
-        self.tiles.append({'row': row, 'col': col, 'color': color, 'text': text})
+    def add_tile(self, row, col, props):
+        self.tiles.append({'row': row, 'col': col, **props})
         return
