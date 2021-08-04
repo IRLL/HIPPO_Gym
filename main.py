@@ -11,9 +11,8 @@ def main():
     hippo = HippoGym()
     control_panel = hippo.get_control_panel()
     game_window = hippo.get_game_window()
-    game_window.update(image=get_image(images[index//len(images)]))
-    buttons = [{"Button": {"text": "start"}}]
-    control_panel.update(buttons=buttons)
+    game_window.update(image=get_image(images[index // len(images)]))
+    control_panel.use_standard_buttons()
     while True:
         hippo.standby()
         for item in hippo.poll():
@@ -25,6 +24,12 @@ def main():
             elif action == 'left':
                 index -= 1
                 game_window.update(image=get_image(images[index // len(images)]))
+            elif action == 'up':
+                control_panel.use_image_sliders()
+                control_panel.send_controls()
+            elif action == 'down':
+                control_panel.reset_sliders()
+                control_panel.send_controls()
 
 
 def get_image(filename):

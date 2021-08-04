@@ -44,6 +44,9 @@ class ControlPanel:
         else:
             return {"Error": "Index not of type int"}
 
+    def reset_buttons(self):
+        self.buttons = None
+
     def add_slider(self, title=None, id=None, min=1, max=100, value=50):
         slider = dict(title=title, id=id, min=min, max=max, value=value)
         self.sliders.append(slider)
@@ -56,7 +59,137 @@ class ControlPanel:
         else:
             return {"Error": "Index not of type int"}
 
+    def reset_sliders(self):
+        self.sliders = None
+
     def set_keys(self, setting):
         if type(setting) == bool:
             self.keys = setting
         return self.keys
+
+    def use_standard_buttons(self):
+        self.buttons = standard_controls
+
+    def use_image_sliders(self):
+        self.sliders = image_sliders
+
+
+start_button = {'Button': {
+    'image': None,
+    'icon': 'FaPlayCircle',
+    'text': 'start',
+    'color': 'white',
+    'bgcolor': 'green',
+    'value': 'start'
+}}
+
+reset_button = {'Button': {
+    'image': None,
+    'icon': 'FaRedo',
+    'text': 'reset',
+    'color': 'white',
+    'bgcolor': 'red',
+    'value': 'reset'
+}}
+
+submit_button = {'Button': {
+    'image': None,
+    'icon': 'FaCheckCircle',
+    'text': 'submit',
+    'color': 'white',
+    'bgcolor': 'green',
+    'value': 'submit'
+}}
+
+end_button = {'Button': {
+    'image': None,
+    'icon': 'FaStopCircle',
+    'text': 'end',
+    'color': 'white',
+    'bgcolor': 'blue',
+    'value': 'end'
+}}
+
+up_button = {'Button': {
+    'image': None,
+    'icon': 'FaArrowUp',
+    'text': None,
+    'color': 'black',
+    'bgcolor': 'white',
+    'value': 'up'
+}}
+
+down_button = {'Button': {
+    'image': None,
+    'icon': 'FaArrowDown',
+    'text': None,
+    'color': 'black',
+    'bgcolor': 'white',
+    'value': 'down'
+}}
+
+left_button = {'Button': {
+    'image': None,
+    'icon': 'FaArrowLeft',
+    'text': None,
+    'color': 'black',
+    'bgcolor': 'white',
+    'value': 'left'
+}}
+
+right_button = {'Button': {
+    'image': None,
+    'icon': 'FaArrowRight',
+    'text': None,
+    'color': 'black',
+    'bgcolor': 'white',
+    'value': 'right'
+}}
+
+standard_controls = [
+    start_button,
+    reset_button,
+    end_button,
+    left_button,
+    right_button,
+    up_button,
+    down_button
+]
+
+brightness_slider = {'Slider': {
+    'title': 'Brightness',
+    'icon': 'BsFillBrightnessHighFill',
+    'id': 'brightness',
+    'min': 0,
+    'max': 1000,
+    'value': 100
+}}
+
+contrast_slider = {'Slider': {
+    'title': 'Contrast',
+    'icon': 'IoContrast',
+    'id': 'contrast',
+    'min': 0,
+    'max': 500,
+    'value': 100
+}}
+
+saturation_slider = {'Slider': {
+    'title': 'Saturation',
+    'icon': 'BsDropletHalf',
+    'id': 'saturation',
+    'min': 0,
+    'max': 100,
+    'value': 100
+}}
+
+hue_slider = {'Slider': {
+    'title': 'Hue',
+    'icon': 'IoColorPaletteOutline',
+    'id': 'hue',
+    'min': 0,
+    'max': 360,
+    'value': 0
+}}
+
+image_sliders = [brightness_slider, contrast_slider, saturation_slider, hue_slider]
