@@ -1,37 +1,37 @@
 project:
-  useAWS: false # bool, set to true if using AWS, set false and ignore all AWS entries
+  id: test-option-metrics-complexity # Letters, Numbers and '-' only!
+  useAWS: True # bool, set to true if using AWS, set false and ignore all AWS entries
   awsSetup:
-    bucket: # working bucket in AWS
-    region: # working AWS region
-    rootDomain: # a fully qualified domain name without 'https://'
+    bucket: projects.irll
+    region: ca-central-1
+    rootDomain: irll.net
     cpu: 2 # int 1,2, or 4
-    memory: 10 # int 1-30
-
+    memory: 8 # int 1-30
   events:
-    startServerStep:  # int
-    stopServerStep:  # int
-  id: # Letters, Numbers and '-' only!
+    startServerStep: 1 # int
+    stopServerStep: 4 # int
   live: True # bool
   maxRuntime: 90 # int in minutes.
-  name: # str
-  researcher: # str
+  name: option-metrics-complexity # str
+  researcher: Federico Mathis # str
   ssl:
-    fullchain: SSL/fullchain.pem # path to fullchain.pem file excluding bucket name
-    privkey: SSL/privkey.pem # path to privkey.pem file excluding bucket name
-    sslBucket: # bucket name for resolving paths above
+    sslBucket: projects.irll
+    fullchain: SSL/fullchain.pem
+    privkey: SSL/privkey.pem
   steps: # any number of steps needed with corresponding filenames
     1: StepFiles/Consent.html
     2: StepFiles/PreSurvey.html
-    3: 
+    3: game
     4: StepFiles/PostSurvey.html
+    5: StepFiles/Thank.html
     finalStep: StepFiles/Thank.html # required, filename can be same as last numbered step
-  teamMembers: # str
+  teamMembers: Federico Mathis, Petrich Laura # str
 trial:
   actionBufferLifespan: 1 # int
   maxEpisodes: 2 # int
   game: MineCrafting # full environment name
   dataFile: episode # episode or trial
-  s3upload: False
+  s3upload: True
   actionSpace: []
   frameRateStepSize: 5 # int Optional if allowFrameRateChange = False
   minFrameRate: 1 # int Optional if allowFrameRateChange = False
@@ -48,7 +48,7 @@ trial:
     start: False
     stop: False
     pause: False
-    reset: False
+    reset: True
     trainOffline: False
     trainOnline: False
     good: False

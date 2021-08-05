@@ -2,7 +2,7 @@ trial:
   actionBufferLifespan: 1
   actionSpace: []
   allowFrameRateChange: false
-  bucket: null
+  bucket: projects.irll
   dataFile: episode
   defaultAction: null
   defaultStart: true
@@ -11,10 +11,11 @@ trial:
   maxEpisodes: 2
   maxFrameRate: 60
   minFrameRate: 1
-  projectId: null
-  s3upload: false
+  projectId: test-option-metrics-complexity
+  s3upload: true
   startingFrameRate: 15
-  ui: []
+  ui:
+  - reset
   variables:
     gameWindowHeight: 719
     gameWindowSize: responsive
