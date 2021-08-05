@@ -19,11 +19,11 @@ def main():
             action = item.get('ACTION', None)
             if action == 'right':
                 index += 1
-                game_window.update(image=get_image(images[index // len(images)]))
+                game_window.update(image=get_image(images[index % len(images)]))
                 control_panel.send_controls()
             elif action == 'left':
                 index -= 1
-                game_window.update(image=get_image(images[index // len(images)]))
+                game_window.update(image=get_image(images[index % len(images)]))
             elif action == 'up':
                 control_panel.use_image_sliders()
                 control_panel.send_controls()
@@ -34,6 +34,7 @@ def main():
 
 def get_image(filename):
     with open(f'img/{filename}', 'rb') as infile:
+        print(filename)
         frame = base64.b64encode(infile.read()).decode('utf-8')
     return frame
 
