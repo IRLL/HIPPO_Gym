@@ -46,7 +46,6 @@ class Communicator:
         message = None
         if not self.out_q.empty():
             message = self.out_q.get()
-            message = json.dumps(message)
         return message
 
     async def handler(self, websocket, path):
