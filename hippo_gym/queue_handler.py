@@ -5,7 +5,7 @@ def check_queue(queue):
     return message
 
 
-def check_all_queues(queues):
+def check_queues(queues):
     response = []
     for q in queues:
         message = check_queue(queues[q])

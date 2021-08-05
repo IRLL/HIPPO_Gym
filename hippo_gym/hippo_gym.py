@@ -5,8 +5,10 @@ from hippo_gym.browser.game_window import GameWindow
 from hippo_gym.browser.grid import Grid
 from hippo_gym.browser.info_panel import InfoPanel
 from multiprocessing import Process, Queue
+
+from hippo_gym.browser.text_box import TextBox
 from hippo_gym.communicator.communicator import Communicator
-from hippo_gym.queue_handler import check_queue, check_all_queues
+from hippo_gym.queue_handler import check_queue, check_queues
 
 
 class HippoGym:
@@ -15,6 +17,7 @@ class HippoGym:
         self.game_windows = []
         self.info_panel = None
         self.control_panel = None
+        self.text_boxes = []
         self.grid = None
         self.run = False
         self.user_id = None
@@ -24,6 +27,12 @@ class HippoGym:
         self.out_q = Queue()
         self.communicator = Process(target=Communicator, args=(self.out_q, self.queues,))
         self.communicator.start()
+
+    def add_text_box(self, text_box=None):
+        if not type(text_box) == TextBox:
+            text_box = TextBox(self.out_q, idx=len(self.text_boxes))
+        self.text_boxes.append(text_box)
+        return text_box
 
     def add_game_window(self, game_window=None):
         if not type(game_window) == GameWindow:
@@ -89,22 +98,37 @@ class HippoGym:
             self.game_windows[index].set_size(new_size)
 
     def poll(self):
-        messages = check_all_queues(self.queues)
+        #control = self.handle_control_messages()
+        #window = self.handle_window_messages()
+        messages = check_queues(self.queues)
         if messages:
             print(self.user_id, messages)
         return messages
 
+    def send(self):
+        for window in self.game_windows:
+            window.send()
+        for text_box in self.text_boxes:
+            text_box.send()
+        if self.control_panel:
+            self.control_panel.send()
+        if self.grid:
+            self.grid.send()
+        if self.info_panel:
+            self.info_panel.send()
+
     def standby(self):
         while not self.user_connected:
             time.sleep(0.01)
-            self.user_id, self.project_id = get_ids(self.queues['flow_q'])
+            self.user_id, self.project_id = get_ids(self.queues['control_q'])
             if self.user_id:
                 self.user_connected = True
+                self.send()
         return self.user_id
 
 
-def get_ids(flow_q):
-    message = check_queue(flow_q)
+def get_ids(control_q):
+    message = check_queue(control_q)
     if message:
         user_id = message.get("userId", None)
         project_id = message.get("projectId", None)
@@ -116,7 +140,7 @@ def main():
     hg = HippoGym()
     while not hg.user_id:
         time.sleep(2)
-        hg.user_id, hg.project_id = get_ids(hg.queues['flow_q'])
+        hg.user_id, hg.project_id = get_ids(hg.queues['control_q'])
     print(f'starting with user: {hg.user_id}')
     buttons = [{"Button": {"text": "start"}}]
     hg.control_panel = ControlPanel(hg.out_q, buttons=buttons, keys=True)
@@ -130,7 +154,7 @@ def main():
 
 
 def create_queues():
-    keys = ['keyboard_q', 'window_q', 'button_q', 'standard_q', 'flow_q']
+    keys = ['keyboard_q', 'window_q', 'button_q', 'standard_q', 'control_q']
     queues = {}
     for key in keys:
         queues[key] = Queue()

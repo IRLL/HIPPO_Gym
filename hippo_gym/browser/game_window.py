@@ -17,8 +17,6 @@ class GameWindow:
         self.frameId = 0
         self.pipe = pipe
         self.events = Queue(maxsize=10)
-        self.send_window_size()
-        self.send_frame()
 
     def update(self, idx=None, width=None, height=None, mode=None, image=None, text=None):
         if idx is not None:
@@ -57,7 +55,15 @@ class GameWindow:
             self.send(message)
             self.frameId += 1
 
-    def send(self, message):
+    def send(self, message=None):
+        if not message:
+            message = {"GameWindow": {
+                "idx": self.id,
+                "size": (self.width, self.height),
+                "mode": self.mode,
+                "frame": self.frame,
+                "frameId": self.frameId
+            }}
         self.pipe.put_nowait(message)
 
     def set_size(self, size):

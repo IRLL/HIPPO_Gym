@@ -8,9 +8,9 @@ class EventHandler:
         self.button_q = queues.get('button_q', None)
         self.window_q = queues.get('window_q', None)
         self.standard_q = queues.get('standard_q', None)
-        self.flow_q = queues.get('flow_q', None)
-        if not self.flow_q:
-            logging.debug("no flow_q in EventHandler")
+        self.control_q = queues.get('control_q', None)
+        if not self.control_q:
+            logging.debug("no control_q in EventHandler")
         if not self.keyboard_q:
             logging.debug("no keyboard_q in EventHandler")
         if not self.button_q:
@@ -79,7 +79,7 @@ class EventHandler:
 
     def handle_user_id(self, user_id, project_id):
         message = {'userId': user_id, 'projectId': project_id}
-        put_in_queue(message, self.flow_q)
+        put_in_queue(message, self.control_q)
 
     def handle_keyboard_event(self, message):
         put_in_queue(message, self.keyboard_q)
@@ -87,22 +87,37 @@ class EventHandler:
         keydown = message.get('KEYDOWN', None)
         if keydown:
             keydown = keydown[0]
-            standard_message = get_standard_message(keydown)
-            if standard_message:
-                put_in_queue(standard_message, self.standard_q)
+            self.check_standard_message(keydown)
 
     def handle_button_event(self, message):
         put_in_queue(message, self.button_q)
         button = message.get('BUTTONPRESSED', None)
+        if button:
+            self.check_standard_message(button)
         if button == 'start':
-            put_in_queue(message, self.flow_q)
+            put_in_queue(message, self.control_q)
         if button == 'pause':
-            put_in_queue(message, self.flow_q)
+            put_in_queue(message, self.control_q)
         if button == 'stop':
-            put_in_queue(message, self.flow_q)
+            put_in_queue(message, self.control_q)
 
     def handle_window_event(self, message):
         put_in_queue(message, self.window_q)
+
+    def check_standard_message(self, event):
+        action = None
+        if event == 'w' or event == 'UpArrow' or event == 'up':
+            action = 'up'
+        if event == 's' or event == 'DownArrow' or event == 'down':
+            action = 'down'
+        if event == 'a' or event == 'LeftArrow' or event == 'left':
+            action = 'left'
+        if event == 'd' or event == 'RightArrow' or event == 'right':
+            action = 'right'
+        if event == 'Space' or event == 'fire':
+            action = 'fire'
+        if action:
+            put_in_queue({'ACTION': action}, self.standard_q)
 
 
 def put_in_queue(message, queue):
@@ -114,18 +129,3 @@ def put_in_queue(message, queue):
         logging.error(e)
 
 
-def get_standard_message(event):
-    action = None
-    if event == 'w' or event == 'UpArrow' or event == 'up':
-        action = 'up'
-    if event == 's' or event == 'DownArrow' or event == 'down':
-        action = 'down'
-    if event == 'a' or event == 'LeftArrow' or event == 'left':
-        action = 'left'
-    if event == 'd' or event == 'RightArrow' or event == 'right':
-        action = 'right'
-    if event == 'Space' or event == 'fire':
-        action = 'fire'
-    if action:
-        return {'ACTION': action}
-    return None

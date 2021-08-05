@@ -4,9 +4,8 @@ class ControlPanel:
         self.sliders = sliders if type(sliders) == list else None
         self.keys = keys if type(keys) == bool else False
         self.pipe = pipe
-        self.send_controls()
 
-    def send_controls(self):
+    def send(self):
         control_panel = {'ControlPanel': {
             'Buttons': self.buttons,
             'Sliders': self.sliders,
@@ -30,7 +29,7 @@ class ControlPanel:
             self.sliders = sliders
         if keys and type(keys) == bool:
             self.keys = keys
-        self.send_controls()
+        self.send()
 
     def add_button(self, text=None, icon=None, image=None, color=None, bgcolor=None, value=None):
         button = dict(text=text, icon=icon, image=image, color=color, bgcolor=bgcolor, value=value)
@@ -61,6 +60,11 @@ class ControlPanel:
 
     def reset_sliders(self):
         self.sliders = None
+
+    def set_slider_value(self, slider_id, value):
+        for slider in self.sliders:
+            if slider_id == slider.get('Slider', {}).get('id', None):
+                slider['Slider']['value'] = value
 
     def set_keys(self, setting):
         if type(setting) == bool:
