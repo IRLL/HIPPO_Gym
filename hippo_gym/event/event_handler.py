@@ -75,6 +75,10 @@ class EventHandler:
         if event:
             self.handle_window_event(event)
             return new_user
+        event = message.get('SliderEvent', None)
+        if event:
+            self.handle_slider_event(event)
+            return new_user
         return new_user
 
     def handle_user_id(self, user_id, project_id):
@@ -119,6 +123,8 @@ class EventHandler:
         if action:
             put_in_queue({'ACTION': action}, self.standard_q)
 
+    def handle_slider_event(self, message):
+        put_in_queue(message, self.control_q)
 
 def put_in_queue(message, queue):
     try:
