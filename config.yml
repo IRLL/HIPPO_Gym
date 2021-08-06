@@ -19,12 +19,12 @@ project:
     fullchain: SSL/fullchain.pem
     privkey: SSL/privkey.pem
   steps: # any number of steps needed with corresponding filenames
-    1: StepFiles/Consent.html
-    2: StepFiles/PreSurvey.html
+    1: Consent.html
+    2: PreSurvey.html
     3: game
-    4: StepFiles/PostSurvey.html
-    5: StepFiles/Thank.html
-    finalStep: StepFiles/Thank.html # required, filename can be same as last numbered step
+    4: PostSurvey.html
+    5: Thank.html
+    finalStep: Thank.html # required, filename can be same as last numbered step
   teamMembers: Federico Mathis, Petrich Laura # str
 trial:
   actionBufferLifespan: 1 # int
