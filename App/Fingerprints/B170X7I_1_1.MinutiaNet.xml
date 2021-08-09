@@ -1,21 +1,21 @@
-<MinutiaeList>
-  <Minutia X="146" Y="266" Angle="94.81480296716758" Type="2"/>
-  <Minutia X="141" Y="187" Angle="347.1278366293334" Type="2"/>
-  <Minutia X="265" Y="221" Angle="62.338187421553485" Type="2"/>
-  <Minutia X="333" Y="268" Angle="60.137164763552484" Type="2"/>
-  <Minutia X="153" Y="246" Angle="83.86614246341192" Type="2"/>
-  <Minutia X="134" Y="253" Angle="101.96200619030702" Type="2"/>
-  <Minutia X="117" Y="230" Angle="310.3188930228162" Type="2"/>
-  <Minutia X="238" Y="229" Angle="64.94431505268426" Type="2"/>
-  <Minutia X="297" Y="305" Angle="237.69517304532326" Type="2"/>
-  <Minutia X="269" Y="174" Angle="227.6945313164328" Type="2"/>
-  <Minutia X="258" Y="153" Angle="41.278694046116904" Type="2"/>
-  <Minutia X="123" Y="293" Angle="295.38084881253457" Type="2"/>
-  <Minutia X="301" Y="187" Angle="52.6568173168266" Type="2"/>
-  <Minutia X="198" Y="146" Angle="212.43612514728386" Type="2"/>
-  <Minutia X="314" Y="258" Angle="241.54262247709784" Type="2"/>
-  <Minutia X="202" Y="178" Angle="38.15712619986087" Type="2"/>
-  <Minutia X="171" Y="154" Angle="92.4895633695194" Type="2"/>
-  <Minutia X="173" Y="259" Angle="129.33893180989162" Type="2"/>
-  <Minutia X="155" Y="228" Angle="73.81251822979786" Type="2"/>
+<MinutiaeList Score="8">
+  <Minutia X="146" Y="266" Angle="94.81480296716758" Type="2" />
+  <Minutia X="141" Y="187" Angle="347.1278366293334" Type="2" />
+  <Minutia X="265" Y="221" Angle="62.338187421553485" Type="2" />
+  <Minutia X="333" Y="268" Angle="60.137164763552484" Type="2" />
+  <Minutia X="153" Y="246" Angle="83.86614246341192" Type="2" />
+  <Minutia X="134" Y="253" Angle="101.96200619030702" Type="2" />
+  <Minutia X="117" Y="230" Angle="310.3188930228162" Type="2" />
+  <Minutia X="238" Y="229" Angle="64.94431505268426" Type="2" />
+  <Minutia X="297" Y="305" Angle="237.69517304532326" Type="2" />
+  <Minutia X="269" Y="174" Angle="227.6945313164328" Type="2" />
+  <Minutia X="258" Y="153" Angle="41.278694046116904" Type="2" />
+  <Minutia X="123" Y="293" Angle="295.38084881253457" Type="2" />
+  <Minutia X="301" Y="187" Angle="52.6568173168266" Type="2" />
+  <Minutia X="198" Y="146" Angle="212.43612514728386" Type="2" />
+  <Minutia X="314" Y="258" Angle="241.54262247709784" Type="2" />
+  <Minutia X="202" Y="178" Angle="38.15712619986087" Type="2" />
+  <Minutia X="171" Y="154" Angle="92.4895633695194" Type="2" />
+  <Minutia X="173" Y="259" Angle="129.33893180989162" Type="2" />
+  <Minutia X="155" Y="228" Angle="73.81251822979786" Type="2" />
 </MinutiaeList>

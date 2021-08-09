@@ -1,17 +1,17 @@
-<MinutiaeList>
-  <Minutia X="334" Y="157" Angle="198.8567636323214" Type="2"/>
-  <Minutia X="190" Y="244" Angle="88.99738151429416" Type="2"/>
-  <Minutia X="163" Y="222" Angle="205.85818680394524" Type="2"/>
-  <Minutia X="373" Y="158" Angle="192.54395546694073" Type="2"/>
-  <Minutia X="138" Y="242" Angle="182.35915176330667" Type="2"/>
-  <Minutia X="322" Y="141" Angle="206.63533714213412" Type="2"/>
-  <Minutia X="229" Y="234" Angle="190.56098738279988" Type="2"/>
-  <Minutia X="173" Y="252" Angle="86.17418401576217" Type="2"/>
-  <Minutia X="81" Y="233" Angle="91.27167258675797" Type="2"/>
-  <Minutia X="198" Y="202" Angle="208.32562637869685" Type="2"/>
-  <Minutia X="178" Y="213" Angle="202.69434186299253" Type="2"/>
-  <Minutia X="260" Y="163" Angle="233.6572140031691" Type="2"/>
-  <Minutia X="138" Y="206" Angle="30.723237840040365" Type="2"/>
-  <Minutia X="340" Y="189" Angle="185.29456606740428" Type="2"/>
-  <Minutia X="282" Y="165" Angle="51.9170227005805" Type="2"/>
+<MinutiaeList Score="46">
+  <Minutia X="334" Y="157" Angle="198.8567636323214" Type="2" />
+  <Minutia X="190" Y="244" Angle="88.99738151429416" Type="2" />
+  <Minutia X="163" Y="222" Angle="205.85818680394524" Type="2" />
+  <Minutia X="373" Y="158" Angle="192.54395546694073" Type="2" />
+  <Minutia X="138" Y="242" Angle="182.35915176330667" Type="2" />
+  <Minutia X="322" Y="141" Angle="206.63533714213412" Type="2" />
+  <Minutia X="229" Y="234" Angle="190.56098738279988" Type="2" />
+  <Minutia X="173" Y="252" Angle="86.17418401576217" Type="2" />
+  <Minutia X="81" Y="233" Angle="91.27167258675797" Type="2" />
+  <Minutia X="198" Y="202" Angle="208.32562637869685" Type="2" />
+  <Minutia X="178" Y="213" Angle="202.69434186299253" Type="2" />
+  <Minutia X="260" Y="163" Angle="233.6572140031691" Type="2" />
+  <Minutia X="138" Y="206" Angle="30.723237840040365" Type="2" />
+  <Minutia X="340" Y="189" Angle="185.29456606740428" Type="2" />
+  <Minutia X="282" Y="165" Angle="51.9170227005805" Type="2" />
 </MinutiaeList>

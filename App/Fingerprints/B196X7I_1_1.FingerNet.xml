@@ -1,17 +1,17 @@
-<MinutiaeList>
-<Minutia X="132" Y="148" Angle="303,0" Type="2"/>
-<Minutia X="197" Y="154" Angle="309,0" Type="2"/>
-<Minutia X="154" Y="315" Angle="315,0" Type="2"/>
-<Minutia X="285" Y="163" Angle="47,0" Type="2"/>
-<Minutia X="154" Y="187" Angle="117,0" Type="2"/>
-<Minutia X="141" Y="251" Angle="299,0" Type="2"/>
-<Minutia X="138" Y="338" Angle="327,0" Type="2"/>
-<Minutia X="245" Y="147" Angle="355,0" Type="2"/>
-<Minutia X="124" Y="325" Angle="317,0" Type="2"/>
-<Minutia X="276" Y="234" Angle="95,0" Type="2"/>
-<Minutia X="284" Y="147" Angle="35,0" Type="2"/>
-<Minutia X="117" Y="57" Angle="315,0" Type="2"/>
-<Minutia X="259" Y="179" Angle="53,0" Type="2"/>
-<Minutia X="190" Y="147" Angle="127,00000000000001" Type="2"/>
-<Minutia X="228" Y="132" Angle="339,0" Type="2"/>
+<MinutiaeList Score="1">
+<Minutia X="132" Y="148" Angle="303,0" Type="2" />
+<Minutia X="197" Y="154" Angle="309,0" Type="2" />
+<Minutia X="154" Y="315" Angle="315,0" Type="2" />
+<Minutia X="285" Y="163" Angle="47,0" Type="2" />
+<Minutia X="154" Y="187" Angle="117,0" Type="2" />
+<Minutia X="141" Y="251" Angle="299,0" Type="2" />
+<Minutia X="138" Y="338" Angle="327,0" Type="2" />
+<Minutia X="245" Y="147" Angle="355,0" Type="2" />
+<Minutia X="124" Y="325" Angle="317,0" Type="2" />
+<Minutia X="276" Y="234" Angle="95,0" Type="2" />
+<Minutia X="284" Y="147" Angle="35,0" Type="2" />
+<Minutia X="117" Y="57" Angle="315,0" Type="2" />
+<Minutia X="259" Y="179" Angle="53,0" Type="2" />
+<Minutia X="190" Y="147" Angle="127,00000000000001" Type="2" />
+<Minutia X="228" Y="132" Angle="339,0" Type="2" />
 </MinutiaeList>

@@ -1,40 +1,40 @@
-<MinutiaeList>
-<Minutia X="266" Y="242" Angle="214,99999999999997" Type="2"/>
-<Minutia X="225" Y="164" Angle="77,0" Type="2"/>
-<Minutia X="211" Y="251" Angle="339,0" Type="2"/>
-<Minutia X="166" Y="146" Angle="81,0" Type="2"/>
-<Minutia X="203" Y="155" Angle="81,0" Type="2"/>
-<Minutia X="196" Y="202" Angle="127,00000000000001" Type="2"/>
-<Minutia X="251" Y="253" Angle="194,99999999999997" Type="2"/>
-<Minutia X="221" Y="212" Angle="81,0" Type="2"/>
-<Minutia X="265" Y="173" Angle="61,0" Type="2"/>
-<Minutia X="173" Y="249" Angle="1,0" Type="2"/>
-<Minutia X="314" Y="228" Angle="225,0" Type="2"/>
-<Minutia X="121" Y="154" Angle="65,0" Type="2"/>
-<Minutia X="157" Y="235" Angle="1,0" Type="2"/>
-<Minutia X="302" Y="241" Angle="213,0" Type="2"/>
-<Minutia X="172" Y="174" Angle="115,0" Type="2"/>
-<Minutia X="162" Y="217" Angle="343,0" Type="2"/>
-<Minutia X="294" Y="265" Angle="199,0" Type="2"/>
-<Minutia X="114" Y="211" Angle="237,00000000000003" Type="2"/>
-<Minutia X="105" Y="177" Angle="63,0" Type="2"/>
-<Minutia X="284" Y="284" Angle="191,0" Type="2"/>
-<Minutia X="245" Y="113" Angle="58,99999999999999" Type="2"/>
-<Minutia X="155" Y="188" Angle="317,0" Type="2"/>
-<Minutia X="109" Y="133" Angle="89,0" Type="2"/>
-<Minutia X="149" Y="179" Angle="225,0" Type="2"/>
-<Minutia X="97" Y="148" Angle="89,0" Type="2"/>
-<Minutia X="226" Y="228" Angle="89,0" Type="2"/>
-<Minutia X="236" Y="243" Angle="194,99999999999997" Type="2"/>
-<Minutia X="251" Y="154" Angle="63,0" Type="2"/>
-<Minutia X="94" Y="147" Angle="281,0" Type="2"/>
-<Minutia X="93" Y="164" Angle="77,0" Type="2"/>
-<Minutia X="142" Y="164" Angle="248,99999999999997" Type="2"/>
-<Minutia X="268" Y="99" Angle="227,0" Type="2"/>
-<Minutia X="218" Y="301" Angle="1,0" Type="2"/>
-<Minutia X="228" Y="236" Angle="139,0" Type="2"/>
-<Minutia X="252" Y="313" Angle="183,0" Type="2"/>
-<Minutia X="233" Y="238" Angle="225,0" Type="2"/>
-<Minutia X="299" Y="84" Angle="41,0" Type="2"/>
-<Minutia X="253" Y="84" Angle="48,99999999999999" Type="2"/>
+<MinutiaeList Score="1">
+<Minutia X="266" Y="242" Angle="214,99999999999997" Type="2" />
+<Minutia X="225" Y="164" Angle="77,0" Type="2" />
+<Minutia X="211" Y="251" Angle="339,0" Type="2" />
+<Minutia X="166" Y="146" Angle="81,0" Type="2" />
+<Minutia X="203" Y="155" Angle="81,0" Type="2" />
+<Minutia X="196" Y="202" Angle="127,00000000000001" Type="2" />
+<Minutia X="251" Y="253" Angle="194,99999999999997" Type="2" />
+<Minutia X="221" Y="212" Angle="81,0" Type="2" />
+<Minutia X="265" Y="173" Angle="61,0" Type="2" />
+<Minutia X="173" Y="249" Angle="1,0" Type="2" />
+<Minutia X="314" Y="228" Angle="225,0" Type="2" />
+<Minutia X="121" Y="154" Angle="65,0" Type="2" />
+<Minutia X="157" Y="235" Angle="1,0" Type="2" />
+<Minutia X="302" Y="241" Angle="213,0" Type="2" />
+<Minutia X="172" Y="174" Angle="115,0" Type="2" />
+<Minutia X="162" Y="217" Angle="343,0" Type="2" />
+<Minutia X="294" Y="265" Angle="199,0" Type="2" />
+<Minutia X="114" Y="211" Angle="237,00000000000003" Type="2" />
+<Minutia X="105" Y="177" Angle="63,0" Type="2" />
+<Minutia X="284" Y="284" Angle="191,0" Type="2" />
+<Minutia X="245" Y="113" Angle="58,99999999999999" Type="2" />
+<Minutia X="155" Y="188" Angle="317,0" Type="2" />
+<Minutia X="109" Y="133" Angle="89,0" Type="2" />
+<Minutia X="149" Y="179" Angle="225,0" Type="2" />
+<Minutia X="97" Y="148" Angle="89,0" Type="2" />
+<Minutia X="226" Y="228" Angle="89,0" Type="2" />
+<Minutia X="236" Y="243" Angle="194,99999999999997" Type="2" />
+<Minutia X="251" Y="154" Angle="63,0" Type="2" />
+<Minutia X="94" Y="147" Angle="281,0" Type="2" />
+<Minutia X="93" Y="164" Angle="77,0" Type="2" />
+<Minutia X="142" Y="164" Angle="248,99999999999997" Type="2" />
+<Minutia X="268" Y="99" Angle="227,0" Type="2" />
+<Minutia X="218" Y="301" Angle="1,0" Type="2" />
+<Minutia X="228" Y="236" Angle="139,0" Type="2" />
+<Minutia X="252" Y="313" Angle="183,0" Type="2" />
+<Minutia X="233" Y="238" Angle="225,0" Type="2" />
+<Minutia X="299" Y="84" Angle="41,0" Type="2" />
+<Minutia X="253" Y="84" Angle="48,99999999999999" Type="2" />
 </MinutiaeList>

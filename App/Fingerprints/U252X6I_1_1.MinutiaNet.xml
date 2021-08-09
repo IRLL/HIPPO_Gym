@@ -1,17 +1,17 @@
-<MinutiaeList>
-  <Minutia X="244" Y="204" Angle="63.65296459327548" Type="2"/>
-  <Minutia X="229" Y="251" Angle="92.41134797211862" Type="2"/>
-  <Minutia X="266" Y="206" Angle="64.93337725676122" Type="2"/>
-  <Minutia X="205" Y="299" Angle="289.33967978929456" Type="2"/>
-  <Minutia X="258" Y="189" Angle="57.775953697768706" Type="2"/>
-  <Minutia X="195" Y="202" Angle="116.30411730684875" Type="2"/>
-  <Minutia X="260" Y="235" Angle="76.56016220344" Type="2"/>
-  <Minutia X="211" Y="196" Angle="57.68229610602111" Type="2"/>
-  <Minutia X="250" Y="253" Angle="84.93604315414976" Type="2"/>
-  <Minutia X="211" Y="236" Angle="107.07236476741369" Type="2"/>
-  <Minutia X="210" Y="220" Angle="102.26591449486803" Type="2"/>
-  <Minutia X="180" Y="228" Angle="113.37457854604035" Type="2"/>
-  <Minutia X="203" Y="250" Angle="136.47948452476808" Type="2"/>
-  <Minutia X="197" Y="171" Angle="356.8274107039266" Type="2"/>
-  <Minutia X="173" Y="260" Angle="139.50588384258066" Type="2"/>
+<MinutiaeList Score="1">
+  <Minutia X="244" Y="204" Angle="63.65296459327548" Type="2" />
+  <Minutia X="229" Y="251" Angle="92.41134797211862" Type="2" />
+  <Minutia X="266" Y="206" Angle="64.93337725676122" Type="2" />
+  <Minutia X="205" Y="299" Angle="289.33967978929456" Type="2" />
+  <Minutia X="258" Y="189" Angle="57.775953697768706" Type="2" />
+  <Minutia X="195" Y="202" Angle="116.30411730684875" Type="2" />
+  <Minutia X="260" Y="235" Angle="76.56016220344" Type="2" />
+  <Minutia X="211" Y="196" Angle="57.68229610602111" Type="2" />
+  <Minutia X="250" Y="253" Angle="84.93604315414976" Type="2" />
+  <Minutia X="211" Y="236" Angle="107.07236476741369" Type="2" />
+  <Minutia X="210" Y="220" Angle="102.26591449486803" Type="2" />
+  <Minutia X="180" Y="228" Angle="113.37457854604035" Type="2" />
+  <Minutia X="203" Y="250" Angle="136.47948452476808" Type="2" />
+  <Minutia X="197" Y="171" Angle="356.8274107039266" Type="2" />
+  <Minutia X="173" Y="260" Angle="139.50588384258066" Type="2" />
 </MinutiaeList>

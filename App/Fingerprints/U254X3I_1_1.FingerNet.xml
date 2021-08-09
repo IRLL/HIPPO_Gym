@@ -1,8 +1,8 @@
-<MinutiaeList>
-<Minutia X="245" Y="252" Angle="223,0" Type="2"/>
-<Minutia X="180" Y="235" Angle="183,0" Type="2"/>
-<Minutia X="258" Y="197" Angle="41,0" Type="2"/>
-<Minutia X="171" Y="244" Angle="359,0" Type="2"/>
-<Minutia X="154" Y="253" Angle="157,0" Type="2"/>
-<Minutia X="212" Y="261" Angle="213,0" Type="2"/>
+<MinutiaeList Score="2258">
+<Minutia X="245" Y="252" Angle="223,0" Type="2" />
+<Minutia X="180" Y="235" Angle="183,0" Type="2" />
+<Minutia X="258" Y="197" Angle="41,0" Type="2" />
+<Minutia X="171" Y="244" Angle="359,0" Type="2" />
+<Minutia X="154" Y="253" Angle="157,0" Type="2" />
+<Minutia X="212" Y="261" Angle="213,0" Type="2" />
 </MinutiaeList>
