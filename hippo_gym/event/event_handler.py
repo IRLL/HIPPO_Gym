@@ -114,7 +114,7 @@ class EventHandler:
             action = 'left'
         if event == 'd' or event == 'RightArrow' or event == 'right':
             action = 'right'
-        if event == 'Space' or event == 'fire':
+        if event == ' ' or event == 'fire':
             action = 'fire'
         if action:
             put_in_queue({'ACTION': action}, self.standard_q)

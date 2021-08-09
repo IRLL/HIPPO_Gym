@@ -46,6 +46,8 @@ def main():
                 else:
                     info_panel.reset()
                 toggle_info = not toggle_info
+            elif action == 'fire':
+                text_box.send()
 
 
 def get_image(filename):
