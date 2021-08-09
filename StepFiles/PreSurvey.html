@@ -17,6 +17,7 @@ textarea {
 	You may leave any answer blank that you do not want to answer.<br>
 When you are finished the questionnaire, click the "Submit" button at the bottom.</h3>
 
+<!-- Have you played Minecraft before? If yes, how much have you played? -->
 <p>1. Gender</p>
 <input type="radio" id="female" name="gender" value="female">
 <label for="female">Female</label><br>
@@ -118,7 +119,26 @@ When you are finished the questionnaire, click the "Submit" button at the bottom
 <label for="other">Other:</label><br>
 <textarea name="gamescomment" cols=40 rows=2 defaultValue="this is comment"></textarea>
 
-<p>9. Do you find that tutorials in video games are helpful?</p>
+<p>9. Have you played Minecraft before?</p>
+<input type="radio" id="yes" name="minecraft" value="yes">
+<label for="yes">Yes</label><br>
+<input type="radio" id="no" name="minecraft" value="no">
+<label for="no">No</label><br>
+
+<p>10. If you have played Minecraft, how often have you played?</p>
+<input type="radio" id="everyday" name="mcexperience" value="everyday">
+<label for="everyday">Every day</label><br>
+<input type="radio" id="weekly" name="mcexperience" value="weekly">
+<label for="weekly">Every week</label><br>
+<input type="radio" id="monthly" name="mcexperience" value="monthly">
+<label for="monthly">Occasionally</label><br>
+<input type="radio" id="never" name="mcexperience" value="never">
+<label for="never">I do not play video games</label><br>
+<input type="radio" id="other" name="mcexperience" value="other">
+<label for="other">Other:</label><br>
+<textarea name="mccomment" cols=40 rows=2 defaultValue="this is comment"></textarea>
+
+<p>11. Do you find that tutorials in video games are helpful?</p>
 <input type="radio" id="yes" name="tutorials" value="yes">
 <label for="yes">Yes</label><br>
 <input type="radio" id="no" name="tutorials" value="no">
@@ -128,7 +148,7 @@ When you are finished the questionnaire, click the "Submit" button at the bottom
 <input type="radio" id="n/a" name="tutorials" value="n/a">
 <label for="n/a">I do not play videogames</label><br>
 
-<p>10. If you had the choice to use a tutorial in a video game where you want to get the highest score, would you?</p>
+<p>12. If you had the choice to use a tutorial in a video game where you want to get the highest score, would you?</p>
 <input type="radio" id="yes" name="tutorials" value="yes">
 <label for="yes">Yes</label><br>
 <input type="radio" id="no" name="tutorials" value="no">
@@ -138,6 +158,6 @@ When you are finished the questionnaire, click the "Submit" button at the bottom
 <input type="radio" id="n/a" name="tutorials" value="n/a">
 <label for="n/a">I do not play videogames</label><br>
 
-<p>11. Any other comments?</p>
+<p>13. Do you have any other comments?</p>
 <textarea name="comment" cols=40 rows=5 defaultValue="this is comment"></textarea>
 
