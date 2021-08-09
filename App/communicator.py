@@ -1,4 +1,4 @@
-import asyncio, websockets, sys, ssl
+import asyncio, websockets, sys, ssl, os
 from multiprocessing import Process, Pipe
 import logging
 
@@ -24,7 +24,10 @@ def main():
         devEnv = True
     else:
         ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-        ssl_context.load_cert_chain('fullchain.pem', keyfile='privkey.pem')
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        fullchain = os.path.join(dir_path, 'fullchain.pem')
+        keyfile = os.path.join(dir_path, 'privkey.pem')
+        ssl_context.load_cert_chain(fullchain, keyfile=keyfile)
         start_server = websockets.serve(handler, None, PORT, ssl=ssl_context)
     asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()

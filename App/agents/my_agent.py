@@ -17,7 +17,7 @@ class CraftingAgent(Agent):
         game = config.get('game')
         if game == 'minecrafting':
             task_name = list(TASKS.keys())[config.get('task_number')]
-            self.env = MineCraftingEnv(tasks=[task_name], tasks_can_end=[True])
+            self.env = MineCraftingEnv(tasks=[task_name], tasks_can_end=[True], max_step=100)
 
     def handle_events(self, events):
         action = get_human_action(self.env, additional_events=events,

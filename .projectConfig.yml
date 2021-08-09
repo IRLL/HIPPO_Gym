@@ -1,35 +1,41 @@
 project:
   awsSetup:
-    bucket: null
+    bucket: projects.irll
+    containerName: test-option-metrics-complexity
     cpu: 2
-    memory: 10
-    region: null
-    rootDomain: null
+    memory: 8
+    region: ca-central-1
+    repository: test-option-metrics-complexity
+    repositoryUri: 237796709103.dkr.ecr.ca-central-1.amazonaws.com/test-option-metrics-complexity
+    rootDomain: irll.net
+  bucket: projects.irll
+  ecsTask: test-option-metrics-complexity
   events:
-    startServerStep: null
-    stopServerStep: null
-  id: null
+    startServerStep: 1
+    stopServerStep: 4
+  id: test-option-metrics-complexity
   live: true
   maxRuntime: 90
-  name: null
-  researcher: null
+  name: option-metrics-complexity
+  researcher: Federico Mathis
   ssl:
     fullchain: SSL/fullchain.pem
     privkey: SSL/privkey.pem
-    sslBucket: null
+    sslBucket: projects.irll
   steps:
-    1: StepFiles/Consent.html
-    2: StepFiles/PreSurvey.html
-    3: null
-    4: StepFiles/PostSurvey.html
-    finalStep: StepFiles/Thank.html
-  teamMembers: null
-  useAWS: false
+    1: Consent.html
+    2: PreSurvey.html
+    3: game
+    4: PostSurvey.html
+    5: Thank.html
+    finalStep: Thank.html
+  teamMembers: Federico Mathis, Petrich Laura
+  useAWS: true
 trial:
   actionBufferLifespan: 1
   actionSpace: []
   allowFrameRateChange: false
-  bucket: null
+  bucket: projects.irll
   dataFile: episode
   defaultAction: null
   defaultStart: true
@@ -38,10 +44,11 @@ trial:
   maxEpisodes: 2
   maxFrameRate: 60
   minFrameRate: 1
-  projectId: null
-  s3upload: false
+  projectId: test-option-metrics-complexity
+  s3upload: true
   startingFrameRate: 15
-  ui: []
+  ui:
+  - reset
   variables:
     gameWindowHeight: 719
     gameWindowSize: responsive
