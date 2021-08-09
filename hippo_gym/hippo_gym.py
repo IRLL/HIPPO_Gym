@@ -97,6 +97,15 @@ class HippoGym:
         if len(self.game_windows) > index:
             self.game_windows[index].set_size(new_size)
 
+    def handle_control_messages(self):
+        messages = check_queues(self.queues['control_q'])
+        if messages:
+            for message in messages:
+                event = message.get('SLIDERSET', None)
+                if event:
+                    self.control_panel.set_slider_value(event)
+
+
     def poll(self):
         #control = self.handle_control_messages()
         #window = self.handle_window_messages()
