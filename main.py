@@ -14,17 +14,23 @@ def main():
     control_panel = hippo.get_control_panel()
     info_panel = hippo.get_info_panel()
     text_box = hippo.add_text_box()
-    text_box.update(text="Hello Payas!", buttons=['save', 'run', 'clear'])
+    text_box.update(text="Hello Payas!")#, buttons=['save', 'run', 'clear'])
     game_window = hippo.get_game_window()
     game_window.update(image=get_image(images[index // len(images)]))
     control_panel.use_standard_buttons()
     control_panel.add_button(text="Save", color='white', bgcolor='orange', value='save')
+    json_recorder = hippo.add_recorder(mode='json')
+    pickle_recorder = hippo.add_recorder()
+    hippo.standby()
     while True:
-        hippo.standby()
         for item in hippo.poll():
             button = item.get('BUTTONPRESSED', None)
             if button == 'save':
                 text_box.request()
+                text = text_box.get_text()
+                print(text)
+                json_recorder.record({'text': text})
+                pickle_recorder.record({'text': text})
             action = item.get('ACTION', None)
             if action == 'right':
                 index += 1
@@ -50,9 +56,13 @@ def main():
                 text_box.send()
 
 
+def tryme(hg):
+    print(hg)
+    print('hello, this worked')
+
+
 def get_image(filename):
     with open(f'img/{filename}', 'rb') as infile:
-        print(filename)
         frame = base64.b64encode(infile.read()).decode('utf-8')
     return frame
 

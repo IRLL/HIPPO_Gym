@@ -9,3 +9,4 @@ Logs/*
 .projectConfig.yml
 App/.trialConfig.yml
 App/server.log
+Records

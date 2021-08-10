@@ -9,6 +9,7 @@ class EventHandler:
         self.window_q = queues.get('window_q', None)
         self.standard_q = queues.get('standard_q', None)
         self.control_q = queues.get('control_q', None)
+        self.textbox_q = queues.get('textbox_q', None)
         if not self.control_q:
             logging.debug("no control_q in EventHandler")
         if not self.keyboard_q:
@@ -19,6 +20,17 @@ class EventHandler:
             logging.debug("no window_q in EventHandler")
         if not self.standard_q:
             logging.debug("no standard_q in EventHandler")
+        if not self.textbox_q:
+            logging.debug("no textbox_q in EventHandler")
+
+        self.handlers = {
+            'KeyboardEvent': self.handle_keyboard_event,
+            'MouseEvent': self.handle_window_event,
+            'ButtonEvent': self.handle_button_event,
+            'WindowEvent': self.handle_window_event,
+            'SliderEvent': self.handle_slider_event,
+            'TextEvent': self.handle_text_event
+        }
 
     def get(self):
         # return all events from queue
@@ -53,37 +65,17 @@ class EventHandler:
             self.pipe.recv()
 
     def parse(self, message):
-        new_user = False
-        user_id = message.get('userId', None)
-        if user_id:
-            project_id = message.get('projectId', None)
-            self.handle_user_id(user_id, project_id)
-            return new_user
-        event = message.get('KeyboardEvent', None)
-        if event:
-            self.handle_keyboard_event(event)
-            return new_user
-        event = message.get('MouseEvent', None)
-        if event:
-            self.handle_window_event(event)
-            return new_user
-        event = message.get('ButtonEvent', None)
-        if event:
-            self.handle_button_event(event)
-            return new_user
-        event = message.get('WindowEvent', None)
-        if event:
-            self.handle_window_event(event)
-            return new_user
-        event = message.get('SliderEvent', None)
-        if event:
-            self.handle_slider_event(event)
-            return new_user
-        return new_user
+        for key in message.keys():
+            if key in self.handlers:
+                self.handlers[key](message[key])
 
-    def handle_user_id(self, user_id, project_id):
-        message = {'userId': user_id, 'projectId': project_id}
+    def handle_user_id(self, ids):
+        message = {'userId': ids[0], 'projectId': ids[1]}
+        print(ids[0], ids[1])
         put_in_queue(message, self.control_q)
+
+    def handle_text_event(self, message):
+        put_in_queue(message, self.textbox_q)
 
     def handle_keyboard_event(self, message):
         put_in_queue(message, self.keyboard_q)
@@ -126,6 +118,15 @@ class EventHandler:
     def handle_slider_event(self, message):
         put_in_queue(message, self.control_q)
 
+    def connect(self, message):
+        user_id = message.get('userId', None)
+        project_id = message.get('projectId', None)
+        return user_id, project_id
+
+    def disconnect(self, user_id):
+        put_in_queue({"disconnect": user_id}, self.control_q)
+
+
 def put_in_queue(message, queue):
     try:
         if queue.full():
@@ -133,5 +134,3 @@ def put_in_queue(message, queue):
         queue.put_nowait(message)
     except Exception as e:
         logging.error(e)
-
-
