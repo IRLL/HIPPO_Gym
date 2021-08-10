@@ -6,7 +6,7 @@ class InfoPanel:
         self.kv = kv if type(kv) == list else None
 
     def send(self):
-        info_panel = {'info_panel': None}
+        info_panel = {'InfoPanel': None}
         if self.text or self.items or self.kv:
             info_panel = {'InfoPanel': {
                 'text': self.text,
