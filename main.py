@@ -19,7 +19,7 @@ def main():
     game_window.update(image=get_image(images[index // len(images)]))
     control_panel.use_standard_buttons()
     control_panel.add_button(text="Save", color='white', bgcolor='orange', value='save')
-    json_recorder = hippo.add_recorder(mode='json')
+    json_recorder = hippo.add_recorder(mode='json', clean_path=True)
     pickle_recorder = hippo.add_recorder()
     hippo.standby()
     while True:

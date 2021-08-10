@@ -34,8 +34,8 @@ class HippoGym:
         self.communicator = Process(target=Communicator, args=(self.out_q, self.queues,))
         self.communicator.start()
 
-    def add_recorder(self, path=None, mode=None):
-        recorder = Recorder(self, path, mode)
+    def add_recorder(self, path=None, mode=None, clean_path=False):
+        recorder = Recorder(self, path, mode, clean_path)
         self.recorders.append(Recorder)
         return recorder
 

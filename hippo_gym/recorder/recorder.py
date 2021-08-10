@@ -1,15 +1,23 @@
 import json
 from os import makedirs, listdir
+from shutil import rmtree
 import _pickle as pickle
 
 
 class Recorder:
-    def __init__(self, hippo, path=None, mode=None):
+    def __init__(self, hippo, path=None, mode=None, clean_path=False):
         self.mode = mode if mode else 'pickle'
         self.hippo = hippo
         self.path = path if path else 'Records'
-        makedirs(self.path, exist_ok=True)
         self.current_file = None
+
+        if clean_path:
+           try:
+               rmtree(self.path)
+               print('Removed:', self.path)
+           except:
+               pass
+        makedirs(self.path, exist_ok=True)
 
     def record(self, data, filename=None):
         if self.mode == 'json':
