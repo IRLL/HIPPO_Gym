@@ -3,13 +3,17 @@ from os import makedirs, listdir
 from shutil import rmtree
 import _pickle as pickle
 
+from hippo_gym.recorder.uploader import Uploader
+
 
 class Recorder:
-    def __init__(self, hippo, path=None, mode=None, clean_path=False):
+    def __init__(self, hippo, path=None, mode=None, clean_path=False, upload=False):
         self.mode = mode if mode else 'pickle'
         self.hippo = hippo
         self.path = path if path else 'Records'
         self.current_file = None
+        self.current_filename = None
+        self.uploader = Uploader() if upload else None
 
         if clean_path:
            try:
@@ -19,20 +23,10 @@ class Recorder:
                pass
         makedirs(self.path, exist_ok=True)
 
-    def record(self, data, filename=None):
-        if self.mode == 'json':
-            mode = 'a'
-        else:
-            mode = 'ab'
-        if filename:
-            outfile = open(f'{self.path}/{filename}', mode)
-            self.write(data, outfile)
-            outfile.close()
-        elif self.current_file:
-            self.write(data, self.current_file)
-        else:
+    def record(self, data):
+        if not self.current_file:
             self.create_file()
-            self.write(data, self.current_file)
+        self.write(data, self.current_file)
 
     def write(self, data, outfile):
         if self.mode == 'json':
@@ -57,8 +51,12 @@ class Recorder:
             i += 1
             new_filename = f'{i}_{filename}'
         if self.current_file:
-            try:
-                self.current_file.close()
-            except:
-                pass
+            self.close_file()
         self.current_file = open(f'{self.path}/{new_filename}', mode)
+
+    def close_file(self)
+        if self.current_file:
+            self.current_file.close()
+            self.current_file = None
+            self.uploader.run(self.path, self.current_filename)
+            self.current_filename = None
