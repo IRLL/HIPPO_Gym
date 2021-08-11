@@ -1,4 +1,5 @@
 import time
+from threading import Thread
 
 from hippo_gym.browser.control_panel import ControlPanel
 from hippo_gym.browser.game_window import GameWindow
@@ -8,7 +9,11 @@ from multiprocessing import Process, Queue
 
 from hippo_gym.browser.text_box import TextBox
 from hippo_gym.communicator.communicator import Communicator
+from hippo_gym.control_message_handler import ControlMessageHandler
 from hippo_gym.queue_handler import check_queue, check_queues
+from hippo_gym.recorder.recorder import Recorder
+from hippo_gym.textbox_message_handler import TextBoxMessageHandler
+from hippo_gym.window_message_handler import WindowMessageHandler
 
 
 class HippoGym:
@@ -20,13 +25,26 @@ class HippoGym:
         self.text_boxes = []
         self.grid = None
         self.run = False
+        self.stop = False
         self.user_id = None
         self.project_id = None
         self.user_connected = False
+        self.recorders = []
         self.queues = create_queues()
         self.out_q = Queue()
         self.communicator = Process(target=Communicator, args=(self.out_q, self.queues,))
         self.communicator.start()
+
+    def add_recorder(self, path=None, mode=None, clean_path=False):
+        recorder = Recorder(self, path, mode, clean_path)
+        self.recorders.append(Recorder)
+        return recorder
+
+    def get_recorder(self, index=0):
+        if len(self.recorders) > index:
+            return self.recorders[index]
+        else:
+            return self.add_recorder()
 
     def add_text_box(self, text_box=None):
         if not type(text_box) == TextBox:
@@ -64,9 +82,6 @@ class HippoGym:
             self.grid = Grid()
         return self.grid
 
-    def get_event_handler(self):
-        return self.event_handler
-
     def set_game_window(self, new_game_window, index):
         if type(new_game_window) == GameWindow and len(self.game_windows) <= index + 1:
             new_game_window.update(id=index)
@@ -84,32 +99,60 @@ class HippoGym:
         if type(new_grid) == Grid:
             self.grid = new_grid
 
-    def start(self):
+    def start(self, value=None):
+        self.stop = False
         self.run = True
 
-    def pause(self):
+    def pause(self, value=None):
         self.run = False
 
-    def stop(self):
+    def end(self, value=None):
         self.run = False
+        self.stop = True
 
     def set_window_size(self, new_size, index):
         if len(self.game_windows) > index:
             self.game_windows[index].set_size(new_size)
 
     def handle_control_messages(self):
-        messages = check_queues(self.queues['control_q'])
-        if messages:
-            for message in messages:
-                event = message.get('SLIDERSET', None)
-                if event:
-                    self.control_panel.set_slider_value(event)
+        messages = check_queue(self.queues['control_q'])
+        for message in messages:
+            user_id = message.get('userId', None)
+            if user_id and not self.user_connected:
+                project_id = message.get('projectId', None)
+                self.project_id = project_id
+                self.user_id = user_id
+                self.user_connected = True
+                self.send()
 
+            event = message.get('SLIDERSET', None)
+            if event:
+                self.control_panel.set_slider_value(event)
+            event = message.get('Disconnect', None)
+            if event:
+                self.user_connected = False
+                self.run = False
+                self.user_id = None
+                print('Disconnected:', self.user_id)
+        return messages
+
+    def handle_window_messages(self):
+        messages = check_queue(self.queues['window_q'])
+        for message in messages:
+            event = message.get('WINDOWRESIZED', None)
+            if event:
+                index = 0
+                self.game_windows[index].update(width=event[0], height=event[1])
+        return messages
 
     def poll(self):
-        #control = self.handle_control_messages()
-        #window = self.handle_window_messages()
-        messages = check_queues(self.queues)
+        control = [] #self.handle_control_messages()
+        window = [] #self.handle_window_messages()
+        messages = check_queues([self.queues['keyboard_q'], self.queues['button_q'], self.queues['standard_q']])
+        for message in window:
+            messages.append(message)
+        for message in control:
+            messages.append(message)
         if messages:
             print(self.user_id, messages)
         return messages
@@ -126,47 +169,23 @@ class HippoGym:
         if self.info_panel:
             self.info_panel.send()
 
-    def standby(self):
+    def standby(self, function=None):
+        control = ControlMessageHandler(self)
+        control.start()
+        window = WindowMessageHandler(self)
+        window.start()
+        text = TextBoxMessageHandler(self)
+        text.start()
         while not self.user_connected:
             time.sleep(0.01)
-            self.user_id, self.project_id = get_ids(self.queues['control_q'])
-            if self.user_id:
-                self.user_connected = True
-                self.send()
-        return self.user_id
-
-
-def get_ids(control_q):
-    message = check_queue(control_q)
-    if message:
-        user_id = message.get("userId", None)
-        project_id = message.get("projectId", None)
-        return user_id, project_id
-    return None, None
-
-
-def main():
-    hg = HippoGym()
-    while not hg.user_id:
-        time.sleep(2)
-        hg.user_id, hg.project_id = get_ids(hg.queues['control_q'])
-    print(f'starting with user: {hg.user_id}')
-    buttons = [{"Button": {"text": "start"}}]
-    hg.control_panel = ControlPanel(hg.out_q, buttons=buttons, keys=True)
-    sliders = [{"Slider": {"title": "slide me"}}]
-    hg.control_panel.update(sliders=sliders)
-    hg.add_game_window()
-    hg.control_panel.update()
-    for i in range(2000):
-        hg.poll()
-        time.sleep(0.01)
+        if function:
+            function(self)
 
 
 def create_queues():
-    keys = ['keyboard_q', 'window_q', 'button_q', 'standard_q', 'control_q']
+    keys = ['keyboard_q', 'window_q', 'button_q', 'standard_q', 'control_q', 'textbox_q' ]
     queues = {}
     for key in keys:
         queues[key] = Queue()
     return queues
-
 

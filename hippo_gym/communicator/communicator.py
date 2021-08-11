@@ -19,10 +19,12 @@ class Communicator:
         self.fullchain = fullchain_path
         self.privkey = privkey_path
         self.event_handler = EventHandler(queues)
-        self.users = set()
+        self.users = []
         self.start()
 
     async def consumer_handler(self, websocket):
+        self.event_handler.handle_user_id(self.users[0])
+        print('starting:', self.users[0])
         async for message in websocket:
             try:
                 message = json.loads(message)
@@ -49,6 +51,16 @@ class Communicator:
         return message
 
     async def handler(self, websocket, path):
+        message = await websocket.recv()
+        user_id, project_id = self.event_handler.connect(json.loads(message))
+        if user_id:
+            self.users.append((user_id, project_id))
+        else:
+            await websocket.send(json.dumps({'Request': ('USER', None)}))
+        while self.users[0] != (user_id, project_id):
+            await websocket.send(json.dumps({'Request': ('STANDBY', None)}))
+            await asyncio.sleep(1)
+
         consumer_task = asyncio.ensure_future(self.consumer_handler(websocket))
         producer_task = asyncio.ensure_future(self.producer_handler(websocket))
         done, pending = await asyncio.wait(
@@ -58,6 +70,10 @@ class Communicator:
         for task in pending:
             task.cancel()
         await websocket.close()
+        print("User Disconnected")
+        self.users.remove((user_id, project_id))
+        self.event_handler.disconnect(user_id)
+
         return
 
     def start(self):

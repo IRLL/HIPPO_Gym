@@ -1,6 +1,9 @@
+import time
+
+
 class TextBox:
 
-    def __init__(self, queue, idx=0, width=700, height=600, mode='responsive', text=None, editable=False,
+    def __init__(self, queue, idx=0, width=700, height=600, mode='responsive', text=None, editable=True,
                  bgcolor='white', color='black', font=None, syntax=None, buttons=None):
         self.queue = queue
         self.id = idx
@@ -8,6 +11,7 @@ class TextBox:
         self.height = height
         self.mode = mode
         self.text = text
+        self.text_buffer = []
         self.editable = editable
         self.bgcolor = bgcolor
         self.color = color
@@ -45,6 +49,7 @@ class TextBox:
         if kwargs.get('mode', None):
             self.mode = kwargs.get('mode')
         if kwargs.get('text', None):
+            self.update_buffer()
             self.text = kwargs.get('text')
         if kwargs.get('editable', None):
             self.editable = kwargs.get('editable')
@@ -60,3 +65,17 @@ class TextBox:
             self.buttons = kwargs.get('buttons')
         if kwargs.get('send', True):
             self.send()
+
+    def clear(self, text=None):
+        self.update(text=text)
+        self.update_buffer()
+        self.text = ''
+
+    def update_buffer(self):
+        self.text_buffer.append(self.text)
+        if len(self.text_buffer) > 10:
+            self.text_buffer.pop(0)
+
+    def get_text(self):
+        time.sleep(0.1)
+        return self.text
