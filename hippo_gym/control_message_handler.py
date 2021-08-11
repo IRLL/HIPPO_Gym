@@ -16,7 +16,7 @@ class ControlMessageHandler(Thread):
             'SLIDERSET': self.slider,
             'start': self.hippo.start,
             'pause': self.hippo.pause,
-            'stop': self.hippo.stop
+            'end': self.hippo.end
         }
 
     def run(self):

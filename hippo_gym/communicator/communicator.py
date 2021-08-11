@@ -71,8 +71,7 @@ class Communicator:
             task.cancel()
         await websocket.close()
         print("User Disconnected")
-        user_id = self.users.pop(0)[0]
-        print(user_id)
+        self.users.remove((user_id, project_id))
         self.event_handler.disconnect(user_id)
 
         return

@@ -25,6 +25,7 @@ class HippoGym:
         self.text_boxes = []
         self.grid = None
         self.run = False
+        self.stop = False
         self.user_id = None
         self.project_id = None
         self.user_connected = False
@@ -99,13 +100,15 @@ class HippoGym:
             self.grid = new_grid
 
     def start(self, value=None):
+        self.stop = False
         self.run = True
 
     def pause(self, value=None):
         self.run = False
 
-    def stop(self, value=None):
+    def end(self, value=None):
         self.run = False
+        self.stop = True
 
     def set_window_size(self, new_size, index):
         if len(self.game_windows) > index:

@@ -22,6 +22,8 @@ class EventHandler:
             logging.debug("no standard_q in EventHandler")
         if not self.textbox_q:
             logging.debug("no textbox_q in EventHandler")
+        self.pressed_keys = set()
+        self.key_map = {'w': 'up', 'a': 'left', 's': 'down', 'd': 'right', ' ': 'fire'}
 
         self.handlers = {
             'KeyboardEvent': self.handle_keyboard_event,
@@ -82,8 +84,17 @@ class EventHandler:
         # check for common keys to add to standard_q events
         keydown = message.get('KEYDOWN', None)
         if keydown:
-            keydown = keydown[0]
-            self.check_standard_message(keydown)
+            key = keydown[0]
+            if key in self.key_map.keys() and key not in self.pressed_keys:
+                self.pressed_keys.add(key)
+                self.check_standard_message(key)
+        keyup = message.get('KEYUP', None)
+        if keyup:
+            key = keyup[0]
+            if key in self.key_map.keys() and key in self.pressed_keys:
+                self.pressed_keys.remove(key)
+                print(self.pressed_keys)
+                self.check_standard_message(key)
 
     def handle_button_event(self, message):
         put_in_queue(message, self.button_q)
@@ -91,26 +102,42 @@ class EventHandler:
         if button:
             self.check_standard_message(button)
         if button == 'start':
-            put_in_queue(message, self.control_q)
+            put_in_queue({'start': True}, self.control_q)
         if button == 'pause':
-            put_in_queue(message, self.control_q)
-        if button == 'stop':
-            put_in_queue(message, self.control_q)
+            put_in_queue({'pause': True}, self.control_q)
+        if button == 'end':
+            put_in_queue({'end': True}, self.control_q)
 
     def handle_window_event(self, message):
         put_in_queue(message, self.window_q)
 
     def check_standard_message(self, event):
         action = None
-        if event == 'w' or event == 'UpArrow' or event == 'up':
+        if event in self.key_map.keys():
+            if len(self.pressed_keys) == 0:
+                action = 'noop'
+            elif 'a' in self.pressed_keys and 'w' in self.pressed_keys:
+                action = 'upleft'
+            elif 'a' in self.pressed_keys and 's' in self.pressed_keys:
+                action = 'downleft'
+            elif 'd' in self.pressed_keys and 'w' in self.pressed_keys:
+                action = 'upright'
+            elif 'd' in self.pressed_keys and 's' in self.pressed_keys:
+                action = 'downright'
+            else:
+                key = self.pressed_keys.pop()
+                self.pressed_keys.add(key)
+                action = self.key_map[key]
+
+        elif event == 'w' or event == 'UpArrow' or event == 'up':
             action = 'up'
-        if event == 's' or event == 'DownArrow' or event == 'down':
+        elif event == 's' or event == 'DownArrow' or event == 'down':
             action = 'down'
-        if event == 'a' or event == 'LeftArrow' or event == 'left':
+        elif event == 'a' or event == 'LeftArrow' or event == 'left':
             action = 'left'
-        if event == 'd' or event == 'RightArrow' or event == 'right':
+        elif event == 'd' or event == 'RightArrow' or event == 'right':
             action = 'right'
-        if event == ' ' or event == 'fire':
+        elif event == ' ' or event == 'fire':
             action = 'fire'
         if action:
             put_in_queue({'ACTION': action}, self.standard_q)

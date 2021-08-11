@@ -1,7 +1,7 @@
 class ControlPanel:
-    def __init__(self, pipe, buttons=None, sliders=None, keys=False):
-        self.buttons = buttons if type(buttons) == list else None
-        self.sliders = sliders if type(sliders) == list else None
+    def __init__(self, pipe, buttons=None, sliders=None, keys=True):
+        self.buttons = buttons if type(buttons) == list else []
+        self.sliders = sliders if type(sliders) == list else []
         self.keys = keys if type(keys) == bool else False
         self.pipe = pipe
 

@@ -54,7 +54,7 @@ class Recorder:
             self.close_file()
         self.current_file = open(f'{self.path}/{new_filename}', mode)
 
-    def close_file(self)
+    def close_file(self):
         if self.current_file:
             self.current_file.close()
             self.current_file = None
