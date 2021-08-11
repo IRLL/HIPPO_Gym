@@ -33,9 +33,9 @@ class InfoPanel:
         self.text = None
 
     def reset(self):
-        self.text = None
-        self.items = None
-        self.kv = None
+        self.reset_text()
+        self.reset_items()
+        self.reset_kv()
         self.send()
 
     def update(self, text=None, items=None, kv=None):

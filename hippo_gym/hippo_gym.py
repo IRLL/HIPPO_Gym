@@ -110,6 +110,9 @@ class HippoGym:
         self.run = False
         self.stop = True
 
+    def disconnect(self):
+        self.out_q.put_nowait('done')
+
     def set_window_size(self, new_size, index):
         if len(self.game_windows) > index:
             self.game_windows[index].set_size(new_size)

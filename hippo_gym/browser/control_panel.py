@@ -1,5 +1,5 @@
 class ControlPanel:
-    def __init__(self, pipe, buttons=None, sliders=None, keys=True):
+    def __init__(self, pipe, buttons=None, sliders=None, keys=False):
         self.buttons = buttons if type(buttons) == list else []
         self.sliders = sliders if type(sliders) == list else []
         self.keys = keys if type(keys) == bool else False
@@ -31,8 +31,8 @@ class ControlPanel:
             self.keys = keys
         self.send()
 
-    def add_button(self, text=None, icon=None, image=None, color=None, bgcolor=None, value=None):
-        button = dict(text=text, icon=icon, image=image, color=color, bgcolor=bgcolor, value=value)
+    def add_button(self, text=None, icon=None, image=None, color=None, bgcolor=None, value=None, confirm=False):
+        button = dict(text=text, icon=icon, image=image, color=color, bgcolor=bgcolor, value=value, confirm=confirm)
         self.buttons.append({"Button": button})
         return button
 
@@ -44,7 +44,7 @@ class ControlPanel:
             return {"Error": "Index not of type int"}
 
     def reset_buttons(self):
-        self.buttons = None
+        self.buttons = []
 
     def add_slider(self, title=None, id=None, min=1, max=100, value=50):
         slider = dict(title=title, id=id, min=min, max=max, value=value)
@@ -59,7 +59,7 @@ class ControlPanel:
             return {"Error": "Index not of type int"}
 
     def reset_sliders(self):
-        self.sliders = None
+        self.sliders = []
 
     def set_slider_value(self, slider_id, value):
         print(slider_id, value)
@@ -77,6 +77,12 @@ class ControlPanel:
 
     def use_image_sliders(self):
         self.sliders = image_sliders
+
+    def reset(self):
+        self.reset_buttons()
+        self.reset_sliders()
+        self.keys = False
+        self.send()
 
 
 start_button = {'Button': {
