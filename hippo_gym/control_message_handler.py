@@ -8,6 +8,7 @@ class ControlMessageHandler(Thread):
     def __init__(self, hippo):
         Thread.__init__(self, daemon=True)
         self.hippo = hippo
+        print("CONTROL ME")
 
         self.handlers = {
             'userId': self.user,
@@ -23,6 +24,7 @@ class ControlMessageHandler(Thread):
         while True:
             messages = check_queue(self.hippo.queues['control_q'])
             for message in messages:
+                print(message)
                 for key in message.keys():
                     if key in self.handlers:
                         self.handlers[key](message[key])

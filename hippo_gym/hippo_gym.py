@@ -34,6 +34,10 @@ class HippoGym:
         self.out_q = Queue()
         self.communicator = Process(target=Communicator, args=(self.out_q, self.queues,))
         self.communicator.start()
+        self.control_message_handler = ControlMessageHandler(self)
+        self.control_message_handler.start()
+        self.window_message_handler = None
+        self.textbox_message_handler = None
 
     def add_recorder(self, path=None, mode=None, clean_path=False):
         recorder = Recorder(self, path, mode, clean_path)
@@ -50,12 +54,18 @@ class HippoGym:
         if not type(text_box) == TextBox:
             text_box = TextBox(self.out_q, idx=len(self.text_boxes))
         self.text_boxes.append(text_box)
+        if not self.textbox_message_handler:
+            self.textbox_message_handler = TextBoxMessageHandler(self)
+            self.textbox_message_handler.start()
         return text_box
 
     def add_game_window(self, game_window=None):
         if not type(game_window) == GameWindow:
             game_window = GameWindow(self.out_q, idx=len(self.game_windows))
         self.game_windows.append(game_window)
+        if not self.window_message_handler:
+            self.window_message_handler = WindowMessageHandler(self)
+            self.window_message_handler.start()
         return game_window
 
     def get_game_window(self, index=0):
@@ -173,12 +183,6 @@ class HippoGym:
             self.info_panel.send()
 
     def standby(self, function=None):
-        control = ControlMessageHandler(self)
-        control.start()
-        window = WindowMessageHandler(self)
-        window.start()
-        text = TextBoxMessageHandler(self)
-        text.start()
         while not self.user_connected:
             time.sleep(0.01)
         if function:
