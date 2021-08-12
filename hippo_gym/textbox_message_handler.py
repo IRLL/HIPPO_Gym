@@ -6,7 +6,7 @@ from hippo_gym.queue_handler import check_queue
 
 class TextBoxMessageHandler(Thread):
     def __init__(self, hippo):
-        Thread.__init__(self)
+        Thread.__init__(self, daemon=True)
         self.hippo = hippo
 
         self.handlers = {
