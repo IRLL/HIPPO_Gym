@@ -34,7 +34,7 @@ class ControlPanel:
     def add_button(self, text=None, icon=None, image=None, color=None, bgcolor=None, value=None, confirm=False):
         button = dict(text=text, icon=icon, image=image, color=color, bgcolor=bgcolor, value=value, confirm=confirm)
         self.buttons.append({"Button": button})
-        return button
+        return  button, len(self.buttons) - 1
 
     def remove_button(self, index):
         if type(index) == int:

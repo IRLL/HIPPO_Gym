@@ -66,6 +66,9 @@ class GameWindow:
             }}
         self.pipe.put_nowait(message)
 
+    def hide(self):
+        self.send({"GameWindow": None})
+
     def set_size(self, size):
         self.width = size[0]
         self.height = size[1]

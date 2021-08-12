@@ -17,6 +17,7 @@ def main():
     control.reset()
     control.add_button(text="Finish", color='white', bgcolor='red', value='end', confirm=True)
     control.add_button(text="Run", color='white', bgcolor='green', value='run')
+    hide_button, hide_index = control.add_button(text="Hide Game Window", color='white', bgcolor='blue', value='hide')
     info = hippo.get_info_panel()
     info.reset()
     window = hippo.get_game_window()
@@ -47,6 +48,8 @@ def get_run(hippo):
         button = item.get('BUTTONPRESSED', None)
         if button == 'run':
             return True
+        if button == 'hide':
+            hippo.get_game_window().hide()
     return False
 
 if __name__ == '__main__':
