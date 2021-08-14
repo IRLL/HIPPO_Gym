@@ -1,13 +1,13 @@
 class InfoPanel:
-    def __init__(self, queue, text=None, items=None, kv=None):
+    def __init__(self, queue, text=None, items=[], kv=[]):
         self.queue = queue
         self.text = text if type(text) == str else None
-        self.items = items if type(items) == list else None
-        self.kv = kv if type(kv) == list else None
+        self.items = items if type(items) == list else []
+        self.kv = kv if type(kv) == list else []
 
     def send(self):
         info_panel = {'InfoPanel': None}
-        if self.text or self.items or self.kv:
+        if self.text or len(self.items) != 0 or len(self.kv) !=0:
             info_panel = {'InfoPanel': {
                 'text': self.text,
                 'items': self.items,
@@ -20,14 +20,14 @@ class InfoPanel:
         return self.items
 
     def reset_items(self):
-        self.items = None
+        self.items = []
 
     def add_kv(self, kv):
         self.kv.append(kv)
         return self.kv
 
     def reset_kv(self):
-        self.kv = None
+        self.kv = []
 
     def reset_text(self):
         self.text = None
@@ -41,8 +41,8 @@ class InfoPanel:
     def update(self, text=None, items=None, kv=None):
         if text and type(text) == str:
             self.text = text
-        if items and type(items) == list:
+        if type(items) == list:
             self.items = items
-        if kv and type(kv) == list:
+        if type(kv) == list:
             self.kv = kv
         self.send()
