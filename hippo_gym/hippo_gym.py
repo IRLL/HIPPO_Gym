@@ -50,9 +50,9 @@ class HippoGym:
         else:
             return self.add_recorder()
 
-    def add_text_box(self, text_box=None):
+    def add_text_box(self, text_box=None, **kwargs):
         if not type(text_box) == TextBox:
-            text_box = TextBox(self.out_q, idx=len(self.text_boxes))
+            text_box = TextBox(self.out_q, idx=len(self.text_boxes), **kwargs)
         self.text_boxes.append(text_box)
         if not self.textbox_message_handler:
             self.textbox_message_handler = TextBoxMessageHandler(self)

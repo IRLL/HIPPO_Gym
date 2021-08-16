@@ -17,7 +17,8 @@ def main():
     control.reset()
     control.add_button(text="Finish", color='white', bgcolor='red', value='end', confirm=True)
     control.add_button(text="Run", color='white', bgcolor='green', value='run')
-    hide_button, hide_index = control.add_button(text="Hide Game Window", color='white', bgcolor='blue', value='hide')
+    control.add_button(text="Hide Game Window", color='white', bgcolor='blue', value='hide')
+    control.add_button(text="Show Game Window", color='white', bgcolor='blue', value='show')
     info = hippo.get_info_panel()
     info.reset()
     window = hippo.get_game_window()
@@ -28,13 +29,16 @@ def main():
         if get_run(hippo):
             textbox.request()
             time.sleep(0.1)
+            textbox.hide()
             do_stuff(textbox, window, info)
+            textbox.send()
         time.sleep(0.1)
     print('All Done')
     hippo.disconnect()
     exit()
 
 def do_stuff(textbox, window, info):
+    window.send()
     text = textbox.get_text()
     print(text)
     try:
@@ -42,6 +46,7 @@ def do_stuff(textbox, window, info):
     except Exception as e:
         error = f'{sys.exc_info()}'
         info.update(text=error)
+    time.sleep(2)
 
 def get_run(hippo):
     for item in hippo.poll():
@@ -50,6 +55,8 @@ def get_run(hippo):
             return True
         if button == 'hide':
             hippo.get_game_window().hide()
+        if button == 'hide':
+            hippo.get_game_window().send()
     return False
 
 if __name__ == '__main__':

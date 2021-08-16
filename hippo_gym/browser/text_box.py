@@ -35,6 +35,9 @@ class TextBox:
         }}
         self.queue.put_nowait(text_box)
 
+    def hide(self):
+        self.queue.put_nowait({'TextBox': None})
+
     def request(self):
         request = {'Request': ['TEXTBOX', self.id]}
         self.queue.put_nowait(request)

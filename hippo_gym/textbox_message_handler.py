@@ -25,7 +25,7 @@ class TextBoxMessageHandler(Thread):
 
     def request(self, text, index=0):
         if len(self.hippo.text_boxes) > index:
-            self.hippo.text_boxes[index].update(text=text)
+            self.hippo.text_boxes[index].update(text=text, send=False)
 
     def button(self, message, index=0):
         if message[0].lower() == 'clear':

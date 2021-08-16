@@ -8,7 +8,6 @@ class ControlMessageHandler(Thread):
     def __init__(self, hippo):
         Thread.__init__(self, daemon=True)
         self.hippo = hippo
-        print("CONTROL ME")
 
         self.handlers = {
             'userId': self.user,
