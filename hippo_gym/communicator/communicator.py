@@ -9,8 +9,8 @@ from hippo_gym.event.event_handler import EventHandler
 
 class Communicator:
 
-    def __init__(self, out_q, queues, address=None, port=5000, use_ssl=True, force_ssl=False, fullchain_path='SSL/fullchain.pem',
-                 privkey_path='SSL/privkey.pem'):
+    def __init__(self, out_q, queues, address=None, port=5000, use_ssl=True, force_ssl=False, fullchain_path='fullchain.pem',
+                 privkey_path='privkey.pem'):
         self.out_q = out_q
         self.address = address
         self.port = port
@@ -81,11 +81,12 @@ class Communicator:
             self.start_non_ssl_server()
         if self.ssl or self.force_ssl:
             self.start_ssl_server()
+        asyncio.get_event_loop().run_forever()
 
     def start_non_ssl_server(self):
         server = websockets.serve(self.handler, self.address, self.port)
         asyncio.get_event_loop().run_until_complete(server)
-        asyncio.get_event_loop().run_forever()
+        #asyncio.get_event_loop().run_forever()
         logging.info('Non-SSL websocket started')
         print('NON SSL UP')
 
@@ -95,7 +96,7 @@ class Communicator:
             ssl_context.load_cert_chain(self.fullchain, keyfile=self.privkey)
             ssl_server = websockets.serve(self.handler, None, self.port, ssl=ssl_context)
             asyncio.get_event_loop().run_until_complete(ssl_server)
-            asyncio.get_event_loop().run_forever()
+            #asyncio.get_event_loop().run_forever()
             logging.info('SSL websocket started')
             print('SSL UP')
         except Exception as e:
