@@ -39,6 +39,7 @@ class Communicator:
             message = await self.producer()
             if message:
                 if message == 'done':
+                    message = {'done': True}
                     done = True
                 await websocket.send(json.dumps(message))
             await asyncio.sleep(0.01)
@@ -84,7 +85,7 @@ class Communicator:
         asyncio.get_event_loop().run_forever()
 
     def start_non_ssl_server(self):
-        server = websockets.serve(self.handler, self.address, self.port)
+        server = websockets.serve(self.handler, self.address, self.port+1)
         asyncio.get_event_loop().run_until_complete(server)
         #asyncio.get_event_loop().run_forever()
         logging.info('Non-SSL websocket started')

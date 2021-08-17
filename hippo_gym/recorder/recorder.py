@@ -53,10 +53,25 @@ class Recorder:
         if self.current_file:
             self.close_file()
         self.current_file = open(f'{self.path}/{new_filename}', mode)
+        self.current_filename = new_filename
 
     def close_file(self):
         if self.current_file:
             self.current_file.close()
             self.current_file = None
-            self.uploader.run(self.path, self.current_filename)
+            self.upload(self.current_filename)
             self.current_filename = None
+
+    def upload(self, file=None):
+        if self.uploader:
+            filename = file if file else self.current_filename
+            if filename == self.current_filename:
+                if self.current_file:
+                    self.current_file.close()
+                    self.uploader.run(self.path, filename)
+                    if self.mode == 'json':
+                        mode = 'a'
+                    else:
+                        mode = 'ab'
+                    self.current_file = open(f'{self.path}/{self.current_filename}', mode)
+            self.uploader.run(self.path, filename)

@@ -23,7 +23,7 @@ class EventHandler:
         if not self.textbox_q:
             logging.debug("no textbox_q in EventHandler")
         self.pressed_keys = set()
-        self.key_map = {'w': 'up', 'a': 'left', 's': 'down', 'd': 'right', ' ': 'fire'}
+        self.key_map = {'w': 'up', 'a': 'left', 's': 'down', 'd': 'right', ' ': 'fire', 'ArrowUp': 'up', 'ArrowDown': 'down', 'ArrowLeft': 'left', 'ArrowRight': 'right'}
 
         self.handlers = {
             'KeyboardEvent': self.handle_keyboard_event,
@@ -129,13 +129,13 @@ class EventHandler:
                 self.pressed_keys.add(key)
                 action = self.key_map[key]
 
-        elif event == 'w' or event == 'UpArrow' or event == 'up':
+        elif event == 'w' or event == 'ArrowUp' or event == 'up':
             action = 'up'
-        elif event == 's' or event == 'DownArrow' or event == 'down':
+        elif event == 's' or event == 'ArrowDown' or event == 'down':
             action = 'down'
-        elif event == 'a' or event == 'LeftArrow' or event == 'left':
+        elif event == 'a' or event == 'ArrowLeft' or event == 'left':
             action = 'left'
-        elif event == 'd' or event == 'RightArrow' or event == 'right':
+        elif event == 'd' or event == 'ArrowRight' or event == 'right':
             action = 'right'
         elif event == ' ' or event == 'fire':
             action = 'fire'

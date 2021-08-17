@@ -18,6 +18,7 @@ class TextBox:
         self.font = font
         self.syntax = syntax
         self.buttons = buttons
+        self.updated = True
         self.send()
 
     def send(self):
@@ -41,6 +42,7 @@ class TextBox:
     def request(self):
         request = {'Request': ['TEXTBOX', self.id]}
         self.queue.put_nowait(request)
+        self.updated = False
 
     def update(self, **kwargs):
         if kwargs.get('idx', None):
@@ -68,6 +70,7 @@ class TextBox:
             self.buttons = kwargs.get('buttons')
         if kwargs.get('send', True):
             self.send()
+        self.updated = True
 
     def clear(self, text=None):
         self.update(text=text)
@@ -80,5 +83,6 @@ class TextBox:
             self.text_buffer.pop(0)
 
     def get_text(self):
-        time.sleep(0.1)
+        while not self.updated:
+            time.sleep(0.1)
         return self.text

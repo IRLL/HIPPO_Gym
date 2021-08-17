@@ -39,8 +39,8 @@ class HippoGym:
         self.window_message_handler = None
         self.textbox_message_handler = None
 
-    def add_recorder(self, path=None, mode=None, clean_path=False):
-        recorder = Recorder(self, path, mode, clean_path)
+    def add_recorder(self, **kwargs):
+        recorder = Recorder(self, **kwargs)
         self.recorders.append(Recorder)
         return recorder
 
@@ -59,9 +59,9 @@ class HippoGym:
             self.textbox_message_handler.start()
         return text_box
 
-    def add_game_window(self, game_window=None):
+    def add_game_window(self, game_window=None, **kwargs):
         if not type(game_window) == GameWindow:
-            game_window = GameWindow(self.out_q, idx=len(self.game_windows))
+            game_window = GameWindow(self.out_q, idx=len(self.game_windows), **kwargs)
         self.game_windows.append(game_window)
         if not self.window_message_handler:
             self.window_message_handler = WindowMessageHandler(self)

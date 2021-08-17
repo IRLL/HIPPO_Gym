@@ -26,6 +26,9 @@ class InfoPanel:
         self.kv.append(kv)
         return self.kv
 
+    def get_kv(self):
+        return self.kv
+
     def reset_kv(self):
         self.kv = []
 
