@@ -32,7 +32,7 @@ class HippoGym:
         self.recorders = []
         self.queues = create_queues()
         self.out_q = Queue()
-        self.communicator = Process(target=Communicator, args=(self.out_q, self.queues,))
+        self.communicator = Process(target=Communicator, args=(self.out_q, self.queues,), daemon=True)
         self.communicator.start()
         self.control_message_handler = ControlMessageHandler(self)
         self.control_message_handler.start()
