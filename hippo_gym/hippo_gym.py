@@ -14,11 +14,12 @@ from hippo_gym.queue_handler import check_queue, check_queues
 from hippo_gym.recorder.recorder import Recorder
 from hippo_gym.textbox_message_handler import TextBoxMessageHandler
 from hippo_gym.window_message_handler import WindowMessageHandler
+from hippo_gym.grid_message_handler import GridMessageHandler
 
 
 class HippoGym:
 
-    def __init__(self):
+    def __init__(self, setup=True):
         self.game_windows = []
         self.info_panel = None
         self.control_panel = None
@@ -30,6 +31,10 @@ class HippoGym:
         self.project_id = None
         self.user_connected = False
         self.recorders = []
+        if setup:
+            self.setup()
+
+    def setup(self):
         self.queues = create_queues()
         self.out_q = Queue()
         self.communicator = Process(target=Communicator, args=(self.out_q, self.queues,), daemon=True)
@@ -38,6 +43,7 @@ class HippoGym:
         self.control_message_handler.start()
         self.window_message_handler = None
         self.textbox_message_handler = None
+        self.grid_message_handler = None
 
     def add_recorder(self, **kwargs):
         recorder = Recorder(self, **kwargs)
@@ -87,9 +93,14 @@ class HippoGym:
             self.control_panel = ControlPanel(self.out_q)
         return self.control_panel
 
-    def get_grid(self):
+    def add_grid(self, **kwargs):
+        self.grid = Grid(self.out_q, **kwargs)
+        self.grid_message_handler = GridMessageHandler(self)
+        self.grid_message_handler.start()
+
+    def get_grid(self, **kwargs):
         if not self.grid:
-            self.grid = Grid()
+            self.add_grid(**kwargs)
         return self.grid
 
     def set_game_window(self, new_game_window, index):
@@ -122,6 +133,7 @@ class HippoGym:
 
     def disconnect(self):
         self.out_q.put_nowait('done')
+        self.__init__(False)
 
     def set_window_size(self, new_size, index):
         if len(self.game_windows) > index:
@@ -190,7 +202,7 @@ class HippoGym:
 
 
 def create_queues():
-    keys = ['keyboard_q', 'window_q', 'button_q', 'standard_q', 'control_q', 'textbox_q' ]
+    keys = ['keyboard_q', 'window_q', 'button_q', 'standard_q', 'control_q', 'textbox_q', 'grid_q' ]
     queues = {}
     for key in keys:
         queues[key] = Queue()

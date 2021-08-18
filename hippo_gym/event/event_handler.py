@@ -10,6 +10,7 @@ class EventHandler:
         self.standard_q = queues.get('standard_q', None)
         self.control_q = queues.get('control_q', None)
         self.textbox_q = queues.get('textbox_q', None)
+        self.grid_q = queues.get('grid_q', None)
         if not self.control_q:
             logging.debug("no control_q in EventHandler")
         if not self.keyboard_q:
@@ -22,6 +23,8 @@ class EventHandler:
             logging.debug("no standard_q in EventHandler")
         if not self.textbox_q:
             logging.debug("no textbox_q in EventHandler")
+        if not self.grid_q:
+            logging.debug("no grid_q in EventHandler")
         self.pressed_keys = set()
         self.key_map = {'w': 'up', 'a': 'left', 's': 'down', 'd': 'right', ' ': 'fire', 'ArrowUp': 'up', 'ArrowDown': 'down', 'ArrowLeft': 'left', 'ArrowRight': 'right'}
 
@@ -31,40 +34,9 @@ class EventHandler:
             'ButtonEvent': self.handle_button_event,
             'WindowEvent': self.handle_window_event,
             'SliderEvent': self.handle_slider_event,
-            'TextEvent': self.handle_text_event
+            'TextEvent': self.handle_text_event,
+            'GridEvent': self.handle_grid_event
         }
-
-    def get(self):
-        # return all events from queue
-        events = []
-        while self.pipe.poll():
-            event = self.parse_event(self.pipe.recv())
-            if event:
-                events.append(event)
-        if len(events) == 0:
-            events = None
-        return events
-
-    def poll(self):
-        # return single event from queue
-        if self.pipe.poll():
-            event = self.parse_event(self.pipe.recv())
-            return event
-        else:
-            return None
-
-    def wait(self):
-        # wait for single event
-        return self.parse_event(self.pipe.recv())
-
-    def peek(self):
-        # test if event type is waiting in queue
-        return self.pipe.peek()
-
-    def clear(self):
-        # clear all events from queue
-        while self.pipe.poll():
-            self.pipe.recv()
 
     def parse(self, message):
         for key in message.keys():
@@ -110,6 +82,9 @@ class EventHandler:
 
     def handle_window_event(self, message):
         put_in_queue(message, self.window_q)
+
+    def handle_grid_event(self, message ):
+        put_in_queue(message, self.grid_q)
 
     def check_standard_message(self, event):
         action = None
