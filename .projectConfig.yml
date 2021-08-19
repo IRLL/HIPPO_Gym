@@ -1,10 +1,15 @@
 project:
   awsSetup:
     bucket: projects.irll
+    containerName: fingerprint-demo
     cpu: 2
     memory: 10
     region: ca-central-1
+    repository: fingerprint-demo
+    repositoryUri: 237796709103.dkr.ecr.ca-central-1.amazonaws.com/fingerprint-demo
     rootDomain: irll.net
+  bucket: projects.irll
+  ecsTask: fingerprint-demo
   events:
     startServerStep: 1
     stopServerStep: 3
@@ -18,12 +23,15 @@ project:
     privkey: SSL/privkey.pem
     sslBucket: projects.irll
   steps:
-    1: exampleConsent.html
-    2: game
-    3: exampleThank.html
-    finalStep: exampleThank.html
+    1: consent.html
+    2: info_0.html
+    3: prequiz.html
+    4: game
+    5: postquiz.html
+    6: thankyou.html
+    finalStep: thankyou.html
   teamMembers: null
-  useAWS: false
+  useAWS: true
 trial:
   actionBufferLifespan: 1
   actionSpace: null

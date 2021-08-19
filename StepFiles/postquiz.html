@@ -1,0 +1,42 @@
+<style>
+	table {
+		font-family: arial, sans-serif;
+		border-collapse: collapse;
+		width: 60%;
+	}
+
+	td,
+	th {
+		border: 1px solid #dddddd;
+		text-align: left;
+		padding: 8px;
+	}
+
+	th {
+		text-align: center;
+	}
+
+	td:not(:first-child) {
+		text-align: center;
+	}
+
+	tr:nth-child(even) {
+		background-color: #dddddd;
+	}
+
+	p {
+		font-size: 20px;
+	}
+</style>
+<h1>Post-Quiz Questionnaire</h1>
+<p>Please answer the following questions to the best of your ability</p>
+<label for="bugs"
+	>Did you experience any technical difficulties? If so, give a detailed description of any problems
+	you encountered.</label
+>
+<textarea id="bugs" required></textarea>
+
+<label for="feedback">
+	Do you have any more information about your trial that you think we should know?
+</label>
+<textarea id="feedback"></textarea>

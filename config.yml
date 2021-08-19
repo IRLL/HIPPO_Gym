@@ -1,5 +1,5 @@
 project:
-  useAWS: false # bool, set to true if using AWS, set false and ignore all AWS entries
+  useAWS: true # bool, set to true if using AWS, set false and ignore all AWS entries
   awsSetup:
     bucket: projects.irll # working bucket in AWS
     region: ca-central-1 # working AWS region
@@ -20,10 +20,13 @@ project:
     privkey: SSL/privkey.pem # path to privkey.pem file excluding bucket name
     sslBucket: projects.irll # bucket name for resolving paths above
   steps: # any number of steps needed with corresponding filenames
-    1: exampleConsent.html
-    2: game
-    3: exampleThank.html
-    finalStep: exampleThank.html # required, filename can be same as last numbered step
+    1: consent.html
+    2: info_0.html
+    3: prequiz.html
+    4: game
+    5: postquiz.html
+    6: thankyou.html
+    finalStep: thankyou.html # required, filename can be same as last numbered step
   teamMembers: # str
 trial:
   actionBufferLifespan: 1 # int
