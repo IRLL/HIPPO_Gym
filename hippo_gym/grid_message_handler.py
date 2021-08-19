@@ -10,7 +10,8 @@ class GridMessageHandler(Thread):
 
         self.handlers = {
             'TILESELECTED': self.select,
-            'TILEUNSELECTED': self.unselect
+            'TILEUNSELECTED': self.unselect,
+            'TILECLICKED': self.click
             }
 
     def run(self):
@@ -23,7 +24,10 @@ class GridMessageHandler(Thread):
             time.sleep(0.01)
 
     def select(self, tile):
-        self.hippo.get_grid().select(tile)
+        self.hippo.get_grid().select(tuple(tile))
 
     def unselect(self, tile):
-        self.hippo.get_grid().unselect(tile)
+        self.hippo.get_grid().unselect(tuple(tile))
+
+    def click(self, tile):
+        self.hipppo.get_grid().click(tuple(tile))

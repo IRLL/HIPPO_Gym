@@ -53,6 +53,12 @@ class Grid:
     def get_selected(self):
         return list(self.selected_tiles)
 
+    def click(self, tile):
+        if tile in self.selected_tiles:
+            self.selected_tiles.remove(tile)
+        else:
+            self.selected_tiles.add(tile)
+
 
 class Tile(dict):
     def __init__(self, row, col, tile_type=None, **kwargs):
