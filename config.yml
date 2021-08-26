@@ -1,5 +1,5 @@
 project:
-  useAWS: false # bool, set to true if using AWS, set false and ignore all AWS entries
+  useAWS: True # bool, set to true if using AWS, set false and ignore all AWS entries
   awsSetup:
     bucket: projects.irll # working bucket in AWS
     region: ca-central-1 # working AWS region
@@ -9,7 +9,7 @@ project:
 
   events:
     startServerStep: 1 # int
-    stopServerStep: 3 # int
+    stopServerStep: 6 # int
   id: fingerprint-demo # Letters, Numbers and '-' only!
   live: true # bool
   maxRuntime: 30 # int in minutes.
@@ -22,6 +22,7 @@ project:
   steps: # any number of steps needed with corresponding filenames
     1: consent.html
     2: info_0.html
+    2: info_1.html
     3: prequiz.html
     4: game
     5: postquiz.html
@@ -49,7 +50,7 @@ trial:
     up: False
     down: False
     start: False
-    stop: False
+    stop: True
     pause: False
     reset: False
     trainOffline: False
