@@ -3,7 +3,7 @@ class InfoPanel:
         self.queue = queue
         self.text = text if type(text) == str else None
         self.items = items if type(items) == list else []
-        self.kv = kv if type(kv) == list else []
+        self.kv = kv if type(kv) == dict else {}
 
     def send(self):
         info_panel = {'InfoPanel': None}
@@ -22,15 +22,15 @@ class InfoPanel:
     def reset_items(self):
         self.items = []
 
-    def add_kv(self, kv):
-        self.kv.append(kv)
+    def update_kv(self, key, value):
+        self.kv[key] = value
         return self.kv
 
     def get_kv(self):
         return self.kv
 
     def reset_kv(self):
-        self.kv = []
+        self.kv = {}
 
     def reset_text(self):
         self.text = None
@@ -46,6 +46,6 @@ class InfoPanel:
             self.text = text
         if type(items) == list:
             self.items = items
-        if type(kv) == list:
+        if type(kv) == dict:
             self.kv = kv
         self.send()

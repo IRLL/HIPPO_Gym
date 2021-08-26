@@ -10,6 +10,8 @@ def main():
 
     hippo.standby()
     # Start Phase 1, play game
+    group = hippo.group(12)
+    print(group)
     play_lunar_lander.play(hippo)
 
     # Start Phase 2

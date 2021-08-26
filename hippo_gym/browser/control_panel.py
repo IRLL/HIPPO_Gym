@@ -88,7 +88,7 @@ class ControlPanel:
 start_button = {'Button': {
     'image': None,
     'icon': 'FaPlayCircle',
-    'text': 'start',
+    'text': 'Start',
     'color': 'white',
     'bgcolor': 'green',
     'value': 'start'
@@ -97,7 +97,7 @@ start_button = {'Button': {
 reset_button = {'Button': {
     'image': None,
     'icon': 'FaRedo',
-    'text': 'reset',
+    'text': 'Reset',
     'color': 'white',
     'bgcolor': 'red',
     'value': 'reset'
@@ -106,7 +106,7 @@ reset_button = {'Button': {
 submit_button = {'Button': {
     'image': None,
     'icon': 'FaCheckCircle',
-    'text': 'submit',
+    'text': 'Submit',
     'color': 'white',
     'bgcolor': 'green',
     'value': 'submit'
@@ -115,11 +115,39 @@ submit_button = {'Button': {
 end_button = {'Button': {
     'image': None,
     'icon': 'FaStopCircle',
-    'text': 'end',
+    'text': 'End',
     'color': 'white',
     'bgcolor': 'blue',
     'value': 'end'
 }}
+
+pause_button = {'Button': {
+    'image': None,
+    'icon': 'FaPauseCircle',
+    'text': 'Pause',
+    'color': 'white',
+    'bgcolor': 'orange',
+    'value': 'pause'
+}}
+
+good_button = {'Button': {
+    'image': None,
+    'icon': 'FaCheck',
+    'text': 'Good',
+    'color': 'white',
+    'bgcolor': 'green',
+    'value': 'good'
+}}
+
+bad_button = {'Button': {
+    'image': None,
+    'icon': 'FaTimes',
+    'text': 'Bad',
+    'color': 'white',
+    'bgcolor': 'red',
+    'value': 'bad'
+}}
+
 
 up_button = {'Button': {
     'image': None,

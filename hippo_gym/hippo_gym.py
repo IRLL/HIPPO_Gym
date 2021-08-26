@@ -15,6 +15,7 @@ from hippo_gym.recorder.recorder import Recorder
 from hippo_gym.textbox_message_handler import TextBoxMessageHandler
 from hippo_gym.window_message_handler import WindowMessageHandler
 from hippo_gym.grid_message_handler import GridMessageHandler
+from hippo_gym.bucketer import bucketer
 
 
 class HippoGym:
@@ -138,6 +139,9 @@ class HippoGym:
     def set_window_size(self, new_size, index):
         if len(self.game_windows) > index:
             self.game_windows[index].set_size(new_size)
+
+    def group(self, num_groups):
+        return bucketer(self.user_id, num_groups)
 
     def handle_control_messages(self):
         messages = check_queue(self.queues['control_q'])

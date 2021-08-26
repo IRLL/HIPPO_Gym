@@ -18,7 +18,7 @@ class GameWindow:
         self.pipe = pipe
         self.events = Queue(maxsize=10)
 
-    def update(self, idx=None, width=None, height=None, mode=None, image=None, text=None):
+    def update(self, idx=None, width=None, height=None, mode=None, image=0, text=None):
         if idx is not None:
             self.id = idx
         if width:
@@ -32,7 +32,7 @@ class GameWindow:
         if text:
             self.text = text
             self.frame = None
-        if image:
+        if image != 0:
             if type(image) != str:
                 self.frame = self.convert_numpy_array_to_base64(image)
             else:

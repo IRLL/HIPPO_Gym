@@ -50,7 +50,7 @@ def main():
                 toggle_sliders = not toggle_sliders
             elif action == 'down':
                 if toggle_info:
-                    info_panel.update(items=[1], kv=[{'hi': 'there', 'we': 'square'}])
+                    info_panel.update(items=[1], kv={'hi': 'there', 'we': 'square'})
                 else:
                     info_panel.reset()
                 toggle_info = not toggle_info

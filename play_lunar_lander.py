@@ -68,9 +68,9 @@ def check_action(hippo, old_action):
 
 def take_step(env, action, info_panel):
     o, r, d, i = env.step(action)
-    info_panel.update(text="Observation:", items=o.tolist(), kv=[{'Reward': r}])
+    info_panel.update(text="Observation:", items=o.tolist(), kv={'Reward': r})
     if d:
-        info_panel.update(kv=[{'Score': r}])
+        info_panel.update(kv={'Score': r})
     return d
 
 
