@@ -420,7 +420,8 @@ class Trial():
 def xmlToArray(path):
     tree = ET.parse(path)
     root = tree.getroot()
+    score = root.attrib["Score"]
     minutiae = []
     for child in root:
         minutiae.append({'x': int(child.attrib['X']), 'y': int(child.attrib['Y']), 'orientation': float(child.attrib['Angle'].replace(',', '.'))})
-    return minutiae
+    return {"score": int(score), "minutiae": minutiae}

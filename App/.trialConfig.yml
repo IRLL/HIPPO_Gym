@@ -27,7 +27,6 @@ trial:
   s3upload: false
   startingFrameRate: 30
   ui:
-  - stop
   - brightness
   - contrast
   - saturation
