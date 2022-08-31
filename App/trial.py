@@ -27,6 +27,8 @@ class Trial:
         self.filename = None
         self.path = None
 
+        self._last_frame = None
+
         self.start()
         self.run()
 
@@ -72,15 +74,18 @@ class Trial:
                 self.recorder.record_message(message)
             if self.play:
                 render = self.get_render()
-                self.send_render(render)
-                self.recorder.record_render(render)
+                if self._last_frame is None or self._last_frame != render["frame"]:
+                    self._last_frame = render["frame"]
+                    self.send_render(render)
+                    self.recorder.record_render(render)
                 if self.humanAction is not None:
                     env_state = self.agent.step(self.humanAction)
                     self.recorder.record_step(env_state)
                     self.humanAction = self.config.get("defaultAction")
                     if env_state["done"]:
                         self.reset()
-            time.sleep(1 / self.framerate)
+            else:
+                self._last_frame = None
 
     def reset(self):
         """
