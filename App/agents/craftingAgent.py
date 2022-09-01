@@ -1,35 +1,46 @@
 from crafting import MineCraftingEnv
 from crafting.render.render import get_human_action
-from crafting.examples.minecraft.tasks import TASKS
+from crafting.task import RewardShaping, TaskObtainItem
 
 from App.agents import Agent
 
-class CraftingAgent(Agent):
-    '''
-    Use this class as a convenient place to store agent state.
-    '''
 
-    def start(self, config:dict) -> None:
-        ''' Starts the Agent's environment.
+class CraftingAgent(Agent):
+    """
+    Use this class as a convenient place to store agent state.
+    """
+
+    def start(self, config: dict) -> None:
+        """Starts the Agent's environment.
         Args:
             config: trial config.
-        '''
-        game = config.get('game')
-        if game == 'minecrafting':
-            task_name = list(TASKS.keys())[config.get('task_number')]
-            self.env = MineCraftingEnv(tasks=[task_name], tasks_can_end=[True], max_step=100)
+        """
+        game = config.get("game")
+        if game == "minecrafting":
+            self.env = MineCraftingEnv(max_step=100)
+            item_task = self.env.world.item_from_name[config.get("task_item_name")]
+            task = TaskObtainItem(
+                self.env.world,
+                item_task,
+                reward_shaping=RewardShaping.NONE,
+            )
+            self.env.add_task(task)
 
     def handle_events(self, events):
-        action = get_human_action(self.env, additional_events=events,
-            can_be_none=True, **self.env.render_variables)
+        action = get_human_action(
+            self.env,
+            additional_events=events,
+            can_be_none=True,
+            **self.env.render_variables
+        )
         if action:
             action = self.env.action(*action)
         return action
 
-    def step(self, action:int):
-        '''
+    def step(self, action: int):
+        """
         Takes a game step.
-        Caller: 
+        Caller:
             - Trial.take_step()
         Inputs:
             - env (Type: OpenAI gym Environment)
@@ -37,13 +48,18 @@ class CraftingAgent(Agent):
         Returns:
             - envState (Type: dict containing all information to be recorded for future use)
               change contents of dict as desired, but return must be type dict.
-        '''
+        """
         observation, reward, done, info = self.env.step(action)
-        envState = {'observation': observation, 'reward': reward, 'done': done, 'info': info}
+        envState = {
+            "observation": observation,
+            "reward": reward,
+            "done": done,
+            "info": info,
+        }
         return envState
 
     def render(self):
-        '''
+        """
         Gets render from gym.
         Caller:
             - Trial.get_render()
@@ -52,23 +68,23 @@ class CraftingAgent(Agent):
         Returns:
             - return from env.render('rgb_array') (Type: npArray)
               must return the unchanged rgb_array
-        '''
-        return self.env.render('rgb_array')
-    
+        """
+        return self.env.render("rgb_array")
+
     def reset(self):
-        '''
+        """
         Resets the environment to start new episode.
-        Caller: 
+        Caller:
             - Trial.reset()
         Inputs:
             - env (Type: OpenAI gym Environment)
-        Returns: 
+        Returns:
             No Return
-        '''
+        """
         self.env.reset()
-    
+
     def close(self):
-        '''
+        """
         Closes the environment at the end of the trial.
         Caller:
             - Trial.close()
@@ -76,5 +92,5 @@ class CraftingAgent(Agent):
             - env (Type: OpenAI gym Environment)
         Returns:
             No Return
-        '''
+        """
         self.env.close()
