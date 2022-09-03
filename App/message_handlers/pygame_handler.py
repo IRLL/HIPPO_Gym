@@ -34,7 +34,9 @@ class PyGameMessageHandler(MessageHandler):
                 )
                 events = [Event(MOUSEMOTION, pos=pos, rel=rel)]
 
-            self.trial.humanAction = self.trial.agent.handle_events(events)
+            action = self.trial.agent.handle_events(events)
+            if action is not None:
+                self.handle_action(action)
 
         else:
-            raise NotImplementedError("Agent has no member handle_events")
+            raise NotImplementedError(f"Agent cannot handle mouse_event: {message}")

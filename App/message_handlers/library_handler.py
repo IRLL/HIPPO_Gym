@@ -16,8 +16,12 @@ class LibraryCommands(Enum):
     NEXT_ITEM = "next library item"
     PREVIOUS_ITEM = "previous library item"
 
+    def toJson(self) -> str:
+        return self.value
+
 
 class LibraryModes(Enum):
+    NONE = "None"
     OPTIONS_GRAPHS = "options_graphs"
 
 
@@ -25,7 +29,7 @@ class LibraryHandler(MessageHandler):
     def __init__(self, trial) -> None:
         super().__init__(trial)
 
-        library_mode = self.trial.config.get("library_mode")
+        library_mode = self.trial.config.get("library_mode", LibraryModes.NONE)
         self.library_mode = LibraryModes(library_mode)
 
         if self.library_mode is None:
@@ -33,34 +37,21 @@ class LibraryHandler(MessageHandler):
             self.trial.send_ui([])
             return
 
-        filter_by_utility = self.trial.config.get("filter_by_utility")
-        rank_by_complexity = self.trial.config.get("rank_by_complexity")
-        task_item_name = self.trial.config.get("task_item_name")
         game = self.trial.config.get("game")
 
-        images_path = os.path.join("images", game)
-        images_filenames = np.array(os.listdir(os.path.join(images_path, library_mode)))
-
-        # TODO Fix this
-        # if filter_by_utility:
-        #     is_useful = np.array(
-        #         [int(name.split("-")[2][task_number]) for name in images_filenames],
-        #         dtype=bool,
-        #     )
-        #     images_filenames = images_filenames[is_useful]
-
-        if rank_by_complexity:
-            complexities = np.array(
-                [name.split("-")[1] for name in images_filenames], dtype=np.float32
-            )
-            images_filenames = images_filenames[np.argsort(complexities)]
-        else:
-            permuted_indexes = np.random.permutation(np.arange(len(images_filenames)))
-            images_filenames = images_filenames[permuted_indexes]
-
-        self.images = self._load_images(images_path, images_filenames)
-
         if self.library_mode == LibraryModes.OPTIONS_GRAPHS:
+            images_path = os.path.join("images", game)
+            filter_by_utility = self.trial.config.get("filter_by_utility")
+            task_item_name = self.trial.config.get("task_item_name")
+            rank_by_complexity = self.trial.config.get("rank_by_complexity")
+            library_images_path = os.path.join(images_path, self.library_mode.value)
+
+            images_filenames = os.listdir(library_images_path)
+            images_filenames = filter_and_order_images(
+                images_filenames, filter_by_utility, rank_by_complexity, task_item_name
+            )
+
+            self.images = self._load_images(images_path, images_filenames)
             self.images_icons = self._load_icons(images_path, images_filenames)
 
         self.library_on = False
@@ -83,6 +74,7 @@ class LibraryHandler(MessageHandler):
         )
 
     def reset_ui(self):
+        default_ui = self.trial.config.get("ui")
         if self.library_mode == LibraryModes.OPTIONS_GRAPHS:
             ui_navigation = {
                 "previousBlock": None,
@@ -90,9 +82,8 @@ class LibraryHandler(MessageHandler):
                 "nextBlock": None,
             }
             self.trial.pipe.send(json.dumps(ui_navigation))
-        default_ui = self.trial.config.get("ui")
-        if LibraryCommands.OPEN_LIBRARY not in default_ui:
-            default_ui += [LibraryCommands.OPEN_LIBRARY]
+            if LibraryCommands.OPEN_LIBRARY.value not in default_ui:
+                default_ui += [LibraryCommands.OPEN_LIBRARY.value]
         self.trial.send_ui(default_ui)
 
     def send_ui(self):
@@ -180,3 +171,32 @@ class LibraryHandler(MessageHandler):
             img_path = os.path.join(images_path, "options_icons", options_name)
             images_icons.append(load_to_b64(img_path))
         return images_icons
+
+
+def filter_and_order_images(
+    images_filenames: List[str],
+    filter_by_utility: bool,
+    rank_by_complexity: bool,
+    task_item_name: str,
+):
+    images_filenames = np.array(images_filenames)
+
+    if filter_by_utility:
+        pass
+    # TODO Fix this
+    #     is_useful = np.array(
+    #         [int(name.split("-")[2][task_number]) for name in images_filenames],
+    #         dtype=bool,
+    #     )
+    #     images_filenames = images_filenames[is_useful]
+
+    if rank_by_complexity:
+        complexities = np.array(
+            [name.split("-")[1] for name in images_filenames], dtype=np.float32
+        )
+        images_filenames = images_filenames[np.argsort(complexities)]
+    else:
+        permuted_indexes = np.random.permutation(np.arange(len(images_filenames)))
+        images_filenames = images_filenames[permuted_indexes]
+
+    return images_filenames

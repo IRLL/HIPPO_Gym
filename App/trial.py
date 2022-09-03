@@ -1,4 +1,5 @@
 import json, shortuuid, time
+
 import numpy as np
 
 from multiprocessing.connection import Connection
@@ -8,13 +9,15 @@ from App.message_handlers.my_handler import PyGameLibrairyHandler
 from App.recorders import LegacyRecorder
 from App.utils import array_to_b64, load_config
 
+from App.message_handlers.library_handler import LibraryModes
+
 
 class Trial:
     def __init__(self, pipe: Connection):
         self.config = load_config()
         self.pipe = pipe
         self.frameId = 0
-        self.humanAction = self.config.get("defaultAction")
+        self.human_action = self.config.get("defaultAction")
         self.episode = 0
         self.done = False
         self.play = self.config.get("defaultStart", False)
@@ -40,9 +43,7 @@ class Trial:
         By default this expects the openAI Gym Environment object to be
         returned.
         """
-
-        lib_modes = (None, "options_graphs")
-        self.config["library_mode"] = np.random.choice(lib_modes)
+        self.config["library_mode"] = np.random.choice(list(LibraryModes))
         print("library_mode: ", self.config["library_mode"])
 
         games = ("minecrafting",)
@@ -51,7 +52,7 @@ class Trial:
         items_names = ("diamond", "clock", "enchanting_table")
         self.config["task_item_name"] = np.random.choice(items_names)
 
-        if self.config["library_mode"] == "options_graphs":
+        if self.config["library_mode"] == LibraryModes.OPTIONS_GRAPHS:
             self.config["filter_by_utility"] = np.random.choice((True, False))
             self.config["rank_by_complexity"] = np.random.choice((True, False))
             print("filter_by_utility: ", self.config["filter_by_utility"])
@@ -78,10 +79,10 @@ class Trial:
                     self._last_frame = render["frame"]
                     self.send_render(render)
                     self.recorder.record_render(render)
-                if self.humanAction is not None:
-                    env_state = self.agent.step(self.humanAction)
+                if self.human_action is not None:
+                    env_state = self.agent.step(self.human_action)
                     self.recorder.record_step(env_state)
-                    self.humanAction = self.config.get("defaultAction")
+                    self.human_action = self.config.get("defaultAction")
                     if env_state["done"]:
                         self.reset()
             else:
@@ -144,9 +145,11 @@ class Trial:
         Translates the npArray into a jpeg image and then base64 encodes the
         image for transmission in json message.
         """
+        t0 = time.time()
         render = self.agent.render()
         frame = array_to_b64(render)
         self.frameId += 1
+        print(f"Render time: {1000*(time.time() - t0):.0f}ms")
         return {"frame": frame, "frameId": self.frameId}
 
     def send_render(self, render: dict = None):

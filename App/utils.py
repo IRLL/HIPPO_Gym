@@ -29,15 +29,15 @@ def load_to_b64(path: str) -> str:
 def array_to_b64(img_array) -> str:
     try:
         img = Image.fromarray(img_array, mode="RGB")
-        fp = BytesIO()
-        img.save(fp, format="JPEG", quality="web_high")
-        frame = base64.b64encode(fp.getvalue()).decode("utf-8")
-        fp.close()
-    except:
+        buffer = BytesIO()
+        img.save(buffer, format="JPEG", quality="web_low")
+        frame = base64.b64encode(buffer.getvalue()).decode("utf-8")
+        buffer.close()
+    except Exception as error:
         raise TypeError(
             "Render failed. Is env.render('rgb_array') being called"
-            " with the correct arguement?"
-        )
+            " with the correct arguments?"
+        ) from error
     return frame
 
 

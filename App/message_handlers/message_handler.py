@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import shortuuid
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from App.trial import Trial
@@ -72,17 +72,21 @@ class MessageHandler:
             except:
                 pass
 
-    def handle_action(self, action: str):
+    def handle_action(self, action: Union[str, int]):
         """
         Translates action to int and resets action buffer
         """
+        if isinstance(action, int):
+            self.trial.human_action = action
+            return
+
         action = action.strip().lower()
         actionSpace = self.trial.config.get("actionSpace")
         if action in actionSpace:
-            actionCode = actionSpace.index(action)
+            action = actionSpace.index(action)
         else:
-            actionCode = self.trial.config.get("defaultAction")
-        self.humanAction = actionCode
+            action = self.trial.config.get("defaultAction")
+        self.trial.human_action = action
 
     def handle_mouse_event(self, message: dict):
         """

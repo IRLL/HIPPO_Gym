@@ -1,3 +1,4 @@
+from typing import Optional
 from crafting import MineCraftingEnv
 from crafting.render.render import get_human_action
 from crafting.task import RewardShaping, TaskObtainItem
@@ -26,7 +27,7 @@ class CraftingAgent(Agent):
             )
             self.env.add_task(task)
 
-    def handle_events(self, events):
+    def handle_events(self, events) -> Optional[int]:
         action = get_human_action(
             self.env,
             additional_events=events,
