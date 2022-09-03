@@ -75,10 +75,8 @@ class Trial:
                 self.recorder.record_message(message)
             if self.play:
                 render = self.get_render()
-                if self._last_frame is None or self._last_frame != render["frame"]:
-                    self._last_frame = render["frame"]
-                    self.send_render(render)
-                    self.recorder.record_render(render)
+                self.send_render(render)
+                self.recorder.record_render(render)
                 if self.human_action is not None:
                     env_state = self.agent.step(self.human_action)
                     self.recorder.record_step(env_state)
@@ -86,6 +84,7 @@ class Trial:
                     if env_state["done"]:
                         self.reset()
             else:
+                # Makes sure to update frame when resuming
                 self._last_frame = None
 
     def reset(self):
@@ -134,7 +133,7 @@ class Trial:
             message = self.pipe.recv()
             try:
                 message = json.loads(message)
-            except:
+            except (ValueError, TypeError):
                 message = {"error": "unable to parse message", "frameId": self.frameId}
             return message
         return None
@@ -158,10 +157,16 @@ class Trial:
         """
         if render is None:
             render = self.get_render()
+
+        if self._last_frame is not None and self._last_frame == render["frame"]:
+            # Skip if frame is the same as last frame to save bandwidth
+            return
+
+        self._last_frame = render["frame"]
         try:
             self.pipe.send(json.dumps(render))
-        except:
-            raise TypeError("Render Dictionary is not JSON serializable")
+        except Exception as error:
+            raise TypeError("Render Dictionary is not JSON serializable") from error
 
     def send_ui(self, ui=None):
         if ui is None:
@@ -169,8 +174,8 @@ class Trial:
             ui = self.config.get("ui", defaultUI)
         try:
             self.pipe.send(json.dumps({"UI": ui}))
-        except:
-            raise TypeError("Render Dictionary is not JSON serializable")
+        except Exception as error:
+            raise TypeError("Render Dictionary is not JSON serializable") from error
 
     def send_variables(self):
         try:
