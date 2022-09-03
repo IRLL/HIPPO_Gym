@@ -1,10 +1,24 @@
 import os
 import json
 import time
+from enum import Enum
+from typing import List
+
 import numpy as np
 
 from App.message_handlers import MessageHandler
 from App.utils import load_to_b64
+
+
+class LibraryCommands(Enum):
+    OPEN_LIBRARY = "library"
+    BACK_TO_GAME = "back to game"
+    NEXT_ITEM = "next library item"
+    PREVIOUS_ITEM = "previous library item"
+
+
+class LibraryModes(Enum):
+    OPTIONS_GRAPHS = "options_graphs"
 
 
 class LibraryHandler(MessageHandler):
@@ -12,7 +26,7 @@ class LibraryHandler(MessageHandler):
         super().__init__(trial)
 
         library_mode = self.trial.config.get("library_mode")
-        self.library_mode = library_mode
+        self.library_mode = LibraryModes(library_mode)
 
         if self.library_mode is None:
             self.handle_command = super().handle_command
@@ -44,17 +58,10 @@ class LibraryHandler(MessageHandler):
             permuted_indexes = np.random.permutation(np.arange(len(images_filenames)))
             images_filenames = images_filenames[permuted_indexes]
 
-        self.images = []
-        for graph_name in images_filenames:
-            img_path = os.path.join(images_path, library_mode, graph_name)
-            self.images.append(load_to_b64(img_path))
+        self.images = self._load_images(images_path, images_filenames)
 
-        if self.library_mode == "options_graphs":
-            options_names = [name.split("-")[3] for name in images_filenames]
-            self.images_icons = []
-            for options_name in options_names:
-                img_path = os.path.join(images_path, "options_icons", options_name)
-                self.images_icons.append(load_to_b64(img_path))
+        if self.library_mode == LibraryModes.OPTIONS_GRAPHS:
+            self.images_icons = self._load_icons(images_path, images_filenames)
 
         self.library_on = False
         self.cursor = 0
@@ -75,14 +82,8 @@ class LibraryHandler(MessageHandler):
             }
         )
 
-    def _prev_item(self):
-        return (self.cursor - 1) % len(self.images)
-
-    def _next_item(self):
-        return (self.cursor + 1) % len(self.images)
-
     def reset_ui(self):
-        if self.library_mode == "options_graphs":
+        if self.library_mode == LibraryModes.OPTIONS_GRAPHS:
             ui_navigation = {
                 "previousBlock": None,
                 "currentBlock": None,
@@ -90,39 +91,24 @@ class LibraryHandler(MessageHandler):
             }
             self.trial.pipe.send(json.dumps(ui_navigation))
         default_ui = self.trial.config.get("ui")
-        if "library" not in default_ui:
-            default_ui += ["library"]
+        if LibraryCommands.OPEN_LIBRARY not in default_ui:
+            default_ui += [LibraryCommands.OPEN_LIBRARY]
         self.trial.send_ui(default_ui)
 
     def send_ui(self):
         if len(self.images) > 1:
-            ui_navigation = {
-                "previousBlock": {
-                    "image": self.images_icons[self._prev_item()],
-                    "value": "previous library item",
-                    "name": f"{self._prev_item() + 1}/{len(self.images)}",
-                    "borderColor": "orange",
-                },
-                "currentBlock": {
-                    "image": self.images_icons[self.cursor],
-                    "value": "current library item",
-                    "name": f"{self.cursor + 1}/{len(self.images)}",
-                    "borderColor": "orange",
-                },
-                "nextBlock": {
-                    "image": self.images_icons[self._next_item()],
-                    "value": "next library item",
-                    "name": f"{self._next_item() + 1}/{len(self.images)}",
-                    "borderColor": "orange",
-                },
-            }
-            self.trial.pipe.send(json.dumps(ui_navigation))
-        self.trial.send_ui(["back to game"])
+            self.trial.pipe.send(json.dumps(self._build_ui_navigation()))
+        self.trial.send_ui([LibraryCommands.BACK_TO_GAME.value])
 
     def handle_command(self, command: str):
         command = super().handle_command(command)
 
-        if command in ("library", "back to game"):
+        try:
+            command = LibraryCommands(command)
+        except ValueError:
+            return command
+
+        if command in (LibraryCommands.OPEN_LIBRARY, LibraryCommands.BACK_TO_GAME):
             if self.library_on:
                 self.trial.play = True
                 self.reset_ui()
@@ -132,22 +118,65 @@ class LibraryHandler(MessageHandler):
                 self.send_ui()
             self.library_on = not self.library_on
 
-        if command.startswith("next library item"):
-            self.cursor = self._next_item()
-            self.send_render()
-            self.send_ui()
-        elif command.startswith("previous library item"):
-            self.cursor = self._prev_item()
+        if command in (LibraryCommands.NEXT_ITEM, LibraryCommands.PREVIOUS_ITEM):
+            self._update_cursor(command)
             self.send_render()
             self.send_ui()
 
-        if command in (
-            "library",
-            "back to game",
-            "next library item",
-            "previous library item",
-        ):
-            command_time = time.time() - self.start_time
-            self.history.append((command, command_time))
+        command_time = time.time() - self.start_time
+        self.history.append((command, command_time))
 
-        return command
+    @property
+    def _prev_item(self):
+        return (self.cursor - 1) % len(self.images)
+
+    @property
+    def _next_item(self):
+        return (self.cursor + 1) % len(self.images)
+
+    def _build_ui_navigation(self) -> dict:
+        return {
+            "previousBlock": {
+                "image": self.images_icons[self._prev_item],
+                "value": "previous library item",
+                "name": f"{self._prev_item + 1}/{len(self.images)}",
+                "borderColor": "orange",
+            },
+            "currentBlock": {
+                "image": self.images_icons[self.cursor],
+                "value": "current library item",
+                "name": f"{self.cursor + 1}/{len(self.images)}",
+                "borderColor": "orange",
+            },
+            "nextBlock": {
+                "image": self.images_icons[self._next_item],
+                "value": "next library item",
+                "name": f"{self._next_item + 1}/{len(self.images)}",
+                "borderColor": "orange",
+            },
+        }
+
+    def _update_cursor(self, command: LibraryCommands):
+        if command == LibraryCommands.NEXT_ITEM:
+            self.cursor = self._next_item
+        elif command == LibraryCommands.PREVIOUS_ITEM:
+            self.cursor = self._prev_item
+        else:
+            raise ValueError(
+                f"Command {command} is not valid to update the library cursor."
+            )
+
+    def _load_images(self, images_path: str, images_filenames: List[str]):
+        images = []
+        for graph_name in images_filenames:
+            img_path = os.path.join(images_path, self.library_mode.value, graph_name)
+            images.append(load_to_b64(img_path))
+        return images
+
+    def _load_icons(self, images_path: str, images_filenames: List[str]):
+        options_names = [name.split("-")[3] for name in images_filenames]
+        images_icons = []
+        for options_name in options_names:
+            img_path = os.path.join(images_path, "options_icons", options_name)
+            images_icons.append(load_to_b64(img_path))
+        return images_icons
