@@ -144,11 +144,9 @@ class Trial:
         Translates the npArray into a jpeg image and then base64 encodes the
         image for transmission in json message.
         """
-        t0 = time.time()
         render = self.agent.render()
         frame = array_to_b64(render)
         self.frameId += 1
-        print(f"Render time: {1000*(time.time() - t0):.0f}ms")
         return {"frame": frame, "frameId": self.frameId}
 
     def send_render(self, render: dict = None):
