@@ -53,10 +53,10 @@ class MessageHandler:
                 handler(message)
                 return  # TODO: Check why we shouln't perform multiple handler
 
-    def handle_command(self, message: dict):
+    def handle_command(self, message: dict) -> str:
         """Deals with allowable commands from user."""
-        command = message[MessageType.COMMAND]
-        command = str(command).strip().lower()
+        command_msg = message[MessageType.COMMAND]
+        command = str(command_msg).strip().lower()
         command = Commands(command)
         command_effects = {
             Commands.START: self.trial.resume,
@@ -65,9 +65,14 @@ class MessageHandler:
             Commands.PAUSE: self.trial.pause,
             Commands.REQUEST_UI: self.trial.send_ui,
         }
-        command_effects[command]()
+        try:
+            command_effects[command]()
+            return command.value
+        except KeyError:
+            return command_msg
 
     def handle_user_id(self, message: dict):
+        """Handle the setting of a user_id."""
         user_id = message[MessageType.USER_ID]
         if not self.trial.user_id:
             user_id = user_id or f"user_{shortuuid.uuid()}"

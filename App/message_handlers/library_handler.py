@@ -11,21 +11,28 @@ from App.utils import load_to_b64
 
 
 class LibraryCommands(Enum):
+    """Enumeration of the available library commands."""
+
     OPEN_LIBRARY = "library"
     BACK_TO_GAME = "back to game"
     NEXT_ITEM = "next library item"
     PREVIOUS_ITEM = "previous library item"
 
-    def toJson(self) -> str:
+    def toJson(self) -> str:  # pylint: disable=invalid-name
+        """Convert to Json serializable object."""
         return self.value
 
 
 class LibraryModes(Enum):
+    """Enumeration of the possible library modes."""
+
     NONE = "None"
     OPTIONS_GRAPHS = "options_graphs"
 
 
 class LibraryHandler(MessageHandler):
+    """MessageHandler to allow to see a library of images."""
+
     def __init__(self, trial) -> None:
         super().__init__(trial)
 
@@ -64,6 +71,7 @@ class LibraryHandler(MessageHandler):
         self.history = []
 
     def send_render(self):
+        """Show the current pointed image."""
         self.trial.frame_id += 1
         self.trial.send_render(
             {
@@ -74,6 +82,7 @@ class LibraryHandler(MessageHandler):
         )
 
     def reset_ui(self):
+        """Reset the library user interface."""
         default_ui = self.trial.config.get("ui")
         if self.library_mode == LibraryModes.OPTIONS_GRAPHS:
             ui_navigation = {
@@ -91,8 +100,8 @@ class LibraryHandler(MessageHandler):
             self.trial.pipe.send(json.dumps(self._build_ui_navigation()))
         self.trial.send_ui([LibraryCommands.BACK_TO_GAME.value])
 
-    def handle_command(self, command: str):
-        command = super().handle_command(command)
+    def handle_command(self, message: dict):
+        command = super().handle_command(message)
 
         try:
             command = LibraryCommands(command)

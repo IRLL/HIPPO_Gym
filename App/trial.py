@@ -5,11 +5,15 @@ import numpy as np
 from multiprocessing.connection import Connection
 
 from App.agents.craftingAgent import CraftingAgent
-from App.message_handlers.my_handler import PyGameLibrairyHandler
+from App.message_handlers import LibraryHandler, PyGameMessageHandler
 from App.recorders import LegacyRecorder
 from App.utils import array_to_b64, load_config
 
 from App.message_handlers.library_handler import LibraryModes
+
+# TODO: Refactor this for more general MessageHandlers composablity
+class PyGameLibrairyHandler(LibraryHandler, PyGameMessageHandler):
+    pass
 
 
 class Trial:
