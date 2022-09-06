@@ -57,8 +57,8 @@ class LegacyRecorder(Recorder):
                 self.trial.pipe.send(
                     {
                         "upload": {
-                            "projectId": self.trial.projectId,
-                            "userId": self.trial.userId,
+                            "projectId": self.trial.project_id,
+                            "userId": self.trial.user_id,
                             "file": self.filename,
                             "path": self.path,
                             "bucket": self.trial.config.get("bucket"),
@@ -76,8 +76,8 @@ class LegacyRecorder(Recorder):
             self.trial.pipe.send(
                 {
                     "upload": {
-                        "projectId": self.trial.projectId,
-                        "userId": self.trial.userId,
+                        "projectId": self.trial.project_id,
+                        "userId": self.trial.user_id,
                         "file": self.filename,
                         "path": self.path,
                     }
@@ -126,9 +126,9 @@ class LegacyRecorder(Recorder):
     def create_file(self) -> None:
         """Creates a file to record records to."""
         if self.trial.config.get("dataFile") == "trial":
-            filename = f"trial_{self.trial.userId}"
+            filename = f"trial_{self.trial.user_id}"
         else:
-            filename = f"episode_{self.trial.episode}_user_{self.trial.userId}"
+            filename = f"episode_{self.trial.episode}_user_{self.trial.user_id}"
 
         path = os.path.join(self.save_path, filename)
         self.outfile = open(path, "ab")

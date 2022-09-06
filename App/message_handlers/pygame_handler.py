@@ -12,11 +12,10 @@ def convert_relative_coordinates(x_rel, y_rel):
 
 
 class PyGameMessageHandler(MessageHandler):
-    def handle_mouse_event(self, message: dict):
+    def handle_info(self, event_type: dict):
         """
         Send pygames events to the trial agent.
         """
-        event_type = message["info"]
 
         if hasattr(self.trial.agent, "handle_events"):
 

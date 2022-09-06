@@ -64,11 +64,11 @@ class LibraryHandler(MessageHandler):
         self.history = []
 
     def send_render(self):
-        self.trial.frameId += 1
+        self.trial.frame_id += 1
         self.trial.send_render(
             {
                 "frame": self.images[self.cursor],
-                "frameId": self.trial.frameId,
+                "frameId": self.trial.frame_id,
                 "borderColor": "orange",
             }
         )

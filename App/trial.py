@@ -15,20 +15,25 @@ from App.message_handlers.library_handler import LibraryModes
 class Trial:
     def __init__(self, pipe: Connection):
         self.config = load_config()
+
         self.pipe = pipe
-        self.frameId = 0
-        self.human_action = self.config.get("defaultAction")
+        self.frame_id = 0
+
         self.episode = 0
         self.done = False
-        self.play = self.config.get("defaultStart", False)
+
         self.record = []
-        self.trialId = shortuuid.uuid()
-        self.outfile = None
+
+        self.human_action = self.config.get("defaultAction")
+        self.play = self.config.get("defaultStart", False)
         self.framerate = self.config.get("startingFrameRate", 30)
-        self.userId = None
-        self.projectId = self.config.get("projectId")
+        self.project_id = self.config.get("projectId")
+
+        self.trial_id = shortuuid.uuid()
+        self.user_id = None
         self.filename = None
         self.path = None
+        self.outfile = None
 
         self._last_frame = None
 
@@ -134,7 +139,7 @@ class Trial:
             try:
                 message = json.loads(message)
             except (ValueError, TypeError):
-                message = {"error": "unable to parse message", "frameId": self.frameId}
+                message = {"error": "unable to parse message", "frameId": self.frame_id}
             return message
         return None
 
@@ -146,8 +151,8 @@ class Trial:
         """
         render = self.agent.render()
         frame = array_to_b64(render)
-        self.frameId += 1
-        return {"frame": frame, "frameId": self.frameId}
+        self.frame_id += 1
+        return {"frame": frame, "frameId": self.frame_id}
 
     def send_render(self, render: dict = None):
         """
@@ -180,3 +185,9 @@ class Trial:
             self.pipe.send(json.dumps(self.config.get("variables")))
         except:
             return
+
+    def pause(self):
+        self.play = False
+
+    def resume(self):
+        self.play = True
