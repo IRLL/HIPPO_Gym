@@ -26,11 +26,10 @@ class PyGameMessageHandler(MessageHandler):
     A MessageHandler design to send incomming messages as pygame events.
     """
 
-    def handle_info(self, message: dict):
+    def handle_info_message(self, message: dict):
         """
         Send pygames events to the trial agent.
         """
-
         if not hasattr(self.trial.agent, "handle_events"):
             raise NotImplementedError(f"Agent cannot handle mouse_event: {message}")
 

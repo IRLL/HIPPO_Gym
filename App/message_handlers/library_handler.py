@@ -2,12 +2,15 @@ import os
 import json
 import time
 from enum import Enum
-from typing import List
+from typing import List, Union
 
 import numpy as np
 
 from App.message_handlers import MessageHandler
 from App.utils import load_to_b64
+
+
+from App.message_handlers.message_handler import Command
 
 
 class LibraryCommands(Enum):
@@ -100,8 +103,10 @@ class LibraryHandler(MessageHandler):
             self.trial.pipe.send(json.dumps(self._build_ui_navigation()))
         self.trial.send_ui([LibraryCommands.BACK_TO_GAME.value])
 
-    def handle_command(self, message: dict):
-        command = super().handle_command(message)
+    def handle_command(
+        self, command: Union[str, Command, LibraryCommands]
+    ) -> Union[str, Command, LibraryCommands]:
+        command = super().handle_command(command)
 
         try:
             command = LibraryCommands(command)
@@ -124,7 +129,8 @@ class LibraryHandler(MessageHandler):
             self.send_ui()
 
         command_time = time.time() - self.start_time
-        self.history.append((command, command_time))
+        self.history.append((command.value, command_time))
+        return command
 
     @property
     def _prev_item(self):
