@@ -391,12 +391,9 @@ class Trial:
             filename = f"trial_{self.userId}"
         else:
             filename = f"episode_{self.episode}_user_{self.userId}"
-        try:
-            path = "Trials/" + filename
-            self.outfile = open(path, "ab")
-        except:
-            os.makedirs("Trials")
-            self.outfile = open(path, "ab")
+        os.makedirs("Trials", exist_ok=True)
+        path = os.path.join("Trials", filename)
+        self.outfile = open(path, "ab")
         self.filename = filename
         self.path = path
 

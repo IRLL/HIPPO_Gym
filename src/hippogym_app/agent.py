@@ -1,4 +1,17 @@
+"""
+This is a demo file to be replaced by the researcher as required.
+This file is imported by trial.py and trial.py will call:
+start()
+step()
+render()
+reset()
+close()
+These functions are mandatory. This file contains minimum working versions 
+of these functions, adapt as required for individual research goals.
+"""
+
 from PIL import Image
+import gym
 
 
 class Agent:
@@ -17,10 +30,7 @@ class Agent:
             - env (Type: OpenAI gym Environment as returned by gym.make())
             Mandatory
         """
-        f = open("images/imgnames.txt", "r")
-        self.imgnames = f.read().split("\n")
-        f.close()
-        self.count = 0
+        self.env = gym.make(game)
         return
 
     def step(self, action: int):
@@ -35,9 +45,13 @@ class Agent:
             - envState (Type: dict containing all information to be recorded for future use)
               change contents of dict as desired, but return must be type dict.
         """
-        self.count += 1
-        done = self.count > len(self.imgnames)
-        envState = {"done": done}
+        observation, reward, done, info = self.env.step(action)
+        envState = {
+            "observation": observation,
+            "reward": reward,
+            "done": done,
+            "info": info,
+        }
         return envState
 
     def render(self):
@@ -51,8 +65,7 @@ class Agent:
             - return from env.render('rgb_array') (Type: npArray)
               must return the unchanged rgb_array
         """
-
-        return f"images/{self.imgnames[self.count]}"
+        return self.env.render("rgb_array")
 
     def reset(self):
         """
@@ -64,7 +77,7 @@ class Agent:
         Returns:
             No Return
         """
-        self.count = 0
+        self.env.reset()
 
     def close(self):
         """
@@ -76,3 +89,4 @@ class Agent:
         Returns:
             No Return
         """
+        self.env.close()

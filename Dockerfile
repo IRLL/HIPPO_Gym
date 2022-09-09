@@ -1,11 +1,11 @@
-FROM python:3.7
+FROM python:3.9
 
 RUN apt-get update && apt-get install -y \
 	xvfb
 
-COPY App/* ./
-COPY App/images/* ./images/
-COPY App/Fingerprints/* ./Fingerprints/
+COPY src/* ./
+COPY src/hippogym_app/images/* ./images/
+COPY src/hippogym_app/Fingerprints/* ./Fingerprints/
 RUN mkdir ./Trials
 RUN mkdir ./XML
 COPY requirements.txt .
