@@ -3,12 +3,23 @@ requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
 
 [project]
 name = "hippogym"
-author='Nick Nissen', 'Mathïs Fédérico'
-author_email='nnissen@ualberta.ca', 'mathfederico@gmail.com'
+
 dynamic = ["version", "readme", "dependencies"]
-license = {text = "Apache-2.0 license"}
+license = {text = "Apache-2.0"}
 requires-python = ">=3.7"
-url='https://hippogym.irll.net'
+
+
+[tool.poetry]
+authors = [
+    {name = "Nick Nissen", email = "nnissen@ualberta.ca"},
+]
+maintainers = [
+    {name = "Mathïs Fédérico", email = "mathfederico@gmail.com"},
+]
+homepage="https://hippogym.irll.net"
+repository="https://github.com/IRLL/HIPPO_Gym"
+documentation = "https://hippogym.irll.net/"
+keywords = ["gym", "human", "loop", "reinforcement", "learning"]
 
 [project.optional-dependencies]
 pyvis = ["pyvis"]
