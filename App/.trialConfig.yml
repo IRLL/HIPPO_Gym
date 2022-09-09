@@ -2,21 +2,32 @@ trial:
   actionBufferLifespan: 1
   actionSpace: null
   allowFrameRateChange: false
-  bucket: null
+  bucket: projects.irll
   dataFile: episode
+  fingerprint: true
   frameRateStepSize: 5
   game: fingerprint
   instructions:
-  - Select a marker to edit it
-  - Scroll (mouse), pinch (touchpad/mousepad), or use arrow keys to zoom
-  - Drag or use space + arrow keys to move
+  - Scroll (mouse), pinch (touchpad/mousepad), double-click or use control keys to
+    zoom
+  - Click and drag the canvas to pan around the canvas
+  - Click and drag a marker to move it
+  - Use sliders to adjust image appearance
+  - Click on "Add Marker" and select target location on image to add a marker, or
+    right-click on the image
+  - Click on "Get Feedback" to get feedback on your image. Green means that removing
+    it will decrease your score, and red means that removing it will increase your
+    score.
   maxEpisodes: 20
   maxFrameRate: 60
+  maxScore: 2242
   minFrameRate: 1
-  projectId: null
+  minMinutiae: 1
+  projectId: fingerprint-demo
   s3upload: false
   startingFrameRate: 30
   ui:
+  - stop
   - brightness
   - contrast
   - saturation
@@ -26,6 +37,7 @@ trial:
   - addMinutia
   - resetImage
   - submitImage
+  - getFeedback
   - fingerprint
   - webcam
   - webcamViewer

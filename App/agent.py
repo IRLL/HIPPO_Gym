@@ -1,5 +1,4 @@
 from PIL import Image
-import gym
 
 class Agent():
     '''
@@ -20,10 +19,9 @@ class Agent():
         f = open("images/imgnames.txt", "r")
         self.imgnames = f.read().split("\n")
         f.close()
-
         self.count = 0;
         return
-    
+
     def step(self, action:int):
         '''
         Takes a game step.
@@ -37,10 +35,10 @@ class Agent():
               change contents of dict as desired, but return must be type dict.
         '''
         self.count += 1
-        done = self.count > 5
+        done = self.count > len(self.imgnames)
         envState = {'done': done}
         return envState
-    
+
     def render(self):
         '''
         Gets render from gym.
@@ -52,9 +50,9 @@ class Agent():
             - return from env.render('rgb_array') (Type: npArray)
               must return the unchanged rgb_array
         '''
-        
+
         return f'images/{self.imgnames[self.count]}'
-    
+
     def reset(self):
         '''
         Resets the environment to start new episode.
@@ -66,7 +64,7 @@ class Agent():
             No Return
         '''
         self.count = 0
-    
+
     def close(self):
         '''
         Closes the environment at the end of the trial.
