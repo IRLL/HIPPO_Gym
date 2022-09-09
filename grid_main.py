@@ -1,6 +1,6 @@
 import time
-from hippo_gym.hippo_gym import HippoGym
-from hippo_gym.browser.control_panel import end_button
+from hippogym import HippoGym
+from hippogym.browser.control_panel import end_button
 
 def main():
     hippo = HippoGym()

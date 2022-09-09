@@ -1,21 +1,21 @@
 import time
 from threading import Thread
 
-from hippo_gym.browser.control_panel import ControlPanel
-from hippo_gym.browser.game_window import GameWindow
-from hippo_gym.browser.grid import Grid
-from hippo_gym.browser.info_panel import InfoPanel
+from hippogym.browser.control_panel import ControlPanel
+from hippogym.browser.game_window import GameWindow
+from hippogym.browser.grid import Grid
+from hippogym.browser.info_panel import InfoPanel
 from multiprocessing import Process, Queue
 
-from hippo_gym.browser.text_box import TextBox
-from hippo_gym.communicator.communicator import Communicator
-from hippo_gym.control_message_handler import ControlMessageHandler
-from hippo_gym.queue_handler import check_queue, check_queues
-from hippo_gym.recorder.recorder import Recorder
-from hippo_gym.textbox_message_handler import TextBoxMessageHandler
-from hippo_gym.window_message_handler import WindowMessageHandler
-from hippo_gym.grid_message_handler import GridMessageHandler
-from hippo_gym.bucketer import bucketer
+from hippogym.browser.text_box import TextBox
+from hippogym.communicator.communicator import Communicator
+from hippogym.control_message_handler import ControlMessageHandler
+from hippogym.queue_handler import check_queue, check_queues
+from hippogym.recorder.recorder import Recorder
+from hippogym.textbox_message_handler import TextBoxMessageHandler
+from hippogym.window_message_handler import WindowMessageHandler
+from hippogym.grid_message_handler import GridMessageHandler
+from hippogym.bucketer import bucketer
 
 
 class HippoGym:

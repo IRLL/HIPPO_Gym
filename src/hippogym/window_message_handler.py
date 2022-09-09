@@ -1,7 +1,7 @@
 import time
 from threading import Thread
 
-from hippo_gym.queue_handler import check_queue
+from hippogym.queue_handler import check_queue
 
 
 class WindowMessageHandler(Thread):

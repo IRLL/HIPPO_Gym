@@ -1,6 +1,6 @@
 import base64
 
-from hippo_gym.hippo_gym import HippoGym
+from hippogym import HippoGym
 
 images = ['logo_vertical.png', 'icon_dark.png', 'words_horizontal.png', 'logo_horizontal.png', 'icon_light.png',
           'words_vertical.png']

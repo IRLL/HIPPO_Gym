@@ -3,7 +3,7 @@ from os import makedirs, listdir
 from shutil import rmtree
 import _pickle as pickle
 
-from hippo_gym.recorder.uploader import Uploader
+from hippogym.recorder.uploader import Uploader
 
 
 class Recorder:

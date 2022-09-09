@@ -1,7 +1,7 @@
 import sys
 import time
 
-from hippo_gym.hippo_gym import HippoGym
+from hippogym import HippoGym
 import play_lunar_lander
 
 

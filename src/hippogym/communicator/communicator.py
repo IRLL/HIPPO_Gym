@@ -4,7 +4,7 @@ import ssl
 import websockets
 import json
 
-from hippo_gym.event.event_handler import EventHandler
+from hippogym.event.event_handler import EventHandler
 
 
 class Communicator:

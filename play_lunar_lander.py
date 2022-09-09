@@ -2,7 +2,7 @@ import time
 
 import gym
 
-from hippo_gym.hippo_gym import HippoGym
+from hippogym import HippoGym
 
 
 def play(hippo):
