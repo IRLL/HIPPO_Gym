@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+
+[project]
+name = "hippogym"
+
+dynamic = ["version", "readme", "dependencies"]
+license = {text = "Apache-2.0"}
+requires-python = ">=3.7"
+authors = [
+    {name = "Nick Nissen", email = "nnissen@ualberta.ca"},
+    {name = "Mathïs Fédérico", email = "mathfederico@gmail.com"},
+]
+keywords = ["gym", "human", "loop", "reinforcement", "learning"]
+
+[project.urls]
+Home-page = "https://hippogym.irll.net"
+Source = "https://github.com/IRLL/HIPPO_Gym"
+Documentation = "https://hippogym.irll.net/"
+
+[project.optional-dependencies]
+pyvis = ["pyvis"]
+
+[tool.setuptools]
+license-files = ['LICEN[CS]E*', 'COPYING*', 'NOTICE*', 'AUTHORS*']
+
+[project.scripts]
+hippogym = "hippogym.__main__:main"
+
+[tool.setuptools.dynamic]
+readme = {file = ["README.md"]}
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools_scm]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["src"]

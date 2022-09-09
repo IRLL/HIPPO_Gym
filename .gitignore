@@ -163,17 +163,15 @@ cython_debug/
 
 # Logs
 Logs/*
-server.log
-.projectConfig.yml
+*.log
 
 # App
-App/server.log
-App/.trialConfig.yml
-App/Trials/*
-App/XML/*
-App/MtiaeScoreAgent/*
-App/Math*
-App/FR*
-App/Impressions/*
-App/score*
-App/addScores.py
+*Config.yml
+Trials/
+XML/
+MtiaeScoreAgent/
+Math/
+FR/
+Impressions/
+**/Fingerprints/
+**/images/
