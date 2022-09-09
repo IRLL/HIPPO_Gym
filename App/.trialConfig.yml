@@ -38,3 +38,11 @@ trial:
   - resetImage
   - submitImage
   - getFeedback
+  - fingerprint
+  - webcam
+  - webcamViewer
+  - webcamRequired
+  - webcamFps
+  - webcamLeft
+  - wecamRight
+  - webcamCaptureButton

@@ -70,6 +70,13 @@ trial:
     resetImage: True
     submitImage: True
     getFeedback: True
+    webcam: True
+    webcamViewer: True
+    webcamRequired: False
+    webcamLeft: True
+    webcamRight: False
+    webcamCaptureButton: True
+    webcamCapture: False
   instructions:
     - Scroll (mouse), pinch (touchpad/mousepad), double-click or use control keys to zoom
     - Click and drag the canvas to pan around the canvas
