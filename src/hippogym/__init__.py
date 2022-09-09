@@ -1,3 +1,5 @@
+""" HippoGym: A framework for human-in-the-loop experiments. """
+
 import time
 from threading import Thread
 
