@@ -15,13 +15,15 @@ import _pickle as cPickle
 import numpy
 import shortuuid
 import yaml
-from agent import (
-    Agent,
-)  # this is the Agent/Environment compo provided by the researcher
+
+
 from PIL import Image
 
 # Get the score change from score_change
-from predict import get_score_change
+from hippogym_app.predict import get_score_change
+
+# this is the Agent/Environment compo provided by the researcher
+from hippogym_app.fingerprintAgent import FingerprintAgent
 
 
 def load_config():
@@ -64,7 +66,7 @@ class Trial:
         By default this expects the openAI Gym Environment object to be
         returned.
         """
-        self.agent = Agent()
+        self.agent = FingerprintAgent()
         self.agent.start(self.config.get("game"))
 
     def run(self):

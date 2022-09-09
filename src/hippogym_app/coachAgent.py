@@ -4,7 +4,6 @@ code provided by Calarina Muslimani of the Intelligent Robot Learning Laboratory
 Note to use this code with the default setup simply rename this file to agent.py
 """
 
-import itertools
 import time
 
 import gym
