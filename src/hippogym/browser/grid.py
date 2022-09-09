@@ -1,4 +1,3 @@
-
 class Grid:
     def __init__(self, queue, rows=10, columns=10):
         self.queue = queue
@@ -9,23 +8,19 @@ class Grid:
         self.submitted = []
 
     def send(self):
-        grid = {
-            'rows': self.rows, 
-            'columns': self.columns, 
-            'tiles': self.tiles
-        }
-        self.queue.put_nowait({'grid': grid})
+        grid = {"rows": self.rows, "columns": self.columns, "tiles": self.tiles}
+        self.queue.put_nowait({"grid": grid})
 
     def hide(self):
-        self.queue.put_nowait({'grid': None})
+        self.queue.put_nowait({"grid": None})
 
     def update(self, **kwargs):
-        self.rows = kwargs.get('rows', self.rows)
-        self.columns = kwargs.get('columns', self.columns)
-        tiles = kwargs.get('tiles', self.tiles)
+        self.rows = kwargs.get("rows", self.rows)
+        self.columns = kwargs.get("columns", self.columns)
+        tiles = kwargs.get("tiles", self.tiles)
         if not type(tiles) == list:
-            raise TypeError('tiles must be a list')
-        self.tiles = tiles 
+            raise TypeError("tiles must be a list")
+        self.tiles = tiles
         self.send()
 
     def add_tile(self, row, col, **kwargs):
@@ -66,24 +61,24 @@ class Tile(dict):
             self,
             row=row,
             col=col,
-            tile_type=tile_type if type(tile_type) == TileType else TileType(**kwargs)
+            tile_type=tile_type if type(tile_type) == TileType else TileType(**kwargs),
         )
 
     def __eq__(self, other):
-        if self['row'] == other['row'] and self['col'] == other['col']:
+        if self["row"] == other["row"] and self["col"] == other["col"]:
             return True
         else:
             return False
+
 
 class TileType(dict):
     def __init__(self, **kwargs):
         dict.__init__(
             self,
-            text = kwargs.get('text', None),
-            image = kwargs.get('image', None),
-            icon = kwargs.get('icon', None),
-            color = kwargs.get('color', None),
-            bgcolor = kwargs.get('bgcolor', None),
-            border = kwargs.get('border', None)
+            text=kwargs.get("text", None),
+            image=kwargs.get("image", None),
+            icon=kwargs.get("icon", None),
+            color=kwargs.get("color", None),
+            bgcolor=kwargs.get("bgcolor", None),
+            border=kwargs.get("border", None),
         )
-

@@ -1,27 +1,25 @@
 """ HippoGym: A framework for human-in-the-loop experiments. """
 
 import time
+from multiprocessing import Process, Queue
 from threading import Thread
 
 from hippogym.browser.control_panel import ControlPanel
 from hippogym.browser.game_window import GameWindow
 from hippogym.browser.grid import Grid
 from hippogym.browser.info_panel import InfoPanel
-from multiprocessing import Process, Queue
-
 from hippogym.browser.text_box import TextBox
+from hippogym.bucketer import bucketer
 from hippogym.communicator.communicator import Communicator
 from hippogym.control_message_handler import ControlMessageHandler
+from hippogym.grid_message_handler import GridMessageHandler
 from hippogym.queue_handler import check_queue, check_queues
 from hippogym.recorder.recorder import Recorder
 from hippogym.textbox_message_handler import TextBoxMessageHandler
 from hippogym.window_message_handler import WindowMessageHandler
-from hippogym.grid_message_handler import GridMessageHandler
-from hippogym.bucketer import bucketer
 
 
 class HippoGym:
-
     def __init__(self, setup=True):
         self.game_windows = []
         self.info_panel = None
@@ -40,7 +38,14 @@ class HippoGym:
     def setup(self):
         self.queues = create_queues()
         self.out_q = Queue()
-        self.communicator = Process(target=Communicator, args=(self.out_q, self.queues,), daemon=True)
+        self.communicator = Process(
+            target=Communicator,
+            args=(
+                self.out_q,
+                self.queues,
+            ),
+            daemon=True,
+        )
         self.communicator.start()
         self.control_message_handler = ControlMessageHandler(self)
         self.control_message_handler.start()
@@ -135,7 +140,7 @@ class HippoGym:
         self.stop = True
 
     def disconnect(self):
-        self.out_q.put_nowait('done')
+        self.out_q.put_nowait("done")
         self.__init__(False)
 
     def set_window_size(self, new_size, index):
@@ -146,40 +151,46 @@ class HippoGym:
         return bucketer(self.user_id, num_groups)
 
     def handle_control_messages(self):
-        messages = check_queue(self.queues['control_q'])
+        messages = check_queue(self.queues["control_q"])
         for message in messages:
-            user_id = message.get('userId', None)
+            user_id = message.get("userId", None)
             if user_id and not self.user_connected:
-                project_id = message.get('projectId', None)
+                project_id = message.get("projectId", None)
                 self.project_id = project_id
                 self.user_id = user_id
                 self.user_connected = True
                 self.send()
 
-            event = message.get('SLIDERSET', None)
+            event = message.get("SLIDERSET", None)
             if event:
                 self.control_panel.set_slider_value(event)
-            event = message.get('Disconnect', None)
+            event = message.get("Disconnect", None)
             if event:
                 self.user_connected = False
                 self.run = False
                 self.user_id = None
-                print('Disconnected:', self.user_id)
+                print("Disconnected:", self.user_id)
         return messages
 
     def handle_window_messages(self):
-        messages = check_queue(self.queues['window_q'])
+        messages = check_queue(self.queues["window_q"])
         for message in messages:
-            event = message.get('WINDOWRESIZED', None)
+            event = message.get("WINDOWRESIZED", None)
             if event:
                 index = 0
                 self.game_windows[index].update(width=event[0], height=event[1])
         return messages
 
     def poll(self):
-        control = [] #self.handle_control_messages()
-        window = [] #self.handle_window_messages()
-        messages = check_queues([self.queues['keyboard_q'], self.queues['button_q'], self.queues['standard_q']])
+        control = []  # self.handle_control_messages()
+        window = []  # self.handle_window_messages()
+        messages = check_queues(
+            [
+                self.queues["keyboard_q"],
+                self.queues["button_q"],
+                self.queues["standard_q"],
+            ]
+        )
         for message in window:
             messages.append(message)
         for message in control:
@@ -208,9 +219,16 @@ class HippoGym:
 
 
 def create_queues():
-    keys = ['keyboard_q', 'window_q', 'button_q', 'standard_q', 'control_q', 'textbox_q', 'grid_q' ]
+    keys = [
+        "keyboard_q",
+        "window_q",
+        "button_q",
+        "standard_q",
+        "control_q",
+        "textbox_q",
+        "grid_q",
+    ]
     queues = {}
     for key in keys:
         queues[key] = Queue()
     return queues
-

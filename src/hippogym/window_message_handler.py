@@ -10,15 +10,15 @@ class WindowMessageHandler(Thread):
         self.hippo = hippo
 
         self.handlers = {
-            'WINDOWRESIZED': self.window_resize,
-            'MOUSEBUTTONDOWN': self.mouse,
-            'MOUSEBUTTONUP': self.mouse,
-            'MOUSEMOTION': self.mouse
+            "WINDOWRESIZED": self.window_resize,
+            "MOUSEBUTTONDOWN": self.mouse,
+            "MOUSEBUTTONUP": self.mouse,
+            "MOUSEMOTION": self.mouse,
         }
 
     def run(self):
         while True:
-            messages = check_queue(self.hippo.queues['window_q'])
+            messages = check_queue(self.hippo.queues["window_q"])
             for message in messages:
                 for key in message.keys():
                     if key in self.handlers:

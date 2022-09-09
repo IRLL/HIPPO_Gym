@@ -7,24 +7,25 @@ from hippogym.queue_handler import check_queue
 if TYPE_CHECKING:
     from hippogym import HippoGym
 
+
 class ControlMessageHandler(Thread):
     def __init__(self, hippo: "HippoGym"):
         Thread.__init__(self, daemon=True)
         self.hippo = hippo
 
         self.handlers = {
-            'userId': self.user,
-            'projectId': self.project,
-            'disconnect': self.disconnect,
-            'SLIDERSET': self.slider,
-            'start': self.hippo.start,
-            'pause': self.hippo.pause,
-            'end': self.hippo.end
+            "userId": self.user,
+            "projectId": self.project,
+            "disconnect": self.disconnect,
+            "SLIDERSET": self.slider,
+            "start": self.hippo.start,
+            "pause": self.hippo.pause,
+            "end": self.hippo.end,
         }
 
     def run(self):
         while True:
-            messages = check_queue(self.hippo.queues['control_q'])
+            messages = check_queue(self.hippo.queues["control_q"])
             for message in messages:
                 for key in message.keys():
                     if key in self.handlers:
