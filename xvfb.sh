@@ -1,0 +1,4 @@
+#! /bin/bash
+
+cd hippo_gym
+xvfb-run -s "-screen 0 1400x900x24" python3 -m App #add 'dev' at the end of this line to disable ssl and s3 uploading for testing. Remove 'dev' for deployment

@@ -1,29 +1,21 @@
 trial:
   actionBufferLifespan: 1
-  actionSpace:
-  - noop
-  - up
-  - right
-  - left
-  - down
-  - upright
-  - upleft
-  - downright
-  - downleft
+  actionSpace: []
   allowFrameRateChange: false
-  bucket: null
+  bucket: projects.irll
   dataFile: episode
   defaultAction: null
   defaultStart: true
   frameRateStepSize: 5
   game: MineCrafting
-  maxEpisodes: 20
+  maxEpisodes: 2
   maxFrameRate: 60
   minFrameRate: 1
-  projectId: null
-  s3upload: false
-  startingFrameRate: 30
-  ui: []
+  projectId: test-option-metrics-complexity
+  s3upload: true
+  startingFrameRate: 15
+  ui:
+  - reset
   variables:
     gameWindowHeight: 719
     gameWindowSize: responsive

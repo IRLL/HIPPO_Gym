@@ -41,9 +41,9 @@ Note: requirements.txt contains pip dependencies for building the Docker Image.
 ## Use:
 communicator.py contains the main program. 
 To run in development mode call:
-    python3 communicator.py dev
+    python3 -m App dev
 To run in poduction on a server, the call can be done with nohup:
-    nohup python3 communicator.py &
+    nohup python3 -m App &
 Note: fullchain.pem and privkey.pem files must be located in the running directory or the program will fail to run in production. These files provide the SSL certificate for secure communication and are mandatory for production.
 ADDRESS and PORT constants are set in communicator.py change as required.
 Defaults for development are:
