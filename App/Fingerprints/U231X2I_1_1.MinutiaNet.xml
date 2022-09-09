@@ -1,17 +1,17 @@
-<MinutiaeList>
-  <Minutia X="133" Y="235" Angle="83.20137181932256" Type="2"/>
-  <Minutia X="234" Y="218" Angle="80.99397412267956" Type="2"/>
-  <Minutia X="202" Y="180" Angle="118.63449217722396" Type="2"/>
-  <Minutia X="106" Y="221" Angle="93.63564213418772" Type="2"/>
-  <Minutia X="162" Y="221" Angle="60.17724456418665" Type="2"/>
-  <Minutia X="131" Y="202" Angle="88.76709000017983" Type="2"/>
-  <Minutia X="203" Y="219" Angle="264.781085441881" Type="2"/>
-  <Minutia X="172" Y="196" Angle="118.25713112731268" Type="2"/>
-  <Minutia X="138" Y="219" Angle="55.19786157779024" Type="2"/>
-  <Minutia X="227" Y="179" Angle="56.02412432779141" Type="2"/>
-  <Minutia X="219" Y="212" Angle="200.3248105430231" Type="2"/>
-  <Minutia X="251" Y="226" Angle="80.0761884032024" Type="2"/>
-  <Minutia X="211" Y="194" Angle="216.39081677544095" Type="2"/>
-  <Minutia X="196" Y="244" Angle="309.3695956840507" Type="2"/>
-  <Minutia X="235" Y="163" Angle="46.889146613508586" Type="2"/>
+<MinutiaeList Score="2258">
+  <Minutia X="133" Y="235" Angle="83.20137181932256" Type="2" />
+  <Minutia X="234" Y="218" Angle="80.99397412267956" Type="2" />
+  <Minutia X="202" Y="180" Angle="118.63449217722396" Type="2" />
+  <Minutia X="106" Y="221" Angle="93.63564213418772" Type="2" />
+  <Minutia X="162" Y="221" Angle="60.17724456418665" Type="2" />
+  <Minutia X="131" Y="202" Angle="88.76709000017983" Type="2" />
+  <Minutia X="203" Y="219" Angle="264.781085441881" Type="2" />
+  <Minutia X="172" Y="196" Angle="118.25713112731268" Type="2" />
+  <Minutia X="138" Y="219" Angle="55.19786157779024" Type="2" />
+  <Minutia X="227" Y="179" Angle="56.02412432779141" Type="2" />
+  <Minutia X="219" Y="212" Angle="200.3248105430231" Type="2" />
+  <Minutia X="251" Y="226" Angle="80.0761884032024" Type="2" />
+  <Minutia X="211" Y="194" Angle="216.39081677544095" Type="2" />
+  <Minutia X="196" Y="244" Angle="309.3695956840507" Type="2" />
+  <Minutia X="235" Y="163" Angle="46.889146613508586" Type="2" />
 </MinutiaeList>

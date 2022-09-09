@@ -7,7 +7,7 @@ get permission to include it in a public repository.
 class Fingerprint:
 
     def __init__(self):
-        self.checker = pexpect.spawn('wine score2K.exe', encoding='utf-8')
+        # self.checker = pexpect.spawn('wine score2K.exe', encoding='utf-8')
         print("Checker Init")
 
     def check_xml(self, filename):

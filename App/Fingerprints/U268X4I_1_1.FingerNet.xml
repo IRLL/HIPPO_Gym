@@ -1,6 +1,6 @@
-<MinutiaeList>
-<Minutia X="201" Y="202" Angle="101,0" Type="2"/>
-<Minutia X="242" Y="211" Angle="81,0" Type="2"/>
-<Minutia X="212" Y="186" Angle="87,0" Type="2"/>
-<Minutia X="206" Y="228" Angle="105,00000000000001" Type="2"/>
+<MinutiaeList Score="132">
+<Minutia X="201" Y="202" Angle="101,0" Type="2" />
+<Minutia X="242" Y="211" Angle="81,0" Type="2" />
+<Minutia X="212" Y="186" Angle="87,0" Type="2" />
+<Minutia X="206" Y="228" Angle="105,00000000000001" Type="2" />
 </MinutiaeList>
