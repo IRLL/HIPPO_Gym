@@ -6,13 +6,11 @@ class InfoPanel:
         self.kv = kv if type(kv) == dict else {}
 
     def send(self):
-        info_panel = {'InfoPanel': None}
-        if self.text or len(self.items) != 0 or len(self.kv) !=0:
-            info_panel = {'InfoPanel': {
-                'text': self.text,
-                'items': self.items,
-                'kv': self.kv
-            }}
+        info_panel = {"InfoPanel": None}
+        if self.text or len(self.items) != 0 or len(self.kv) != 0:
+            info_panel = {
+                "InfoPanel": {"text": self.text, "items": self.items, "kv": self.kv}
+            }
         self.queue.put_nowait(info_panel)
 
     def add_item(self, item):

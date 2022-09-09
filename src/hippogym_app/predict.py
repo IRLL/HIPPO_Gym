@@ -1,6 +1,8 @@
-from hippogym_app.preprocess import get_one_pair_regresor_data
 import pickle
 import xml.etree.ElementTree as ET
+
+from hippogym_app.preprocess import get_one_pair_regresor_data
+
 
 # def get_score_change(minutiae_file_path, output_file):
 def get_score_change(minutiae_file_path):

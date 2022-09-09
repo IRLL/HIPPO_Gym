@@ -6,11 +6,13 @@ class ControlPanel:
         self.pipe = pipe
 
     def send(self):
-        control_panel = {'ControlPanel': {
-            'Buttons': self.buttons,
-            'Sliders': self.sliders,
-            'Keys': self.keys
-        }}
+        control_panel = {
+            "ControlPanel": {
+                "Buttons": self.buttons,
+                "Sliders": self.sliders,
+                "Keys": self.keys,
+            }
+        }
         self.pipe.put_nowait(control_panel)
 
     def get_buttons(self):
@@ -31,10 +33,27 @@ class ControlPanel:
             self.keys = keys
         self.send()
 
-    def add_button(self, text=None, icon=None, image=None, color=None, bgcolor=None, value=None, confirm=False):
-        button = dict(text=text, icon=icon, image=image, color=color, bgcolor=bgcolor, value=value, confirm=confirm)
+    def add_button(
+        self,
+        text=None,
+        icon=None,
+        image=None,
+        color=None,
+        bgcolor=None,
+        value=None,
+        confirm=False,
+    ):
+        button = dict(
+            text=text,
+            icon=icon,
+            image=image,
+            color=color,
+            bgcolor=bgcolor,
+            value=value,
+            confirm=confirm,
+        )
         self.buttons.append({"Button": button})
-        return  button, len(self.buttons) - 1
+        return button, len(self.buttons) - 1
 
     def remove_button(self, index):
         if type(index) == int:
@@ -64,8 +83,8 @@ class ControlPanel:
     def set_slider_value(self, slider_id, value):
         print(slider_id, value)
         for slider in self.sliders:
-            if slider_id == slider.get('Slider', {}).get('id', None):
-                slider['Slider']['value'] = value
+            if slider_id == slider.get("Slider", {}).get("id", None):
+                slider["Slider"]["value"] = value
 
     def set_keys(self, setting):
         if type(setting) == bool:
@@ -85,105 +104,127 @@ class ControlPanel:
         self.send()
 
 
-start_button = {'Button': {
-    'image': None,
-    'icon': 'FaPlayCircle',
-    'text': 'Start',
-    'color': 'white',
-    'bgcolor': 'green',
-    'value': 'start'
-}}
+start_button = {
+    "Button": {
+        "image": None,
+        "icon": "FaPlayCircle",
+        "text": "Start",
+        "color": "white",
+        "bgcolor": "green",
+        "value": "start",
+    }
+}
 
-reset_button = {'Button': {
-    'image': None,
-    'icon': 'FaRedo',
-    'text': 'Reset',
-    'color': 'white',
-    'bgcolor': 'red',
-    'value': 'reset'
-}}
+reset_button = {
+    "Button": {
+        "image": None,
+        "icon": "FaRedo",
+        "text": "Reset",
+        "color": "white",
+        "bgcolor": "red",
+        "value": "reset",
+    }
+}
 
-submit_button = {'Button': {
-    'image': None,
-    'icon': 'FaCheckCircle',
-    'text': 'Submit',
-    'color': 'white',
-    'bgcolor': 'green',
-    'value': 'submit'
-}}
+submit_button = {
+    "Button": {
+        "image": None,
+        "icon": "FaCheckCircle",
+        "text": "Submit",
+        "color": "white",
+        "bgcolor": "green",
+        "value": "submit",
+    }
+}
 
-end_button = {'Button': {
-    'image': None,
-    'icon': 'FaStopCircle',
-    'text': 'End',
-    'color': 'white',
-    'bgcolor': 'blue',
-    'value': 'end'
-}}
+end_button = {
+    "Button": {
+        "image": None,
+        "icon": "FaStopCircle",
+        "text": "End",
+        "color": "white",
+        "bgcolor": "blue",
+        "value": "end",
+    }
+}
 
-pause_button = {'Button': {
-    'image': None,
-    'icon': 'FaPauseCircle',
-    'text': 'Pause',
-    'color': 'white',
-    'bgcolor': 'orange',
-    'value': 'pause'
-}}
+pause_button = {
+    "Button": {
+        "image": None,
+        "icon": "FaPauseCircle",
+        "text": "Pause",
+        "color": "white",
+        "bgcolor": "orange",
+        "value": "pause",
+    }
+}
 
-good_button = {'Button': {
-    'image': None,
-    'icon': 'FaCheck',
-    'text': 'Good',
-    'color': 'white',
-    'bgcolor': 'green',
-    'value': 'good'
-}}
+good_button = {
+    "Button": {
+        "image": None,
+        "icon": "FaCheck",
+        "text": "Good",
+        "color": "white",
+        "bgcolor": "green",
+        "value": "good",
+    }
+}
 
-bad_button = {'Button': {
-    'image': None,
-    'icon': 'FaTimes',
-    'text': 'Bad',
-    'color': 'white',
-    'bgcolor': 'red',
-    'value': 'bad'
-}}
+bad_button = {
+    "Button": {
+        "image": None,
+        "icon": "FaTimes",
+        "text": "Bad",
+        "color": "white",
+        "bgcolor": "red",
+        "value": "bad",
+    }
+}
 
 
-up_button = {'Button': {
-    'image': None,
-    'icon': 'FaArrowUp',
-    'text': None,
-    'color': 'black',
-    'bgcolor': 'white',
-    'value': 'up'
-}}
+up_button = {
+    "Button": {
+        "image": None,
+        "icon": "FaArrowUp",
+        "text": None,
+        "color": "black",
+        "bgcolor": "white",
+        "value": "up",
+    }
+}
 
-down_button = {'Button': {
-    'image': None,
-    'icon': 'FaArrowDown',
-    'text': None,
-    'color': 'black',
-    'bgcolor': 'white',
-    'value': 'down'
-}}
+down_button = {
+    "Button": {
+        "image": None,
+        "icon": "FaArrowDown",
+        "text": None,
+        "color": "black",
+        "bgcolor": "white",
+        "value": "down",
+    }
+}
 
-left_button = {'Button': {
-    'image': None,
-    'icon': 'FaArrowLeft',
-    'text': None,
-    'color': 'black',
-    'bgcolor': 'white',
-    'value': 'left'
-}}
+left_button = {
+    "Button": {
+        "image": None,
+        "icon": "FaArrowLeft",
+        "text": None,
+        "color": "black",
+        "bgcolor": "white",
+        "value": "left",
+    }
+}
 
-right_button = {'Button': {
-    'image': None,
-    'icon': 'FaArrowRight',
-    'text': None,
-    'color': 'black',
-    'bgcolor': 'white',
-    'value': 'right'
-}}
+right_button = {
+    "Button": {
+        "image": None,
+        "icon": "FaArrowRight",
+        "text": None,
+        "color": "black",
+        "bgcolor": "white",
+        "value": "right",
+    }
+}
 
 standard_controls = [
     start_button,
@@ -192,43 +233,51 @@ standard_controls = [
     left_button,
     right_button,
     up_button,
-    down_button
+    down_button,
 ]
 
-brightness_slider = {'Slider': {
-    'title': 'Brightness',
-    'icon': 'BsFillBrightnessHighFill',
-    'id': 'brightness',
-    'min': 0,
-    'max': 1000,
-    'value': 100
-}}
+brightness_slider = {
+    "Slider": {
+        "title": "Brightness",
+        "icon": "BsFillBrightnessHighFill",
+        "id": "brightness",
+        "min": 0,
+        "max": 1000,
+        "value": 100,
+    }
+}
 
-contrast_slider = {'Slider': {
-    'title': 'Contrast',
-    'icon': 'IoContrast',
-    'id': 'contrast',
-    'min': 0,
-    'max': 500,
-    'value': 100
-}}
+contrast_slider = {
+    "Slider": {
+        "title": "Contrast",
+        "icon": "IoContrast",
+        "id": "contrast",
+        "min": 0,
+        "max": 500,
+        "value": 100,
+    }
+}
 
-saturation_slider = {'Slider': {
-    'title': 'Saturation',
-    'icon': 'BsDropletHalf',
-    'id': 'saturation',
-    'min': 0,
-    'max': 100,
-    'value': 100
-}}
+saturation_slider = {
+    "Slider": {
+        "title": "Saturation",
+        "icon": "BsDropletHalf",
+        "id": "saturation",
+        "min": 0,
+        "max": 100,
+        "value": 100,
+    }
+}
 
-hue_slider = {'Slider': {
-    'title': 'Hue',
-    'icon': 'IoColorPaletteOutline',
-    'id': 'hue',
-    'min': 0,
-    'max': 360,
-    'value': 0
-}}
+hue_slider = {
+    "Slider": {
+        "title": "Hue",
+        "icon": "IoColorPaletteOutline",
+        "id": "hue",
+        "min": 0,
+        "max": 360,
+        "value": 0,
+    }
+}
 
 image_sliders = [brightness_slider, contrast_slider, saturation_slider, hue_slider]

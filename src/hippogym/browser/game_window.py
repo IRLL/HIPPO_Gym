@@ -1,13 +1,22 @@
 import base64
 import logging
-from queue import Queue
-from PIL import Image
 from io import BytesIO
+from queue import Queue
+
+from PIL import Image
 
 
 class GameWindow:
-
-    def __init__(self, pipe, idx=0, width=700, height=600, mode='responsive', image=None, text=None):
+    def __init__(
+        self,
+        pipe,
+        idx=0,
+        width=700,
+        height=600,
+        mode="responsive",
+        image=None,
+        text=None,
+    ):
         self.id = idx
         self.width = width
         self.height = height
@@ -42,28 +51,48 @@ class GameWindow:
             self.send_frame()
 
     def send_window_size(self):
-        message = {"GameWindow": {"id": self.id, "size": (self.width, self.height), "mode": self.mode}}
+        message = {
+            "GameWindow": {
+                "id": self.id,
+                "size": (self.width, self.height),
+                "mode": self.mode,
+            }
+        }
         self.send(message)
 
     def send_frame(self):
         message = None
         if self.frame:
-            message = {"GameWindow": {"id": self.id, "frame": self.frame, "frameId": self.frameId}}
+            message = {
+                "GameWindow": {
+                    "id": self.id,
+                    "frame": self.frame,
+                    "frameId": self.frameId,
+                }
+            }
         elif self.text:
-            message = {"GameWindow": {"id": self.id, "text": self.text, "frameId": self.frameId}}
+            message = {
+                "GameWindow": {
+                    "id": self.id,
+                    "text": self.text,
+                    "frameId": self.frameId,
+                }
+            }
         if message:
             self.send(message)
             self.frameId += 1
 
     def send(self, message=None):
         if not message:
-            message = {"GameWindow": {
-                "idx": self.id,
-                "size": (self.width, self.height),
-                "mode": self.mode,
-                "frame": self.frame,
-                "frameId": self.frameId
-            }}
+            message = {
+                "GameWindow": {
+                    "idx": self.id,
+                    "size": (self.width, self.height),
+                    "mode": self.mode,
+                    "frame": self.frame,
+                    "frameId": self.frameId,
+                }
+            }
         self.pipe.put_nowait(message)
 
     def hide(self):
@@ -93,10 +122,10 @@ class GameWindow:
         try:
             img = Image.fromarray(array)
             fp = BytesIO()
-            img.save(fp, 'JPEG')
-            frame = base64.b64encode(fp.getvalue()).decode('utf-8')
+            img.save(fp, "JPEG")
+            frame = base64.b64encode(fp.getvalue()).decode("utf-8")
             fp.close()
             return frame
         except Exception as e:
-            logging.info('Failed to convert numpy array to Base64')
-            logging.info(f'Numpy Array conversion error: {e}')
+            logging.info("Failed to convert numpy array to Base64")
+            logging.info(f"Numpy Array conversion error: {e}")
