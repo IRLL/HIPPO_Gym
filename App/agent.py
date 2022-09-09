@@ -1,5 +1,4 @@
 from PIL import Image
-from fingerprint import Fingerprint
 
 class Agent():
     '''
@@ -21,7 +20,6 @@ class Agent():
         self.imgnames = f.read().split("\n")
         f.close()
         self.count = 0;
-        self.checker = Fingerprint()
         return
 
     def step(self, action:int):
@@ -77,6 +75,3 @@ class Agent():
         Returns:
             No Return
         '''
-
-    def get_score(self, filename:str):
-        return self.checker.check_xml(filename)

@@ -1,0 +1,70 @@
+<style>
+	p {
+		font-size: 20px;
+		margin-top: 1rem;
+	}
+
+	label {
+		font-size: 18px;
+		display: inline-block;
+		margin-left: 1rem;
+	}
+
+	#otherInput {
+		margin-left: 1rem;
+	}
+</style>
+
+<h1>Pre-Quiz Questionnaire</h1>
+<h3>Please select one answer for each of the following questions</h3>
+<h3>When you finish the questionnaire, please click "Submit" at the bottom</h3>
+
+<p>1. What year were you born in?</p>
+<select id="yearpicker" name="yearpicker"></select>
+
+<p>2. Are you right or left-handed?</p>
+<input type="radio" id="Right" name="hand" value="Right" />
+<label for="Right">Right-handed</label><br />
+<input type="radio" id="Left" name="hand" value="Left" />
+<label for="Left">Left-handed</label><br />
+<input type="radio" id="Both" name="hand" value="Both" />
+<label for="Both">Ambidextrous</label><br />
+
+<p>3. What is your gender?</p>
+<div>
+	<input type="radio" name="gender" id="male" />
+	<label for="male">Male</label>
+</div>
+<div>
+	<input type="radio" name="gender" id="female" />
+	<label for="female">Female</label>
+</div>
+<div>
+	<input type="radio" name="gender" id="none" />
+	<label for="none">I don't want to answer</label>
+</div>
+<div>
+	<input type="radio" name="gender" id="other" />
+	<label for="other">Other</label>
+	<input type="text" id="otherInput" />
+</div>
+
+<p>4. Do you wear glasses or contact lenses?</p>
+<input type="radio" id="glasses" name="vision" value="glasses" />
+<label for="glasses">Glasses</label><br />
+<input type="radio" id="contactlens" name="vision" value="contactlens" />
+<label for="contactlens">Contact Lenses</label><br />
+<input type="radio" id="both" name="vision" value="both" />
+<label for="both">Both</label><br />
+<input type="radio" id="neither" name="vision" value="neither" />
+<label for="neither">Neither</label><br />
+
+<p>5. How often do you play video games?</p>
+<input type="radio" id="often" name="gaming" value="often" />
+<label for="often">Often (More than 10 hours / week)</label><br />
+<input type="radio" id="occasionally" name="gaming" value="occasionally" />
+<label for="occasionally">Occasionally (1-10 hours / week)</label><br />
+<input type="radio" id="rarely" name="gaming" value="rarely" />
+<label for="rarely">Rarely (Less than 1 hour / week)</label><br />
+<input type="radio" id="never" name="gaming" value="never" />
+<label for="never">Never</label><br />
