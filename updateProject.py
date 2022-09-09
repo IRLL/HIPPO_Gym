@@ -173,12 +173,12 @@ def push_image(projectConfig, imageExists):
         push = input("Do you want to deploy docker now? [y/n]").strip().lower()
         if push not in ("y", "yes"):
             return
-    with open("App/xvfb.sh", "r") as infile:
+    with open("src/hippogym_app/xvfb.sh", "r") as infile:
         instructions = infile.read()
         if "python3 communicator.py dev" in instructions:
             confirm = (
                 input(
-                    "dev flag set in App/xvfb.sh file, ssl and s3uploading dissabled. Do you want to continue? [y/n]"
+                    "dev flag set in src/hippogym_app/xvfb.sh file, ssl and s3uploading dissabled. Do you want to continue? [y/n]"
                 )
                 .strip()
                 .lower()
@@ -219,14 +219,14 @@ def get_ssl_cert(projectConfig):
         try:
             s3 = boto3.resource("s3")
             object = s3.Object(sslBucket, fullchain)
-            object.download_file("App/fullchain.pem")
+            object.download_file("src/hippogym_app/fullchain.pem")
             object = s3.Object(sslBucket, privkey)
-            object.download_file("App/privkey.pem")
+            object.download_file("src/hippogym_app/privkey.pem")
             logging.info("SSL Cert files downloaded.")
             return
         except Exception as error:
             logging.info(error)
-    os.system("chmod 600 App/privkey.pem")
+    os.system("chmod 600 src/hippogym_app/privkey.pem")
     logging.info(f"Config entry for SSL Cert files not found")
     logging.info("SSL Cert files NOT downloaded.")
     return
@@ -250,15 +250,15 @@ def set_trial_config(trialConfig, projectConfig):
         if uiConfig.get(key):
             ui.append(key)
     trialConfig["ui"] = ui
-    with open("App/.trialConfig.yml", "w") as outfile:
+    with open("src/hippogym_app/.trialConfig.yml", "w") as outfile:
         yaml.dump({"trial": trialConfig}, outfile)
     logging.info("trialConfig.yml Created")
     return trialConfig
 
 
 def set_dotenv():
-    logging.info("Copying .env to App...")
-    os.system("cp .env App/.env")
+    logging.info("Copying .env to src/hippogym_app...")
+    os.system("cp .env src/hippogym_app/.env")
     logging.info(".env Copied.")
 
 
