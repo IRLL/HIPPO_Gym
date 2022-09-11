@@ -1,5 +1,8 @@
+from multiprocessing import Queue
+
+
 class Grid:
-    def __init__(self, queue, rows=10, columns=10):
+    def __init__(self, queue: Queue, rows: int = 10, columns: int = 10):
         self.queue = queue
         self.rows = rows
         self.columns = columns
@@ -18,7 +21,7 @@ class Grid:
         self.rows = kwargs.get("rows", self.rows)
         self.columns = kwargs.get("columns", self.columns)
         tiles = kwargs.get("tiles", self.tiles)
-        if not type(tiles) == list:
+        if not isinstance(tiles, list):
             raise TypeError("tiles must be a list")
         self.tiles = tiles
         self.send()
@@ -56,19 +59,21 @@ class Grid:
 
 
 class Tile(dict):
-    def __init__(self, row, col, tile_type=None, **kwargs):
+    def __init__(self, row: int, col: int, tile_type=None, **kwargs):
+        tile_type = tile_type if isinstance(tile_type, TileType) else TileType(**kwargs)
         dict.__init__(
             self,
             row=row,
             col=col,
-            tile_type=tile_type if type(tile_type) == TileType else TileType(**kwargs),
+            tile_type=tile_type,
         )
 
-    def __eq__(self, other):
-        if self["row"] == other["row"] and self["col"] == other["col"]:
-            return True
-        else:
+    def __eq__(self, other: "Tile"):
+        if not isinstance(other, Tile):
             return False
+        same_row = self["row"] == other["row"]
+        same_col = self["col"] == other["col"]
+        return same_row and same_col
 
 
 class TileType(dict):
