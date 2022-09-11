@@ -1,8 +1,12 @@
+import logging
 import time
 
 import gym
 
 from hippogym import HippoGym
+
+logging.basicConfig(level=logging.DEBUG)
+LOGGER = logging.getLogger(__name__)
 
 
 def play(hippo: HippoGym):
@@ -17,11 +21,12 @@ def play(hippo: HippoGym):
     )
     hippo.get_control_panel().send()
     env = gym.make("LunarLander-v2")
+    LOGGER.debug("Env created")
     send_render(env, window)
     send_render(env, window)
     while not hippo.stop:
         action = 0
-        print(hippo.stop, hippo.run)
+        LOGGER.debug(hippo.stop, hippo.run)
         env.reset()
         while hippo.run:
             send_render(env, window)
