@@ -3,6 +3,7 @@ import json
 import logging
 import time
 from io import BytesIO
+from typing import Any, Dict
 
 import _pickle as cPickle
 import shortuuid
@@ -13,17 +14,16 @@ from PIL import Image
 from hippogym_app.agents.agent import Agent
 
 
-def load_config():
-    logging.info("Loading Config in trial.py")
-    with open(".trialConfig.yml", "r") as infile:
-        config = yaml.load(infile, Loader=yaml.FullLoader)
-    logging.info("Config loaded in trial.py")
+def load_config(trial_config_path: str) -> Dict[str, Any]:
+    with open(trial_config_path, "r") as infile:
+        config: dict = yaml.load(infile, Loader=yaml.FullLoader)
+    logging.info("Trial config loaded from %s", trial_config_path)
     return config.get("trial")
 
 
 class Trial:
     def __init__(self, pipe):
-        self.config = load_config()
+        self.config = load_config(".trialConfig.yml")
         self.pipe = pipe
         self.frameId = 0
         self.humanAction = 0
