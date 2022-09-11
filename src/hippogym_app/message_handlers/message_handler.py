@@ -5,7 +5,7 @@ import shortuuid
 from typing import TYPE_CHECKING, Optional, Union
 
 if TYPE_CHECKING:
-    from App.trial import Trial
+    from hippogym_app.trial import Trial
 
 
 class MessageType(Enum):

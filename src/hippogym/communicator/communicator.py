@@ -2,8 +2,8 @@ import asyncio, websockets, sys, ssl, os
 from multiprocessing import Process, Pipe
 import logging
 
-from App.s3upload import Uploader
-from App.trial import Trial
+from hippogym_app.s3upload import Uploader
+from hippogym_app.trial import Trial
 
 ADDRESS = None  # set desired IP for development
 PORT = 5000  # if port is changed here it must also be changed in Dockerfile

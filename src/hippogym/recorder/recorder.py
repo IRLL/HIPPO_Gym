@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 import _pickle as cPickle
 
 if TYPE_CHECKING:
-    from App.trial import Trial
+    from hippogym_app.trial import Trial
 
 
 class Recorder:

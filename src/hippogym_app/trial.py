@@ -4,12 +4,12 @@ import numpy as np
 
 from multiprocessing.connection import Connection
 
-from App.agents.craftingAgent import CraftingAgent
-from App.message_handlers import LibraryHandler, PyGameMessageHandler
-from App.recorders import LegacyRecorder
-from App.utils import array_to_b64, load_config
+from hippogym_app.agents.craftingAgent import CraftingAgent
+from hippogym_app.message_handlers import LibraryHandler, PyGameMessageHandler
+from hippogym_app.recorders import LegacyRecorder
+from hippogym_app.utils import array_to_b64, load_config
 
-from App.message_handlers.library_handler import LibraryModes
+from hippogym_app.message_handlers.library_handler import LibraryModes
 
 # TODO: Refactor this for more general MessageHandlers composablity
 class PyGameLibrairyHandler(LibraryHandler, PyGameMessageHandler):

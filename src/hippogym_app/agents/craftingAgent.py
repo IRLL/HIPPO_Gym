@@ -3,7 +3,7 @@ from crafting import MineCraftingEnv
 from crafting.render.render import get_human_action
 from crafting.task import RewardShaping, TaskObtainItem
 
-from App.agents import Agent
+from hippogym_app.agents import Agent
 
 
 class CraftingAgent(Agent):

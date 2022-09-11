@@ -3,7 +3,7 @@ import pygame
 from pygame.event import Event
 from pygame.locals import MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION
 
-from App.message_handlers import MessageHandler
+from hippogym_app.message_handlers import MessageHandler
 
 
 def rel_to_abs_coords(x_rel: float, y_rel: float) -> Tuple[int, int]:

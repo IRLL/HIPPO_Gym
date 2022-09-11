@@ -6,11 +6,11 @@ from typing import List, Union
 
 import numpy as np
 
-from App.message_handlers import MessageHandler
-from App.utils import load_to_b64
+from hippogym_app.message_handlers import MessageHandler
+from hippogym_app.utils import load_to_b64
 
 
-from App.message_handlers.message_handler import Command
+from hippogym_app.message_handlers.message_handler import Command
 
 
 class LibraryCommands(Enum):
