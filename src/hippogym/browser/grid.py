@@ -1,23 +1,23 @@
 from multiprocessing import Queue
+from typing import Any, Dict, List, Set
 
 
 class Grid:
-    def __init__(self, queue: Queue, rows: int = 10, columns: int = 10):
+    def __init__(self, queue: Queue, rows: int = 10, columns: int = 10) -> None:
         self.queue = queue
         self.rows = rows
         self.columns = columns
-        self.tiles = []
-        self.selected_tiles = set()
-        self.submitted = []
+        self.tiles: List[Tile] = []
+        self.selected_tiles: Set[Tile] = set()
 
-    def send(self):
+    def send(self) -> None:
         grid = {"rows": self.rows, "columns": self.columns, "tiles": self.tiles}
         self.queue.put_nowait({"grid": grid})
 
-    def hide(self):
+    def hide(self) -> None:
         self.queue.put_nowait({"grid": None})
 
-    def update(self, **kwargs):
+    def update(self, **kwargs: Dict[str, Any]) -> None:
         self.rows = kwargs.get("rows", self.rows)
         self.columns = kwargs.get("columns", self.columns)
         tiles = kwargs.get("tiles", self.tiles)
@@ -26,32 +26,32 @@ class Grid:
         self.tiles = tiles
         self.send()
 
-    def add_tile(self, row, col, **kwargs):
+    def add_tile(self, row: int, col: int, **kwargs: Dict[str, Any]) -> None:
         tile = Tile(row, col, **kwargs)
         if tile in self.tiles:
             self.tiles.remove(tile)
         self.tiles.append(tile)
         self.send()
 
-    def remove_tile(self, row, col):
+    def remove_tile(self, row: int, col: int) -> None:
         tile = Tile(row, col)
         if tile in self.tiles:
             self.tiles.remove(tile)
         self.send()
 
-    def create_tile_type(self, **kwargs):
+    def create_tile_type(self, **kwargs) -> "TileType":
         return TileType(**kwargs)
 
-    def select(self, tile):
+    def select(self, tile: "Tile") -> None:
         self.selected_tiles.add(tile)
 
-    def unselect(self, tile):
+    def unselect(self, tile: "Tile") -> None:
         self.selected_tiles.discard(tile)
 
-    def get_selected(self):
+    def get_selected(self) -> List["Tile"]:
         return list(self.selected_tiles)
 
-    def click(self, tile):
+    def click(self, tile) -> None:
         if tile in self.selected_tiles:
             self.selected_tiles.remove(tile)
         else:
@@ -59,7 +59,7 @@ class Grid:
 
 
 class Tile(dict):
-    def __init__(self, row: int, col: int, tile_type=None, **kwargs):
+    def __init__(self, row: int, col: int, tile_type=None, **kwargs) -> None:
         tile_type = tile_type if isinstance(tile_type, TileType) else TileType(**kwargs)
         dict.__init__(
             self,
@@ -68,7 +68,7 @@ class Tile(dict):
             tile_type=tile_type,
         )
 
-    def __eq__(self, other: "Tile"):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, Tile):
             return False
         same_row = self["row"] == other["row"]

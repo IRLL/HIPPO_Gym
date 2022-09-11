@@ -1,15 +1,18 @@
-def check_queue(queue):
+from multiprocessing import Queue
+from typing import Dict, List
+
+
+def check_queue(queue: Queue) -> List[Dict[str, str]]:
     messages = []
     while not queue.empty():
         messages.append(queue.get(False))
     return messages
 
 
-def check_queues(queues):
+def check_queues(queues: Dict[str, Queue]) -> List[str]:
     response = []
-    for q in queues:
-        messages = check_queue(q)
+    for queue in queues:
+        messages = check_queue(queue)
         if messages:
-            for message in messages:
-                response.append(message)
+            response += messages
     return response

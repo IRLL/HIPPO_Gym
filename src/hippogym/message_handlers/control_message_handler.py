@@ -1,6 +1,6 @@
 import time
 from threading import Thread
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable, Optional
 
 from hippogym.queue_handler import check_queue
 
@@ -18,18 +18,19 @@ class ControlMessageHandler(Thread):
             "projectId": self.project,
             "disconnect": self.disconnect,
             "SLIDERSET": self.slider,
-            "start": lambda _msg: self.hippo.start(),
-            "pause": lambda _msg: self.hippo.pause(),
-            "end": lambda _msg: self.hippo.end(),
+            "start": self.start,
+            "pause": self.pause,
+            "end": self.end,
         }
 
-    def run(self):
+    def run(self) -> None:
         while True:
             messages = check_queue(self.hippo.queues["control_q"])
             for message in messages:
                 for key in message.keys():
                     if key in self.handlers:
-                        self.handlers[key](message[key])
+                        handler: Callable[[Optional[str]], None] = self.handlers[key]
+                        handler(message[key])
             time.sleep(0.01)
 
     def user(self, user_id):
@@ -38,13 +39,21 @@ class ControlMessageHandler(Thread):
             self.hippo.user_connected = True
             self.hippo.send()
 
-    def project(self, project_id):
+    def project(self, project_id: str) -> None:
         self.hippo.project_id = project_id
 
-    def disconnect(self, user_id):
-        self.hippo.user_connected = False
+    def disconnect(self) -> None:
         self.hippo.user_id = None
 
-    def slider(self, setting):
+    def slider(self, setting) -> None:
         if self.hippo.control_panel:
             self.hippo.control_panel.set_slider_value(*setting)
+
+    def start(self, _message:Optional[str]=None):
+        self.hippo.start()
+
+    def pause(self, _message:Optional[str]=None):
+        self.hippo.pause()
+    
+    def end(self, _message:Optional[str]=None):
+        self.hippo.end()

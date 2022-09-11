@@ -1,18 +1,18 @@
 # Given a UUID and total number of groups,
 # returns the corresponding group based on the UUID
-def bucketer(UUID, n):
+def bucketer(UUID: str, num_groups: int) -> int:
     # Get the number of requisite hex characters for the UUID
-    hex_chars = UUID[-num_chars(n) :]
+    hex_chars = UUID[-num_chars(num_groups) :]
 
     # sum last largest_prime digits
-    sum = 0
+    primes_sum = 0
     for char in hex_chars:
-        sum += int(char, 16)
+        primes_sum += int(char, 16)
 
-    return sum % n
+    return primes_sum % num_groups
 
 
-def num_chars(n):
+def num_chars(n: int) -> int:
     # Determine all prime factors
     i = 2
     factors = []

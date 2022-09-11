@@ -6,13 +6,13 @@ from dotenv import load_dotenv
 
 
 class Uploader:
-    def __init__(self):
+    def __init__(self) -> None:
         load_dotenv()
         self.s3 = boto3.resource("s3")
         self.bucket = getenv("BUCKET")
         self.key = getenv("S3_KEY")
 
-    def run(self, path, filename):
+    def run(self, path, filename) -> None:
         if self.key[-1] != "/":
             key = f"{self.key}/{filename}"
         else:
@@ -22,5 +22,5 @@ class Uploader:
         Process(target=upload, args=(self.s3, file_path, self.bucket, key)).start()
 
 
-def upload(s3, file_path, bucket, key):
+def upload(s3, file_path, bucket, key) -> None:
     s3.meta.client.upload_file(file_path, bucket, key)

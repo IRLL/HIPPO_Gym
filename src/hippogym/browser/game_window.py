@@ -2,6 +2,7 @@ import base64
 import logging
 from io import BytesIO
 from queue import Queue
+from typing import Optional
 
 from PIL import Image
 
@@ -9,14 +10,14 @@ from PIL import Image
 class GameWindow:
     def __init__(
         self,
-        pipe,
+        pipe: Queue,
         idx=0,
         width=700,
         height=600,
         mode="responsive",
         image=None,
         text=None,
-    ):
+    ) -> None:
         self.id = idx
         self.width = width
         self.height = height
@@ -25,7 +26,7 @@ class GameWindow:
         self.text = text
         self.frameId = 0
         self.pipe = pipe
-        self.events = Queue(maxsize=10)
+        self.events: Queue = Queue(maxsize=10)
 
     def update(self, idx=None, width=None, height=None, mode=None, image=0, text=None):
         if idx is not None:
@@ -107,13 +108,13 @@ class GameWindow:
             self.get_event()
         self.events.put(event)
 
-    def get_event(self):
+    def get_event(self) -> Optional[str]:
         event = None
         if not self.events.empty():
             event = self.events.get()
         return event
 
-    def clear_events(self):
+    def clear_events(self) -> None:
         if not self.events.empty():
             self.events.get()
 

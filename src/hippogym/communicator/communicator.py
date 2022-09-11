@@ -3,7 +3,7 @@ from multiprocessing import Queue
 import json
 from logging import getLogger
 import ssl
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from websockets.server import serve
 
@@ -16,7 +16,7 @@ class Communicator:
     def __init__(
         self,
         out_q: Queue,
-        queues: List[Queue],
+        queues: Dict[str, Queue],
         address: Optional[str] = None,
         port: int = 5000,
         use_ssl: bool = True,
@@ -32,7 +32,7 @@ class Communicator:
         self.fullchain = fullchain_path
         self.privkey = privkey_path
         self.event_handler = EventHandler(queues)
-        self.users = []
+        self.users: List[str] = []
         self.start()
 
     async def consumer_handler(self, websocket):
@@ -86,14 +86,14 @@ class Communicator:
         self.users.remove((user_id, project_id))
         self.event_handler.disconnect(user_id)
 
-    def start(self):
+    def start(self) -> None:
         if not self.force_ssl:
             self.start_non_ssl_server()
         elif self.ssl:
             self.start_ssl_server()
         asyncio.get_event_loop().run_forever()
 
-    def start_non_ssl_server(self):
+    def start_non_ssl_server(self) -> None:
         server = serve(self.handler, self.address, self.port)
         asyncio.get_event_loop().run_until_complete(server)
         LOGGER.info(
@@ -102,7 +102,7 @@ class Communicator:
             self.port,
         )
 
-    def start_ssl_server(self):
+    def start_ssl_server(self) -> None:
         try:
             ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
             ssl_context.load_cert_chain(self.fullchain, keyfile=self.privkey)

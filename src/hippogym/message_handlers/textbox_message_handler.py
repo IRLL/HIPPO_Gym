@@ -1,6 +1,6 @@
 import time
 from threading import Thread
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable, Dict, Optional
 
 from hippogym.queue_handler import check_queue
 
@@ -18,20 +18,21 @@ class TextBoxMessageHandler(Thread):
             "TEXTREQUEST": self.request,
         }
 
-    def run(self):
+    def run(self) -> None:
         while True:
             messages = check_queue(self.hippo.queues["textbox_q"])
             for message in messages:
                 for key in message.keys():
                     if key in self.handlers:
-                        self.handlers[key](message[key])
+                        handler: Callable[[Optional[str]], None] = self.handlers[key]
+                        handler(message[key])
             time.sleep(0.01)
 
-    def request(self, text, index=0):
+    def request(self, text:str, index=0) -> None:
         if len(self.hippo.text_boxes) > index:
             self.hippo.text_boxes[index].update(text=text, send=False)
 
-    def button(self, message, index=0):
+    def button(self, message:Dict[int, str], index=0) -> None:
         if message[0].lower() == "clear":
             self.hippo.text_boxes[index].clear(message[1])
         else:
