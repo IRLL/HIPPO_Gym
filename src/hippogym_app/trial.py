@@ -6,7 +6,7 @@ from multiprocessing.connection import Connection
 
 from hippogym_app.agents.craftingAgent import CraftingAgent
 from hippogym_app.message_handlers import LibraryHandler, PyGameMessageHandler
-from hippogym_app.recorders import LegacyRecorder
+from hippogym.recorder.recorder import LegacyRecorder
 from hippogym_app.utils import array_to_b64, load_config
 
 from hippogym_app.message_handlers.library_handler import LibraryModes
@@ -18,7 +18,7 @@ class PyGameLibrairyHandler(LibraryHandler, PyGameMessageHandler):
 
 class Trial:
     def __init__(self, pipe: Connection):
-        self.config = load_config()
+        self.config = load_config("hippogym_app/.trialConfig.yml")
 
         self.pipe = pipe
         self.frame_id = 0

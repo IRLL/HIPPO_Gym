@@ -8,15 +8,10 @@ from PIL import Image
 from io import BytesIO
 
 
-def load_config() -> dict:
-    logging.info("Loading Config in trial.py")
-    try:
-        with open(".trialConfig.yml", "r") as infile:
-            config = yaml.load(infile, Loader=yaml.FullLoader)
-    except FileNotFoundError:
-        with open(os.path.join("App", ".trialConfig.yml"), "r") as infile:
-            config = yaml.load(infile, Loader=yaml.FullLoader)
-    logging.info("Config loaded in trial.py")
+def load_config(config_path: str) -> dict:
+    with open(config_path, "r") as infile:
+        config: dict = yaml.load(infile, Loader=yaml.FullLoader)
+    logging.info("Trial config loaded from %s", config_path)
     return config.get("trial")
 
 
