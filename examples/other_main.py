@@ -1,8 +1,11 @@
+import logging
 import sys
 import time
 
 from hippogym import HippoGym
 from lunar_lander import play
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 def main():
