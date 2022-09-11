@@ -8,18 +8,23 @@ from hippogym.browser.game_window import GameWindow
 from hippogym.browser.grid import Grid
 from hippogym.browser.info_panel import InfoPanel
 from hippogym.browser.text_box import TextBox
+
 from hippogym.bucketer import bucketer
 from hippogym.communicator.communicator import Communicator
-from hippogym.control_message_handler import ControlMessageHandler
-from hippogym.grid_message_handler import GridMessageHandler
+
 from hippogym.queue_handler import check_queue, check_queues
 from hippogym.recorder.recorder import Recorder
-from hippogym.textbox_message_handler import TextBoxMessageHandler
-from hippogym.window_message_handler import WindowMessageHandler
+
+from hippogym.message_handlers import (
+    ControlMessageHandler,
+    GridMessageHandler,
+    TextBoxMessageHandler,
+    WindowMessageHandler,
+)
 
 
 class HippoGym:
-    def __init__(self, setup=True):
+    def __init__(self):
         self.game_windows = []
         self.info_panel = None
         self.control_panel = None
@@ -31,19 +36,17 @@ class HippoGym:
         self.project_id = None
         self.user_connected = False
         self.recorders = []
-        if setup:
-            self.setup()
-
-    def setup(self):
         self.queues = create_queues()
         self.out_q = Queue()
-        self.communicator = Process(
-            target=Communicator,
-            args=(
-                self.out_q,
-                self.queues,
-            ),
-            daemon=True,
+        self.communicator = Communicator(
+            self.out_q,
+            self.queues,
+            address=None,
+            port=5000,
+            use_ssl=True,
+            force_ssl=False,
+            fullchain_path="fullchain.pem",
+            privkey_path="privkey.pem",
         )
         self.communicator.start()
         self.control_message_handler = ControlMessageHandler(self)
