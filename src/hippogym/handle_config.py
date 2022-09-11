@@ -309,7 +309,3 @@ def set_dotenv():
     logging.info("Copying .env to src/hippogym_app...")
     os.system("cp .env src/hippogym_app/.env")
     logging.info(".env Copied.")
-
-
-if __name__ == "__main__":
-    handle_config("config.yml", "StepFiles")
