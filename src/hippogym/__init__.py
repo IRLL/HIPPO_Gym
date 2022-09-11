@@ -2,7 +2,6 @@
 
 import time
 from multiprocessing import Process, Queue
-from threading import Thread
 
 from hippogym.browser.control_panel import ControlPanel
 from hippogym.browser.game_window import GameWindow

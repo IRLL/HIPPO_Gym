@@ -1,11 +1,14 @@
 import asyncio
 import json
-import logging
+from logging import getLogger
 import ssl
+from typing import Optional
 
-import websockets
+from websockets.server import serve
 
 from hippogym.event.event_handler import EventHandler
+
+LOGGER = getLogger(__name__)
 
 
 class Communicator:
@@ -13,12 +16,12 @@ class Communicator:
         self,
         out_q,
         queues,
-        address=None,
-        port=5000,
-        use_ssl=True,
-        force_ssl=False,
-        fullchain_path="fullchain.pem",
-        privkey_path="privkey.pem",
+        address: Optional[str] = None,
+        port: int = 5000,
+        use_ssl: bool = True,
+        force_ssl: bool = False,
+        fullchain_path: str = "fullchain.pem",
+        privkey_path: str = "privkey.pem",
     ):
         self.out_q = out_q
         self.address = address
@@ -33,7 +36,7 @@ class Communicator:
 
     async def consumer_handler(self, websocket):
         self.event_handler.handle_user_id(self.users[0])
-        print("starting:", self.users[0])
+        LOGGER.info("Starting users: %s", str(self.users))
         async for message in websocket:
             try:
                 message = json.loads(message)
@@ -52,7 +55,6 @@ class Communicator:
                     done = True
                 await websocket.send(json.dumps(message))
             await asyncio.sleep(0.01)
-        return
 
     async def producer(self):
         message = None
@@ -73,44 +75,38 @@ class Communicator:
 
         consumer_task = asyncio.ensure_future(self.consumer_handler(websocket))
         producer_task = asyncio.ensure_future(self.producer_handler(websocket))
-        done, pending = await asyncio.wait(
+        _, pending = await asyncio.wait(
             [consumer_task, producer_task], return_when=asyncio.FIRST_COMPLETED
         )
         for task in pending:
             task.cancel()
         await websocket.close()
-        print("User Disconnected")
+        LOGGER.info("User Disconnected")
         self.users.remove((user_id, project_id))
         self.event_handler.disconnect(user_id)
-
-        return
 
     def start(self):
         if not self.force_ssl:
             self.start_non_ssl_server()
-        if self.ssl or self.force_ssl:
+        elif self.ssl:
             self.start_ssl_server()
         asyncio.get_event_loop().run_forever()
 
     def start_non_ssl_server(self):
-        server = websockets.serve(self.handler, self.address, self.port + 1)
+        server = serve(self.handler, self.address, self.port)
         asyncio.get_event_loop().run_until_complete(server)
-        # asyncio.get_event_loop().run_forever()
-        logging.info("Non-SSL websocket started")
-        print("NON SSL UP")
+        LOGGER.info(
+            "Non-SSL websocket started at %s on port %i",
+            self.address,
+            self.port,
+        )
 
     def start_ssl_server(self):
         try:
             ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
             ssl_context.load_cert_chain(self.fullchain, keyfile=self.privkey)
-            ssl_server = websockets.serve(
-                self.handler, None, self.port, ssl=ssl_context
-            )
+            ssl_server = serve(self.handler, None, self.port, ssl=ssl_context)
             asyncio.get_event_loop().run_until_complete(ssl_server)
-            # asyncio.get_event_loop().run_forever()
-            logging.info("SSL websocket started")
-            print("SSL UP")
-        except Exception as e:
-            logging.info("SSL failed to initialize")
-            logging.error(f"SSL failed with error: {e}")
-            print(f"SSL Failed: {e}")
+            LOGGER.info("SSL websocket started on port %i", self.port)
+        except Exception as error:
+            LOGGER.error("SSL failed with error: %s", error)
