@@ -5,13 +5,12 @@ import time
 from io import BytesIO
 
 import _pickle as cPickle
-import numpy
 import shortuuid
 import yaml
-from agent import (
-    Agent,
-)  # this is the Agent/Environment compo provided by the researcher
 from PIL import Image
+
+# this is the Agent/Environment compo provided by the researcher
+from hippogym_app.agents.agent import Agent
 
 
 def load_config():

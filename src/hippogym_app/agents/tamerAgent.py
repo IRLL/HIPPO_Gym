@@ -336,7 +336,7 @@ class Agent:
             - env (Type: OpenAI gym Environment as returned by gym.make())
             Mandatory
         """
-        self.tamer = true
+        self.tamer = True
         if self.tamer:
             np.random.seed(0)
             self.tamerAgent = TamerAgent()
