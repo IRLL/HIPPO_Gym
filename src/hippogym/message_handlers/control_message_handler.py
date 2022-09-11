@@ -18,9 +18,9 @@ class ControlMessageHandler(Thread):
             "projectId": self.project,
             "disconnect": self.disconnect,
             "SLIDERSET": self.slider,
-            "start": self.hippo.start,
-            "pause": self.hippo.pause,
-            "end": self.hippo.end,
+            "start": lambda _msg: self.hippo.start(),
+            "pause": lambda _msg: self.hippo.pause(),
+            "end": lambda _msg: self.hippo.end(),
         }
 
     def run(self):

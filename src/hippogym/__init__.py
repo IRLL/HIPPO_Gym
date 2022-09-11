@@ -1,6 +1,7 @@
 """ HippoGym: A framework for human-in-the-loop experiments. """
 
 import time
+from logging import getLogger
 from multiprocessing import Process, Queue
 
 from hippogym.browser.control_panel import ControlPanel
@@ -22,6 +23,8 @@ from hippogym.message_handlers import (
     WindowMessageHandler,
 )
 
+LOGGER = getLogger(__name__)
+
 
 class HippoGym:
     def __init__(self):
@@ -34,7 +37,6 @@ class HippoGym:
         self.stop = False
         self.user_id = None
         self.project_id = None
-        self.user_connected = False
         self.recorders = []
         self.queues = create_queues()
         self.out_q = Queue()
@@ -67,7 +69,7 @@ class HippoGym:
             return self.add_recorder()
 
     def add_text_box(self, text_box=None, **kwargs):
-        if not type(text_box) == TextBox:
+        if not isinstance(text_box, TextBox):
             text_box = TextBox(self.out_q, idx=len(self.text_boxes), **kwargs)
         self.text_boxes.append(text_box)
         if not self.textbox_message_handler:
@@ -76,7 +78,7 @@ class HippoGym:
         return text_box
 
     def add_game_window(self, game_window=None, **kwargs):
-        if not type(game_window) == GameWindow:
+        if not isinstance(game_window, GameWindow):
             game_window = GameWindow(self.out_q, idx=len(self.game_windows), **kwargs)
         self.game_windows.append(game_window)
         if not self.window_message_handler:
@@ -103,8 +105,9 @@ class HippoGym:
             self.control_panel = ControlPanel(self.out_q)
         return self.control_panel
 
-    def add_grid(self, **kwargs):
-        self.grid = Grid(self.out_q, **kwargs)
+    def add_grid(self, grid=None, **kwargs):
+        if not isinstance(grid, Grid):
+            self.grid = Grid(self.out_q, **kwargs)
         self.grid_message_handler = GridMessageHandler(self)
         self.grid_message_handler.start()
 
@@ -130,14 +133,14 @@ class HippoGym:
         if type(new_grid) == Grid:
             self.grid = new_grid
 
-    def start(self, value=None):
+    def start(self):
         self.stop = False
         self.run = True
 
-    def pause(self, value=None):
+    def pause(self):
         self.run = False
 
-    def end(self, value=None):
+    def end(self):
         self.run = False
         self.stop = True
 
@@ -151,37 +154,6 @@ class HippoGym:
 
     def group(self, num_groups):
         return bucketer(self.user_id, num_groups)
-
-    def handle_control_messages(self):
-        messages = check_queue(self.queues["control_q"])
-        for message in messages:
-            user_id = message.get("userId", None)
-            if user_id and not self.user_connected:
-                project_id = message.get("projectId", None)
-                self.project_id = project_id
-                self.user_id = user_id
-                self.user_connected = True
-                self.send()
-
-            event = message.get("SLIDERSET", None)
-            if event:
-                self.control_panel.set_slider_value(event)
-            event = message.get("Disconnect", None)
-            if event:
-                self.user_connected = False
-                self.run = False
-                self.user_id = None
-                print("Disconnected:", self.user_id)
-        return messages
-
-    def handle_window_messages(self):
-        messages = check_queue(self.queues["window_q"])
-        for message in messages:
-            event = message.get("WINDOWRESIZED", None)
-            if event:
-                index = 0
-                self.game_windows[index].update(width=event[0], height=event[1])
-        return messages
 
     def poll(self):
         control = []  # self.handle_control_messages()
@@ -212,7 +184,7 @@ class HippoGym:
             self.info_panel.send()
 
     def standby(self, function=None):
-        while not self.user_connected:
+        while len(self.communicator.users) == 0:
             time.sleep(0.01)
         if function:
             function(self)
