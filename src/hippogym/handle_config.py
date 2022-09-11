@@ -175,7 +175,6 @@ def check_repository(project_config: ConfigType):
 
 
 def create_repository(project_config: ConfigType):
-    logging.info("Creating Repository...")
     client = boto3.client(
         "ecr", region_name=project_config.get("awsSetup").get("region")
     )
@@ -185,8 +184,7 @@ def create_repository(project_config: ConfigType):
     project_config["awsSetup"]["repositoryUri"] = response.get("repository").get(
         "repositoryUri"
     )
-    logging.debug(response)
-    logging.info("Repository Created")
+    logging.info("AWS repository Created : %s", response)
     return project_config
 
 

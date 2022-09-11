@@ -81,7 +81,6 @@ class ControlPanel:
         self.sliders = []
 
     def set_slider_value(self, slider_id, value):
-        print(slider_id, value)
         for slider in self.sliders:
             if slider_id == slider.get("Slider", {}).get("id", None):
                 slider["Slider"]["value"] = value
