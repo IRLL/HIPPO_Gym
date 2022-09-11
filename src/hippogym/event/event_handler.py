@@ -54,7 +54,6 @@ class EventHandler:
 
     def handle_user_id(self, ids):
         message = {"userId": ids[0], "projectId": ids[1]}
-        print(ids[0], ids[1])
         put_in_queue(message, self.control_q)
 
     def handle_text_event(self, message):
