@@ -197,8 +197,6 @@ class HippoGym:
             messages.append(message)
         for message in control:
             messages.append(message)
-        if messages:
-            print(self.user_id, messages)
         return messages
 
     def send(self):
