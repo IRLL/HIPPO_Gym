@@ -1,8 +1,9 @@
 import asyncio
+from multiprocessing import Queue
 import json
 from logging import getLogger
 import ssl
-from typing import Optional
+from typing import List, Optional
 
 from websockets.server import serve
 
@@ -14,8 +15,8 @@ LOGGER = getLogger(__name__)
 class Communicator:
     def __init__(
         self,
-        out_q,
-        queues,
+        out_q: Queue,
+        queues: List[Queue],
         address: Optional[str] = None,
         port: int = 5000,
         use_ssl: bool = True,
