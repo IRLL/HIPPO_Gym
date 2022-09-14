@@ -17,7 +17,7 @@ class Communicator:
         self,
         out_q: Queue,
         queues: Dict[str, Queue],
-        address: Optional[str] = None,
+        address: Optional[str] = "localhost",
         port: int = 5000,
         use_ssl: bool = True,
         force_ssl: bool = False,

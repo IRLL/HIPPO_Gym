@@ -41,15 +41,20 @@ class HippoGym:
         self.recorders: List[Recorder] = []
         self.queues = create_queues()
         self.out_q = Queue()
-        self.communicator = Communicator(
-            self.out_q,
-            self.queues,
-            address=None,
-            port=5000,
-            use_ssl=True,
-            force_ssl=False,
-            fullchain_path="fullchain.pem",
-            privkey_path="privkey.pem",
+        self.communicator = Process(
+            target=Communicator,
+            args=(
+                self.out_q,
+                self.queues,
+            ),
+            kwargs={
+                "address": "localhost",
+                "port": 5000,
+                "use_ssl": True,
+                "force_ssl": False,
+                "fullchain_path": "fullchain.pem",
+                "privkey_path": "privkey.pem",
+            },
         )
         self.communicator.start()
         self.control_message_handler = ControlMessageHandler(self)
@@ -185,7 +190,7 @@ class HippoGym:
             self.info_panel.send()
 
     def standby(self, function: Optional[Callable] = None) -> None:
-        while len(self.communicator.users) == 0:
+        while self.user_id is None:
             time.sleep(0.01)
         if function:
             function(self)
