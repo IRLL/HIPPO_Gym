@@ -10,3 +10,5 @@ Logs/*
 App/.trialConfig.yml
 App/server.log
 Records
+
+venv
