@@ -1,10 +1,14 @@
 import time
 from threading import Thread
+from typing import TYPE_CHECKING
 
 from hippo_gym.queue_handler import check_queue
 
+if TYPE_CHECKING:
+    from hippo_gym.hippo_gym import HippoGym
+
 class GridMessageHandler(Thread):
-    def __init__(self, hippo):
+    def __init__(self, hippo: "HippoGym"):
         Thread.__init__(self, daemon=True)
         self.hippo = hippo
 
@@ -30,4 +34,4 @@ class GridMessageHandler(Thread):
         self.hippo.get_grid().unselect(tuple(tile))
 
     def click(self, tile):
-        self.hipppo.get_grid().click(tuple(tile))
+        self.hippo.get_grid().click(tuple(tile))

@@ -5,7 +5,7 @@ import gym
 from hippo_gym.hippo_gym import HippoGym
 
 
-def play(hippo):
+def play(hippo:HippoGym):
     window = hippo.get_game_window()
     control = hippo.get_control_panel()
     control.use_standard_buttons()
@@ -16,6 +16,7 @@ def play(hippo):
     env = gym.make('LunarLander-v2')
     send_render(env, window)
     send_render(env, window)
+    hippo.start()
     while not hippo.stop:
         action = 0
         print(hippo.stop, hippo.run)
