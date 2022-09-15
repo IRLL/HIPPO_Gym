@@ -1,16 +1,16 @@
 from queue import Queue
 from typing import Any, List, Union
 
-from hippogym.ui_elements.button import Button
-from hippogym.ui_elements.slider import Slider
+from hippogym.ui_elements.control_panel.button import Button
+from hippogym.ui_elements.control_panel.slider import Slider
 
 
 class ControlPanel:
     """A control panel with buttons to press and sliders to slide."""
 
     def __init__(self, pipe: Queue, buttons=None, sliders=None, keys=False):
-        self.buttons: List[Button] = ensure_list_type(buttons, Button)
-        self.sliders: List[Slider] = ensure_list_type(sliders, Slider)
+        self.buttons: List[Button] = _ensure_list_type(buttons, Button)
+        self.sliders: List[Slider] = _ensure_list_type(sliders, Slider)
         self.keys = keys if isinstance(keys, bool) else False
         self.pipe = pipe
 
@@ -36,9 +36,9 @@ class ControlPanel:
             TypeError: If given values were not in expected type.
         """
         if buttons is not None:
-            self.buttons = ensure_list_type(buttons, Button)
+            self.buttons = _ensure_list_type(buttons, Button)
         if sliders is not None:
-            self.sliders = ensure_list_type(sliders, Slider)
+            self.sliders = _ensure_list_type(sliders, Slider)
         if keys is not None:
             if not isinstance(keys, bool):
                 raise TypeError("Keys must be a bool")
@@ -63,7 +63,7 @@ class ControlPanel:
         }
 
 
-def ensure_list_type(
+def _ensure_list_type(
     values: Union[list, Any],
     expected_type: type,
     default: Any = None,

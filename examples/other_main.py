@@ -3,8 +3,7 @@ import sys
 import time
 
 from hippogym import HippoGym
-from hippogym.ui_elements.button import Button
-from hippogym.ui_elements.control_panel import ControlPanel
+from hippogym.ui_elements.control_panel import ControlPanel, Button
 from lunar_lander import play
 
 logging.basicConfig(level=logging.DEBUG)

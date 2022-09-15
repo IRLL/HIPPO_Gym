@@ -1,6 +1,6 @@
 import pytest_check as check
 
-from hippogym.ui_elements.button import Button, build_arrow_button
+from hippogym.ui_elements.control_panel.button import Button, build_arrow_button
 
 
 def test_button_to_dict():
