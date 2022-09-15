@@ -26,9 +26,8 @@ class UIElement(ABC):
 
     def update(self, **kwargs) -> None:
         """Update the UIElement with new attr values."""
-        for _, values in self.dict().items():
-            for attr_name in values.keys():
-                new_attr = kwargs.get(attr_name)
-                if new_attr:
-                    setattr(self, attr_name, new_attr)
+        for attr_name in dir(self):
+            new_attr = kwargs.get(attr_name)
+            if new_attr:
+                setattr(self, attr_name, new_attr)
         self.send()
