@@ -1,7 +1,7 @@
 import base64
 
 from hippogym import HippoGym
-from hippogym.ui_elements.control_panel import ControlPanel
+from hippogym.ui_elements.control_panel import ControlPanel, image_sliders
 
 images = [
     "logo_vertical.png",
@@ -52,10 +52,9 @@ def main():
                 game_window.update(image=get_image(images[index % len(images)]))
             elif action == "up":
                 if toggle_sliders:
-                    control_panel.use_image_sliders()
+                    control_panel.update(sliders=image_sliders)
                 else:
-                    control_panel.reset_sliders()
-                control_panel.send()
+                    control_panel.update(sliders=[])
                 toggle_sliders = not toggle_sliders
             elif action == "down":
                 if toggle_info:

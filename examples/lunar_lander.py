@@ -4,25 +4,31 @@ import time
 import gym
 
 from hippogym import HippoGym
+from hippogym.ui_elements.control_panel import ControlPanel, standard_controls
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 
 
 def play(hippo: HippoGym):
     window = hippo.get_game_window()
-    control = hippo.get_control_panel()
-    control.use_standard_buttons()
-    control.update(keys=True)
+
+    control_panel = ControlPanel(
+        hippo.queues,
+        buttons=standard_controls,
+        keys=True,
+    )
+    hippo.set_control_panel(control_panel)
+
     info_panel = hippo.get_info_panel()
     info_panel.update(
         text="Use keyboard to play the game",
         items=["s = down", "a = left", "d = right"],
     )
-    hippo.get_control_panel().send()
+
     env = gym.make("LunarLander-v2")
     LOGGER.debug("Env created")
-    send_render(env, window)
+
     send_render(env, window)
     while not hippo.stop:
         action = 0

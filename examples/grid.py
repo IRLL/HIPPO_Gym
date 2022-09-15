@@ -1,5 +1,6 @@
 import time
 from hippogym import HippoGym
+from hippogym.ui_elements.control_panel import ControlPanel, standard_controls
 
 
 def play_grid(hippo: HippoGym):
@@ -7,9 +8,10 @@ def play_grid(hippo: HippoGym):
     grid.add_tile(20, 21, text="Hello")
     grid.send()
     info = hippo.get_info_panel()
-    control = hippo.get_control_panel()
-    control.use_standard_buttons()
-    control.send()
+
+    control_panel = ControlPanel(hippo.queues["control_q"], buttons=standard_controls)
+    hippo.set_control_panel(control_panel)
+
     while not hippo.stop:
         info.update(text="Selected Tiles:", items=grid.get_selected())
         time.sleep(1)
