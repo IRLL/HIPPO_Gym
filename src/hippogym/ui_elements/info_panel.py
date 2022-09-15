@@ -1,56 +1,32 @@
 from queue import Queue
 
+from hippogym.ui_elements.ui_element import UIElement
 
-class InfoPanel:
-    def __init__(self, queue: Queue, text=None, items=[], kv=[]):
-        self.queue = queue
-        self.text = text if type(text) == str else None
-        self.items = items if type(items) == list else []
-        self.kv = kv if type(kv) == dict else {}
 
-    def send(self):
+class InfoPanel(UIElement):
+    def __init__(self, queue: Queue, text: str = None, items=None, key_value=None):
+        super().__init__(queue)
+        self.text = text
+        self.items = items if items is not None else []
+        self.key_value = key_value if key_value is not None else {}
+
+    def dict(self) -> dict:
         info_panel = {"InfoPanel": None}
-        if self.text or len(self.items) != 0 or len(self.kv) != 0:
+        if self.text or len(self.items) != 0 or len(self.key_value) != 0:
             info_panel = {
                 "InfoPanel": {
                     "text": self.text,
                     "items": self.items,
-                    "kv": self.kv,
+                    "kv": self.key_value,
                 }
             }
-        self.queue.put_nowait(info_panel)
+        return info_panel
 
-    def add_item(self, item):
-        self.items.append(item)
-        return self.items
-
-    def reset_items(self):
-        self.items = []
-
-    def update_kv(self, key, value):
-        self.kv[key] = value
-        return self.kv
-
-    def get_kv(self):
-        return self.kv
-
-    def reset_kv(self):
-        self.kv = {}
-
-    def reset_text(self):
-        self.text = None
-
-    def reset(self):
-        self.reset_text()
-        self.reset_items()
-        self.reset_kv()
-        self.send()
-
-    def update(self, text=None, items=None, kv=None):
-        if text and type(text) == str:
+    def update(self, text=None, items=None, key_value=None):
+        if text is not None:
             self.text = text
-        if type(items) == list:
+        if items is not None:
             self.items = items
-        if type(kv) == dict:
-            self.kv = kv
+        if key_value is not None:
+            self.key_value = key_value
         self.send()

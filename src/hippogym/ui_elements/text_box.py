@@ -1,8 +1,10 @@
 from queue import Queue
 import time
 
+from hippogym.ui_elements.ui_element import UIElement
 
-class TextBox:
+
+class TextBox(UIElement):
     def __init__(
         self,
         queue: Queue,
@@ -18,8 +20,8 @@ class TextBox:
         syntax=None,
         buttons=None,
     ):
-        self.queue = queue
-        self.id = idx
+        super().__init__(queue)
+        self.idx = idx
         self.width = width
         self.height = height
         self.mode = mode
@@ -34,10 +36,10 @@ class TextBox:
         self.updated = True
         self.send()
 
-    def send(self):
-        text_box = {
+    def dict(self) -> dict:
+        return {
             "TextBox": {
-                "idx": self.id,
+                "idx": self.idx,
                 "size": (self.width, self.height),
                 "mode": self.mode,
                 "text": self.text,
@@ -49,19 +51,18 @@ class TextBox:
                 "buttons": self.buttons,
             }
         }
-        self.queue.put_nowait(text_box)
 
     def hide(self):
-        self.queue.put_nowait({"TextBox": None})
+        self.messages_queue.put_nowait({"TextBox": None})
 
     def request(self):
-        request = {"Request": ["TEXTBOX", self.id]}
-        self.queue.put_nowait(request)
+        request = {"Request": ["TEXTBOX", self.idx]}
+        self.messages_queue.put_nowait(request)
         self.updated = False
 
     def update(self, **kwargs):
         if kwargs.get("idx", None):
-            self.id = kwargs.get("idx")
+            self.idx = kwargs.get("idx")
         if kwargs.get("width", None):
             self.width = kwargs.get("width")
         if kwargs.get("height", None):

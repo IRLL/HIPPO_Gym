@@ -58,9 +58,11 @@ def main():
                 toggle_sliders = not toggle_sliders
             elif action == "down":
                 if toggle_info:
-                    info_panel.update(items=[1], kv={"hi": "there", "we": "square"})
+                    info_panel.update(
+                        items=[1], key_value={"hi": "there", "we": "square"}
+                    )
                 else:
-                    info_panel.reset()
+                    info_panel.update(items=[], key_value={})
                 toggle_info = not toggle_info
             elif action == "fire":
                 text_box.send()

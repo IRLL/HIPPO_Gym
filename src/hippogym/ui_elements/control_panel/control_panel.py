@@ -3,19 +3,17 @@ from typing import Any, List, Union
 
 from hippogym.ui_elements.control_panel.button import Button
 from hippogym.ui_elements.control_panel.slider import Slider
+from hippogym.ui_elements.ui_element import UIElement
 
 
-class ControlPanel:
+class ControlPanel(UIElement):
     """A control panel with buttons to press and sliders to slide."""
 
     def __init__(self, pipe: Queue, buttons=None, sliders=None, keys=False):
+        super().__init__(pipe)
         self.buttons: List[Button] = _ensure_list_type(buttons, Button)
         self.sliders: List[Slider] = _ensure_list_type(sliders, Slider)
         self.keys = keys if isinstance(keys, bool) else False
-        self.pipe = pipe
-
-    def send(self):
-        self.pipe.put_nowait(self.dict())
 
     def update(
         self,
