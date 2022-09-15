@@ -1,16 +1,14 @@
-import time
-from threading import Thread
-from typing import TYPE_CHECKING, Callable, Optional
+from typing import TYPE_CHECKING, Optional
 
-from hippogym.queue_handler import check_queue
+from hippogym.message_handlers.message_handler import MessageHandler
 
 if TYPE_CHECKING:
     from hippogym import HippoGym
 
 
-class ControlMessageHandler(Thread):
+class ControlMessageHandler(MessageHandler):
     def __init__(self, hippo: "HippoGym"):
-        Thread.__init__(self, daemon=True)
+        super().__init__(self.hippo.queues["control_q"])
         self.hippo = hippo
 
         self.handlers = {
@@ -22,16 +20,6 @@ class ControlMessageHandler(Thread):
             "pause": self.pause,
             "end": self.end,
         }
-
-    def run(self) -> None:
-        while True:
-            messages = check_queue(self.hippo.queues["control_q"])
-            for message in messages:
-                for key in message.keys():
-                    if key in self.handlers:
-                        handler: Callable[[Optional[str]], None] = self.handlers[key]
-                        handler(message[key])
-            time.sleep(0.01)
 
     def user(self, user_id: str):
         if not self.hippo.user_id:
@@ -55,8 +43,8 @@ class ControlMessageHandler(Thread):
             self.hippo.user_id,
         )
 
-    def slider(self, setting) -> None:
-        if self.hippo.control_panel:
+    def slider(self, setting: str) -> None:
+        if self.hippo.control_panel is not None:
             self.hippo.control_panel.set_slider_value(*setting)
 
     def resume(self, _message: Optional[str] = None):

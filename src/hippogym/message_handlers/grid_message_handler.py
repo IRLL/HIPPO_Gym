@@ -1,39 +1,31 @@
-import time
-from threading import Thread
-from typing import TYPE_CHECKING, Callable, Optional
+from typing import TYPE_CHECKING
 
-from hippogym.queue_handler import check_queue
+from hippogym.message_handlers.message_handler import MessageHandler
 
 if TYPE_CHECKING:
+    from hippogym.ui_elements.grid import Tile
     from hippogym import HippoGym
 
 
-class GridMessageHandler(Thread):
+class GridMessageHandler(MessageHandler):
     def __init__(self, hippo: "HippoGym") -> None:
-        Thread.__init__(self, daemon=True)
+        super().__init__(self.hippo.queues["grid_q"])
+        self.grid = self.hippo.get_grid()
         self.hippo = hippo
-
         self.handlers = {
             "TILESELECTED": self.select,
             "TILEUNSELECTED": self.unselect,
             "TILECLICKED": self.click,
         }
 
-    def run(self) -> None:
-        while True:
-            messages = check_queue(self.hippo.queues["grid_q"])
-            for message in messages:
-                for key in message.keys():
-                    if key in self.handlers:
-                        handler: Callable[[Optional[str]], None] = self.handlers[key]
-                        handler(message[key])
-            time.sleep(0.01)
+    def select(self, tile_data: str) -> None:
+        tile = Tile(*tuple(tile_data))
+        self.grid.select(tile)
 
-    def select(self, tile) -> None:
-        self.hippo.get_grid().select(tuple(tile))
+    def unselect(self, tile_data: str) -> None:
+        tile = Tile(*tuple(tile_data))
+        self.grid.unselect(tile)
 
-    def unselect(self, tile) -> None:
-        self.hippo.get_grid().unselect(tuple(tile))
-
-    def click(self, tile) -> None:
-        self.hippo.get_grid().click(tuple(tile))
+    def click(self, tile_data: str) -> None:
+        tile = Tile(*tuple(tile_data))
+        self.grid.click(tile)

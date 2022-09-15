@@ -32,7 +32,7 @@ class Grid(UIElement):
     def unselect(self, tile: "Tile") -> None:
         self.selected_tiles.discard(tile)
 
-    def click(self, tile) -> None:
+    def click(self, tile: "Tile") -> None:
         if tile in self.selected_tiles:
             self.selected_tiles.remove(tile)
         else:
