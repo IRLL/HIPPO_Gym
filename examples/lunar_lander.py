@@ -4,7 +4,7 @@ import time
 import gym
 
 from hippogym import HippoGym
-from hippogym.ui_elements.control_panel import ControlPanel, standard_controls
+from hippogym.ui_elements import InfoPanel, ControlPanel, standard_controls
 
 logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
@@ -30,6 +30,7 @@ def play(hippo: HippoGym):
     LOGGER.debug("Env created")
 
     send_render(env, window)
+    hippo.start()
     while not hippo.stop:
         action = 0
         env.reset()
@@ -78,12 +79,16 @@ def check_action(hippo, old_action):
     return None
 
 
-def take_step(env, action, info_panel):
-    o, r, d, i = env.step(action)
-    info_panel.update(text="Observation:", items=o.tolist(), kv={"Reward": r})
-    if d:
-        info_panel.update(kv={"Score": r})
-    return d
+def take_step(env, action, info_panel: InfoPanel):
+    observation, reward, done, _ = env.step(action)
+    info_panel.update(
+        text="Observation:",
+        items=observation.tolist(),
+        key_value={"Reward": reward},
+    )
+    if done:
+        info_panel.update(kv={"Score": reward})
+    return done
 
 
 def main():
