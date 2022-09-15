@@ -9,7 +9,7 @@ def play_grid(hippo: HippoGym):
     grid.send()
     info = hippo.get_info_panel()
 
-    control_panel = ControlPanel(hippo.queues["control_q"], buttons=standard_controls)
+    control_panel = ControlPanel(hippo.out_q, buttons=standard_controls)
     hippo.set_control_panel(control_panel)
 
     while not hippo.stop:

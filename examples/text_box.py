@@ -27,7 +27,7 @@ def main():
         image=get_image(images[index // len(images)]), width=300, height=300
     )
 
-    control_panel = ControlPanel(hippo.queues["control_q"])
+    control_panel = ControlPanel(hippo.out_q)
     hippo.set_control_panel(control_panel)
 
     json_recorder = hippo.add_recorder(mode="json", clean_path=True)

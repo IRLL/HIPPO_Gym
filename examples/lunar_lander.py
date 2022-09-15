@@ -6,7 +6,7 @@ import gym
 from hippogym import HippoGym
 from hippogym.ui_elements.control_panel import ControlPanel, standard_controls
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
 
@@ -14,7 +14,7 @@ def play(hippo: HippoGym):
     window = hippo.get_game_window()
 
     control_panel = ControlPanel(
-        hippo.queues,
+        hippo.out_q,
         buttons=standard_controls,
         keys=True,
     )

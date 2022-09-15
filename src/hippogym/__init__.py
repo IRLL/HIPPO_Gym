@@ -109,11 +109,6 @@ class HippoGym:
             self.info_panel = InfoPanel(self.out_q)
         return self.info_panel
 
-    def get_control_panel(self) -> ControlPanel:
-        if not self.control_panel:
-            self.control_panel = ControlPanel(self.out_q)
-        return self.control_panel
-
     def add_grid(self, rows: int = 10, columns: int = 10) -> Grid:
         if self.grid is None:
             self.grid = Grid(self.out_q, rows=rows, columns=columns)
@@ -142,6 +137,7 @@ class HippoGym:
         if not isinstance(control_panel, ControlPanel):
             raise TypeError("Given control_panel must subclass ControlPanel")
         self.control_panel = control_panel
+        self.control_panel.send()
 
     def set_grid(self, grid: Grid) -> None:
         if isinstance(grid, Grid):
