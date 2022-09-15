@@ -1,7 +1,7 @@
 from queue import Queue
 from typing import Any, List, Union
 
-from hippogym.browser.button import Button, standard_controls
+from hippogym.ui_elements.button import Button, standard_controls
 
 
 class ControlPanel:

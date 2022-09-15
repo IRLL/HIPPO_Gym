@@ -5,11 +5,11 @@ from logging import getLogger
 from multiprocessing import Process, Queue
 from typing import Callable, Dict, List, Optional, Tuple
 
-from hippogym.browser.control_panel import ControlPanel
-from hippogym.browser.game_window import GameWindow
-from hippogym.browser.grid import Grid
-from hippogym.browser.info_panel import InfoPanel
-from hippogym.browser.text_box import TextBox
+from hippogym.ui_elements.control_panel import ControlPanel
+from hippogym.ui_elements.game_window import GameWindow
+from hippogym.ui_elements.grid import Grid
+from hippogym.ui_elements.info_panel import InfoPanel
+from hippogym.ui_elements.text_box import TextBox
 
 from hippogym.bucketer import bucketer
 from hippogym.communicator.communicator import Communicator
