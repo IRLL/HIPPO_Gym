@@ -24,7 +24,7 @@ class GameWindow:
         self.mode = mode
         self.frame = image
         self.text = text
-        self.frameId = 0
+        self.frame_id = 0
         self.pipe = pipe
         self.events: Queue = Queue(maxsize=10)
 
@@ -68,7 +68,7 @@ class GameWindow:
                 "GameWindow": {
                     "id": self.id,
                     "frame": self.frame,
-                    "frameId": self.frameId,
+                    "frameId": self.frame_id,
                 }
             }
         elif self.text:
@@ -76,12 +76,12 @@ class GameWindow:
                 "GameWindow": {
                     "id": self.id,
                     "text": self.text,
-                    "frameId": self.frameId,
+                    "frameId": self.frame_id,
                 }
             }
         if message:
             self.send(message)
-            self.frameId += 1
+            self.frame_id += 1
 
     def send(self, message=None):
         if not message:
@@ -91,7 +91,7 @@ class GameWindow:
                     "size": (self.width, self.height),
                     "mode": self.mode,
                     "frame": self.frame,
-                    "frameId": self.frameId,
+                    "frameId": self.frame_id,
                 }
             }
         self.pipe.put_nowait(message)

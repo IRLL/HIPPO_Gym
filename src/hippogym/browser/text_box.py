@@ -1,10 +1,11 @@
+from queue import Queue
 import time
 
 
 class TextBox:
     def __init__(
         self,
-        queue,
+        queue: Queue,
         idx=0,
         width=700,
         height=600,

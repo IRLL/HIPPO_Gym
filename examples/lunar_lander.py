@@ -26,7 +26,6 @@ def play(hippo: HippoGym):
     send_render(env, window)
     while not hippo.stop:
         action = 0
-        LOGGER.debug(hippo.stop, hippo.run)
         env.reset()
         while hippo.run:
             send_render(env, window)
@@ -39,7 +38,6 @@ def play(hippo: HippoGym):
             time.sleep(0.03)
         time.sleep(1)
     env.close()
-    print("All Done")
 
 
 def send_render(env, window):

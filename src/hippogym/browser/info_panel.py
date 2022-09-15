@@ -1,5 +1,8 @@
+from queue import Queue
+
+
 class InfoPanel:
-    def __init__(self, queue, text=None, items=[], kv=[]):
+    def __init__(self, queue: Queue, text=None, items=[], kv=[]):
         self.queue = queue
         self.text = text if type(text) == str else None
         self.items = items if type(items) == list else []
