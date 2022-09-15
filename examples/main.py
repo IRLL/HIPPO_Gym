@@ -1,6 +1,7 @@
 import base64
 
 from hippogym import HippoGym
+from hippogym.ui_elements.control_panel import ControlPanel
 
 images = [
     "logo_vertical.png",
@@ -17,7 +18,7 @@ def main():
     toggle_sliders = True
     toggle_info = True
     hippo = HippoGym()
-    control_panel = hippo.get_control_panel()
+
     info_panel = hippo.get_info_panel()
     text_box = hippo.add_text_box()
     text_box.update(text="Hello Payas!", buttons=["save", "run", "clear"])
@@ -25,12 +26,10 @@ def main():
     game_window.update(
         image=get_image(images[index // len(images)]), width=300, height=300
     )
-    control_panel.add_button(text="Run", color="white", bgcolor="Green", value="run")
-    control_panel.add_button(
-        text="Next Page", color="white", bgcolor="Blue", value="next"
-    )
-    control_panel.add_button(text="Save", color="white", bgcolor="Blue", value="save")
-    control_panel.use_standard_buttons()
+
+    control_panel = ControlPanel(hippo.queues["control_q"])
+    hippo.set_control_panel(control_panel)
+
     json_recorder = hippo.add_recorder(mode="json", clean_path=True)
     pickle_recorder = hippo.add_recorder()
     hippo.standby()

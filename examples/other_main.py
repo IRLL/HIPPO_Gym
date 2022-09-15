@@ -3,6 +3,8 @@ import sys
 import time
 
 from hippogym import HippoGym
+from hippogym.ui_elements.button import Button
+from hippogym.ui_elements.control_panel import ControlPanel
 from lunar_lander import play
 
 logging.basicConfig(level=logging.DEBUG)
@@ -18,18 +20,15 @@ def main():
     play(hippo)
 
     # Start Phase 2
-    control = hippo.get_control_panel()
-    control.reset()
-    control.add_button(
-        text="Finish", color="white", bgcolor="red", value="end", confirm=True
-    )
-    control.add_button(text="Run", color="white", bgcolor="green", value="run")
-    control.add_button(
-        text="Hide Game Window", color="white", bgcolor="blue", value="hide"
-    )
-    control.add_button(
-        text="Show Game Window", color="white", bgcolor="blue", value="show"
-    )
+    buttons = [
+        Button(text="Finish", color="white", bgcolor="red", value="end"),
+        Button(text="Run", color="white", bgcolor="green", value="run"),
+        Button(text="Hide Game Window", color="white", bgcolor="blue", value="hide"),
+        Button(text="Show Game Window", color="white", bgcolor="blue", value="show"),
+    ]
+    control = ControlPanel(hippo.queues["control_q"], buttons=buttons)
+    hippo.set_control_panel(control)
+
     info = hippo.get_info_panel()
     info.reset()
     window = hippo.get_game_window()

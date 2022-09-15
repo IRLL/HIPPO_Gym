@@ -6,22 +6,15 @@ from hippogym.ui_elements.button import Button, standard_controls
 
 class ControlPanel:
     def __init__(self, pipe: Queue, buttons=None, sliders=None, keys=False):
-        self.buttons: List[Button] = ensure_list_type(buttons, Button)
+        self.buttons: List[Button] = ensure_list_type(
+            buttons, Button, default=standard_controls
+        )
         self.sliders = sliders if type(sliders) == list else []
         self.keys = keys if type(keys) == bool else False
         self.pipe = pipe
 
     def send(self):
         self.pipe.put_nowait(self.dict())
-
-    def get_buttons(self):
-        return self.buttons
-
-    def get_sliders(self):
-        return self.sliders
-
-    def get_keys(self):
-        return self.keys
 
     def update(self, buttons=None, sliders=None, keys=None):
         if buttons and type(buttons) == list:
@@ -31,28 +24,6 @@ class ControlPanel:
         if keys and type(keys) == bool:
             self.keys = keys
         self.send()
-
-    def add_button(
-        self,
-        text=None,
-        icon=None,
-        image=None,
-        color=None,
-        bgcolor=None,
-        value=None,
-        confirm=False,
-    ):
-        button = dict(
-            text=text,
-            icon=icon,
-            image=image,
-            color=color,
-            bgcolor=bgcolor,
-            value=value,
-            confirm=confirm,
-        )
-        self.buttons.append({"Button": button})
-        return button, len(self.buttons) - 1
 
     def remove_button(self, index):
         if type(index) == int:
@@ -88,9 +59,6 @@ class ControlPanel:
         if type(setting) == bool:
             self.keys = setting
         return self.keys
-
-    def use_standard_buttons(self):
-        self.buttons = standard_controls
 
     def use_image_sliders(self):
         self.sliders = image_sliders

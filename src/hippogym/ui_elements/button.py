@@ -6,11 +6,11 @@ from enum import Enum
 class Button:
     """Button for the control panel."""
 
-    icon: str
-    text: str
     color: str
     bgcolor: str
     value: str
+    icon: str = field(default=None)
+    text: str = field(default=None)
     image: str = field(default=None)
 
     def dict(self) -> dict:
