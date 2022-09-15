@@ -55,6 +55,7 @@ class HippoGym:
                 "fullchain_path": "fullchain.pem",
                 "privkey_path": "privkey.pem",
             },
+            daemon=True,
         )
         self.communicator.start()
         self.control_message_handler = ControlMessageHandler(self)

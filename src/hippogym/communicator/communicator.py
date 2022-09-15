@@ -89,17 +89,18 @@ class Communicator:
     def start(self) -> None:
         if not self.force_ssl:
             self.start_non_ssl_server()
-        elif self.ssl:
+        if self.ssl:
             self.start_ssl_server()
         asyncio.get_event_loop().run_forever()
 
     def start_non_ssl_server(self) -> None:
-        server = serve(self.handler, self.address, self.port)
+        non_ssl_port = self.port + 1
+        server = serve(self.handler, self.address, non_ssl_port)
         asyncio.get_event_loop().run_until_complete(server)
         LOGGER.info(
-            "Non-SSL websocket started at %s on port %i",
+            "Non-SSL websocket started at %s:%i",
             self.address,
-            self.port,
+            non_ssl_port,
         )
 
     def start_ssl_server(self) -> None:
@@ -110,4 +111,6 @@ class Communicator:
             asyncio.get_event_loop().run_until_complete(ssl_server)
             LOGGER.info("SSL websocket started on port %i", self.port)
         except Exception as error:
-            LOGGER.error("SSL failed with error: %s", error)
+            if self.force_ssl:
+                raise error
+            LOGGER.info("SSL websocket could not start: %s", error)
