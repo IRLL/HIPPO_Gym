@@ -190,10 +190,26 @@ class HippoGym:
             self.info_panel.send()
 
     def standby(self, function: Optional[Callable] = None) -> None:
+        time_printer = TimeActor(lambda: LOGGER.debug("HippoGym in standby"))
         while self.user_id is None:
             time.sleep(0.01)
+            time_printer.tick()
+
         if function:
             function(self)
+
+
+class TimeActor:
+    def __init__(self, func: Callable[[None], None]) -> None:
+        self.start_time = time.time()
+        self.last_tick = self.start_time
+        self.func = func
+
+    def tick(self):
+        now = time.time()
+        if int(now) != int(self.last_tick) and now - self.last_tick >= 2:
+            self.last_tick = time.time()
+            self.func()
 
 
 def create_queues() -> Dict[str, Queue]:
