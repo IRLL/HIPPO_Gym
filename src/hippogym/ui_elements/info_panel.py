@@ -14,7 +14,7 @@ class InfoPanel(UIElement):
 
     def dict(self) -> dict:
         info_panel = {"InfoPanel": None}
-        if self.text or len(self.items) != 0 or len(self.key_value) != 0:
+        if self.text or self.items or self.key_value:
             info_panel = {
                 "InfoPanel": {
                     "text": self.text,
