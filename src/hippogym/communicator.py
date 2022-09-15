@@ -7,7 +7,7 @@ from typing import Dict, List, Optional
 
 from websockets.server import serve
 
-from hippogym.event.event_handler import EventHandler
+from hippogym.event_handler import EventHandler
 
 LOGGER = getLogger(__name__)
 

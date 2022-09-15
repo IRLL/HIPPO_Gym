@@ -12,7 +12,7 @@ from hippogym.ui_elements.info_panel import InfoPanel
 from hippogym.ui_elements.text_box import TextBox
 
 from hippogym.bucketer import bucketer
-from hippogym.communicator.communicator import Communicator
+from hippogym.communicator import Communicator
 
 from hippogym.queue_handler import check_queues
 from hippogym.recorder.recorder import Recorder
