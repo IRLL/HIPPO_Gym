@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 class GridMessageHandler(MessageHandler):
     def __init__(self, hippo: "HippoGym") -> None:
-        super().__init__(self.hippo.queues["grid_q"])
+        super().__init__(hippo.queues["grid_q"])
         self.grid = self.hippo.get_grid()
         self.hippo = hippo
         self.handlers = {

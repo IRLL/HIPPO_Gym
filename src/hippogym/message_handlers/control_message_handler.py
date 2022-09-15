@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 class ControlMessageHandler(MessageHandler):
     def __init__(self, hippo: "HippoGym"):
-        super().__init__(self.hippo.queues["control_q"])
+        super().__init__(hippo.queues["control_q"])
         self.hippo = hippo
 
         self.handlers = {

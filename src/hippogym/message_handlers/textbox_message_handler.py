@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 class TextBoxMessageHandler(MessageHandler):
     def __init__(self, hippo: "HippoGym"):
-        super().__init__(self.hippo.queues["textbox_q"])
+        super().__init__(hippo.queues["textbox_q"])
         self.hippo = hippo
         self.handlers = {
             "TEXTBUTTON": self.button,

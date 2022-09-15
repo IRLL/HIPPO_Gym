@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 class WindowMessageHandler(MessageHandler):
     def __init__(self, hippo: "HippoGym"):
-        super().__init__(self.hippo.queues["window_q"])
+        super().__init__(hippo.queues["window_q"])
         self.hippo = hippo
         self.handlers = {
             "WINDOWRESIZED": self.window_resize,
