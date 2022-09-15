@@ -4,6 +4,8 @@ from typing import TYPE_CHECKING, Dict
 if TYPE_CHECKING:
     from multiprocessing import Queue
 
+DO_NOT_UPDATE = "DO_NOT_UPDATE&@"
+
 
 class UIElement(ABC):
     """Base class for all UI elements that compose a TrialStep."""
@@ -26,8 +28,9 @@ class UIElement(ABC):
 
     def update(self, **kwargs) -> None:
         """Update the UIElement with new attr values."""
+
         for attr_name in dir(self):
-            new_attr = kwargs.get(attr_name)
-            if new_attr:
+            new_attr = kwargs.get(attr_name, DO_NOT_UPDATE)
+            if new_attr != DO_NOT_UPDATE:
                 setattr(self, attr_name, new_attr)
         self.send()
