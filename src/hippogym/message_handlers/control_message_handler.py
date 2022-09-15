@@ -18,7 +18,7 @@ class ControlMessageHandler(Thread):
             "projectId": self.project,
             "disconnect": self.disconnect,
             "SLIDERSET": self.slider,
-            "start": self.start,
+            "start": self.resume,
             "pause": self.pause,
             "end": self.end,
         }
@@ -33,27 +33,37 @@ class ControlMessageHandler(Thread):
                         handler(message[key])
             time.sleep(0.01)
 
-    def user(self, user_id):
-        if not self.hippo.user_connected:
+    def user(self, user_id: str):
+        if not self.hippo.user_id:
             self.hippo.user_id = user_id
-            self.hippo.user_connected = True
             self.hippo.send()
+            return
+        raise ValueError(
+            "Two users conflicting: %s and %s", user_id, self.hippo.user_id
+        )
 
     def project(self, project_id: str) -> None:
         self.hippo.project_id = project_id
 
-    def disconnect(self) -> None:
-        self.hippo.user_id = None
+    def disconnect(self, user_id: str) -> None:
+        if self.hippo.user_id == user_id:
+            self.hippo.user_id = None
+            return
+        raise ValueError(
+            "Cannot disconnect unkown user: %s. Known users: %s",
+            user_id,
+            self.hippo.user_id,
+        )
 
     def slider(self, setting) -> None:
         if self.hippo.control_panel:
             self.hippo.control_panel.set_slider_value(*setting)
 
-    def start(self, _message:Optional[str]=None):
+    def resume(self, _message: Optional[str] = None):
         self.hippo.start()
 
-    def pause(self, _message:Optional[str]=None):
+    def pause(self, _message: Optional[str] = None):
         self.hippo.pause()
-    
-    def end(self, _message:Optional[str]=None):
+
+    def end(self, _message: Optional[str] = None):
         self.hippo.end()

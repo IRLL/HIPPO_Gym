@@ -44,7 +44,7 @@ class Communicator:
                 self.event_handler.parse(message)
 
             except Exception as e:
-                print(e)
+                LOGGER.error(e)
 
     async def producer_handler(self, websocket):
         done = False

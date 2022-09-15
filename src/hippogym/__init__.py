@@ -58,8 +58,10 @@ class HippoGym:
             daemon=True,
         )
         self.communicator.start()
+
         self.control_message_handler = ControlMessageHandler(self)
         self.control_message_handler.start()
+
         self.window_message_handler = None
         self.textbox_message_handler = None
         self.grid_message_handler: Optional[GridMessageHandler] = None
