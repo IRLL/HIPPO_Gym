@@ -1,13 +1,16 @@
-from queue import Queue
 import time
+from typing import TYPE_CHECKING
 
 from hippogym.ui_elements.ui_element import UIElement
+
+if TYPE_CHECKING:
+    from multiprocessing import Queue
 
 
 class TextBox(UIElement):
     def __init__(
         self,
-        queue: Queue,
+        queue: "Queue",
         idx=0,
         width=700,
         height=600,
@@ -41,6 +44,8 @@ class TextBox(UIElement):
             "TextBox": {
                 "idx": self.idx,
                 "size": (self.width, self.height),
+                "width": self.width,
+                "height": self.height,
                 "mode": self.mode,
                 "text": self.text,
                 "editable": self.editable,
@@ -52,40 +57,18 @@ class TextBox(UIElement):
             }
         }
 
-    def hide(self):
-        self.messages_queue.put_nowait({"TextBox": None})
-
     def request(self):
         request = {"Request": ["TEXTBOX", self.idx]}
         self.messages_queue.put_nowait(request)
         self.updated = False
 
     def update(self, **kwargs):
-        if kwargs.get("idx", None):
-            self.idx = kwargs.get("idx")
-        if kwargs.get("width", None):
-            self.width = kwargs.get("width")
-        if kwargs.get("height", None):
-            self.height = kwargs.get("height")
-        if kwargs.get("mode", None):
-            self.mode = kwargs.get("mode")
-        if kwargs.get("text", None):
+        new_text = kwargs.pop("text", None)
+        if new_text:
             self.update_buffer()
-            self.text = kwargs.get("text")
-        if kwargs.get("editable", None):
-            self.editable = kwargs.get("editable")
-        if kwargs.get("bgcolor", None):
-            self.bgcolor = kwargs.get("bgcolor")
-        if kwargs.get("color", None):
-            self.color = kwargs.get("color")
-        if kwargs.get("font", None):
-            self.font = kwargs.get("font")
-        if kwargs.get("syntax", None):
-            self.syntax = kwargs.get("syntax")
-        if kwargs.get("buttons", None):
-            self.buttons = kwargs.get("buttons")
-        if kwargs.get("send", True):
-            self.send()
+            self.text = new_text
+
+        super().update(**kwargs)
         self.updated = True
 
     def clear(self, text=None):
