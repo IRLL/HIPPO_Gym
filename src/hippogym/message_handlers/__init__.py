@@ -1,7 +1,7 @@
-from hippogym.message_handlers.control_message_handler import ControlMessageHandler
-from hippogym.message_handlers.grid_message_handler import GridMessageHandler
-from hippogym.message_handlers.textbox_message_handler import TextBoxMessageHandler
-from hippogym.message_handlers.window_message_handler import WindowMessageHandler
+from hippogym.message_handlers.control import ControlMessageHandler
+from hippogym.message_handlers.grid import GridMessageHandler
+from hippogym.message_handlers.textbox import TextBoxMessageHandler
+from hippogym.message_handlers.window import WindowMessageHandler
 
 __all__ = [
     "ControlMessageHandler",
