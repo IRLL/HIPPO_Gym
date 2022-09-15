@@ -1,7 +1,11 @@
 import base64
 
 from hippogym import HippoGym
-from hippogym.ui_elements.control_panel import ControlPanel, image_sliders
+from hippogym.ui_elements.control_panel import (
+    ControlPanel,
+    image_sliders,
+    standard_controls,
+)
 
 images = [
     "logo_vertical.png",
@@ -27,7 +31,7 @@ def main():
         image=get_image(images[index // len(images)]), width=300, height=300
     )
 
-    control_panel = ControlPanel(hippo.out_q)
+    control_panel = ControlPanel(hippo.out_q, buttons=standard_controls)
     hippo.set_control_panel(control_panel)
 
     json_recorder = hippo.add_recorder(mode="json", clean_path=True)
@@ -59,10 +63,12 @@ def main():
             elif action == "down":
                 if toggle_info:
                     info_panel.update(
-                        items=[1], key_value={"hi": "there", "we": "square"}
+                        text="Hello world!",
+                        items=[1],
+                        key_value={"hi": "there", "dear": "human"},
                     )
                 else:
-                    info_panel.update(items=[], key_value={})
+                    info_panel.update(text="", items=[], key_value={})
                 toggle_info = not toggle_info
             elif action == "fire":
                 text_box.send()
