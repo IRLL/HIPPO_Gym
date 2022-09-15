@@ -1,19 +1,18 @@
+from queue import Queue
+from typing import Any, List, Union
+
+from hippogym.browser.button import Button, standard_controls
+
+
 class ControlPanel:
-    def __init__(self, pipe, buttons=None, sliders=None, keys=False):
-        self.buttons = buttons if type(buttons) == list else []
+    def __init__(self, pipe: Queue, buttons=None, sliders=None, keys=False):
+        self.buttons: List[Button] = ensure_list_type(buttons, Button)
         self.sliders = sliders if type(sliders) == list else []
         self.keys = keys if type(keys) == bool else False
         self.pipe = pipe
 
     def send(self):
-        control_panel = {
-            "ControlPanel": {
-                "Buttons": self.buttons,
-                "Sliders": self.sliders,
-                "Keys": self.keys,
-            }
-        }
-        self.pipe.put_nowait(control_panel)
+        self.pipe.put_nowait(self.dict())
 
     def get_buttons(self):
         return self.buttons
@@ -102,138 +101,43 @@ class ControlPanel:
         self.keys = False
         self.send()
 
-
-start_button = {
-    "Button": {
-        "image": None,
-        "icon": "FaPlayCircle",
-        "text": "Start",
-        "color": "white",
-        "bgcolor": "green",
-        "value": "start",
-    }
-}
-
-reset_button = {
-    "Button": {
-        "image": None,
-        "icon": "FaRedo",
-        "text": "Reset",
-        "color": "white",
-        "bgcolor": "red",
-        "value": "reset",
-    }
-}
-
-submit_button = {
-    "Button": {
-        "image": None,
-        "icon": "FaCheckCircle",
-        "text": "Submit",
-        "color": "white",
-        "bgcolor": "green",
-        "value": "submit",
-    }
-}
-
-end_button = {
-    "Button": {
-        "image": None,
-        "icon": "FaStopCircle",
-        "text": "End",
-        "color": "white",
-        "bgcolor": "blue",
-        "value": "end",
-    }
-}
-
-pause_button = {
-    "Button": {
-        "image": None,
-        "icon": "FaPauseCircle",
-        "text": "Pause",
-        "color": "white",
-        "bgcolor": "orange",
-        "value": "pause",
-    }
-}
-
-good_button = {
-    "Button": {
-        "image": None,
-        "icon": "FaCheck",
-        "text": "Good",
-        "color": "white",
-        "bgcolor": "green",
-        "value": "good",
-    }
-}
-
-bad_button = {
-    "Button": {
-        "image": None,
-        "icon": "FaTimes",
-        "text": "Bad",
-        "color": "white",
-        "bgcolor": "red",
-        "value": "bad",
-    }
-}
+    def dict(self) -> dict:
+        return {
+            "ControlPanel": {
+                "Buttons": [button.dict() for button in self.buttons],
+                "Sliders": self.sliders,
+                "Keys": self.keys,
+            }
+        }
 
 
-up_button = {
-    "Button": {
-        "image": None,
-        "icon": "FaArrowUp",
-        "text": None,
-        "color": "black",
-        "bgcolor": "white",
-        "value": "up",
-    }
-}
+def ensure_list_type(
+    values: Union[list, Any],
+    expected_type: type,
+    default: Any = None,
+) -> list:
+    """Ensures that values are a list of the given type.
 
-down_button = {
-    "Button": {
-        "image": None,
-        "icon": "FaArrowDown",
-        "text": None,
-        "color": "black",
-        "bgcolor": "white",
-        "value": "down",
-    }
-}
+    Will creating a wrapping list if only one value of the good type is given.
 
-left_button = {
-    "Button": {
-        "image": None,
-        "icon": "FaArrowLeft",
-        "text": None,
-        "color": "black",
-        "bgcolor": "white",
-        "value": "left",
-    }
-}
+    Args:
+        values (Union[list, Any]): List of values to check, or single value to wrap in a list.
+        expected_type (type): Expected type of every values in values.
+        default (Any, optional): Default return if values is None. Defaults to an empty list.
 
-right_button = {
-    "Button": {
-        "image": None,
-        "icon": "FaArrowRight",
-        "text": None,
-        "color": "black",
-        "bgcolor": "white",
-        "value": "right",
-    }
-}
+    Returns:
+        list: List of values of the given expected type.
+    """
+    if default is None:
+        default = []
+    if values is None:
+        values = default
+    elif isinstance(values, expected_type):
+        values = [values]
+    for value in values:
+        assert isinstance(value, expected_type)
+    return values
 
-standard_controls = [
-    start_button,
-    reset_button,
-    end_button,
-    left_button,
-    right_button,
-    up_button,
-    down_button,
-]
 
 brightness_slider = {
     "Slider": {
