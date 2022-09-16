@@ -3,15 +3,14 @@ from typing import TYPE_CHECKING
 from hippogym.message_handlers.message_handler import MessageHandler
 
 if TYPE_CHECKING:
-    from hippogym.ui_elements.grid import Tile
-    from hippogym import HippoGym
+    from multiprocessing import Queue
+    from hippogym.ui_elements.grid import Grid, Tile
 
 
 class GridMessageHandler(MessageHandler):
-    def __init__(self, hippo: "HippoGym") -> None:
-        super().__init__(hippo.queues["grid_q"])
-        self.grid = self.hippo.get_grid()
-        self.hippo = hippo
+    def __init__(self, grid: "Grid", queue: "Queue") -> None:
+        super().__init__(queue)
+        self.grid = grid
         self.handlers = {
             "TILESELECTED": self.select,
             "TILEUNSELECTED": self.unselect,

@@ -2,6 +2,7 @@ import time
 from typing import TYPE_CHECKING
 
 from hippogym.ui_elements.ui_element import UIElement
+from hippogym.message_handlers.textbox import TextBoxMessageHandler
 
 if TYPE_CHECKING:
     from multiprocessing import Queue
@@ -11,6 +12,7 @@ class TextBox(UIElement):
     def __init__(
         self,
         queue: "Queue",
+        out_q: "Queue",
         idx=0,
         width=700,
         height=600,
@@ -23,7 +25,7 @@ class TextBox(UIElement):
         syntax=None,
         buttons=None,
     ):
-        super().__init__(queue)
+        super().__init__(TextBoxMessageHandler(self, queue), out_q=out_q)
         self.idx = idx
         self.width = width
         self.height = height

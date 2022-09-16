@@ -1,6 +1,7 @@
 import json
 from os import listdir, makedirs
 from shutil import rmtree
+from typing import Optional
 
 import _pickle as pickle
 
@@ -8,9 +9,9 @@ from hippogym.recorder.uploader import Uploader
 
 
 class Recorder:
-    def __init__(self, hippo, path=None, mode=None, clean_path=False, upload=False):
+    def __init__(self, path=None, mode=None, clean_path=False, upload=False):
         self.mode = mode if mode else "pickle"
-        self.hippo = hippo
+        self.user_id: Optional[str] = None
         self.path = path if path else "Records"
         self.current_file = None
         self.current_filename = None
@@ -37,6 +38,7 @@ class Recorder:
             pickle.dump(data, outfile)
 
     def create_file(self, filename=None):
+        assert self.user_id is not None
         if self.mode == "json":
             ext = "json"
             mode = "w"
@@ -44,7 +46,7 @@ class Recorder:
             ext = "pk"
             mode = "wb"
         if not filename:
-            filename = f"user_{self.hippo.user_id}.{ext}"
+            filename = f"user_{self.user_id}.{ext}"
         ls = listdir(self.path)
         i = 0
         new_filename = f"{i}_{filename}"

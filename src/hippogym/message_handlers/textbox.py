@@ -3,24 +3,24 @@ from typing import TYPE_CHECKING, Dict
 from hippogym.message_handlers.message_handler import MessageHandler
 
 if TYPE_CHECKING:
-    from hippogym import HippoGym
+    from multiprocessing import Queue
+    from hippogym.ui_elements.text_box import TextBox
 
 
 class TextBoxMessageHandler(MessageHandler):
-    def __init__(self, hippo: "HippoGym"):
-        super().__init__(hippo.queues["textbox_q"])
-        self.hippo = hippo
+    def __init__(self, textbox: "TextBox", queue: "Queue"):
+        super().__init__(queue)
+        self.textbox = textbox
         self.handlers = {
             "TEXTBUTTON": self.button,
             "TEXTREQUEST": self.request,
         }
 
-    def request(self, text: str, index=0) -> None:
-        if len(self.hippo.text_boxes) > index:
-            self.hippo.text_boxes[index].update(text=text, send=False)
+    def request(self, text: str) -> None:
+        self.textbox.update(text=text, send=False)
 
-    def button(self, message: Dict[int, str], index=0) -> None:
+    def button(self, message: Dict[int, str]) -> None:
         if message[0].lower() == "clear":
-            self.hippo.text_boxes[index].clear(message[1])
+            self.textbox.clear(message[1])
         else:
-            self.hippo.text_boxes[index].update(message[1])
+            self.textbox.update(message[1])

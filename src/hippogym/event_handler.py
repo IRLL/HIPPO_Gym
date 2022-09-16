@@ -1,5 +1,7 @@
 import logging
 
+LOGGER = logging.getLogger(__name__)
+
 
 class EventHandler:
     def __init__(self, queues):
@@ -11,19 +13,19 @@ class EventHandler:
         self.textbox_q = queues.get("textbox_q", None)
         self.grid_q = queues.get("grid_q", None)
         if not self.control_q:
-            logging.debug("no control_q in EventHandler")
+            LOGGER.debug("no control_q in EventHandler")
         if not self.keyboard_q:
-            logging.debug("no keyboard_q in EventHandler")
+            LOGGER.debug("no keyboard_q in EventHandler")
         if not self.button_q:
-            logging.debug("no button_q in EventHandler")
+            LOGGER.debug("no button_q in EventHandler")
         if not self.window_q:
-            logging.debug("no window_q in EventHandler")
+            LOGGER.debug("no window_q in EventHandler")
         if not self.standard_q:
-            logging.debug("no standard_q in EventHandler")
+            LOGGER.debug("no standard_q in EventHandler")
         if not self.textbox_q:
-            logging.debug("no textbox_q in EventHandler")
+            LOGGER.debug("no textbox_q in EventHandler")
         if not self.grid_q:
-            logging.debug("no grid_q in EventHandler")
+            LOGGER.debug("no grid_q in EventHandler")
         self.pressed_keys = set()
         self.key_map = {
             "w": "up",
@@ -54,6 +56,7 @@ class EventHandler:
 
     def handle_user_id(self, ids):
         message = {"userId": ids[0], "projectId": ids[1]}
+        print(self.control_q)
         put_in_queue(message, self.control_q)
 
     def handle_text_event(self, message):
@@ -143,4 +146,4 @@ def put_in_queue(message, queue):
             queue.get_nowait()
         queue.put_nowait(message)
     except Exception as e:
-        logging.error(e)
+        LOGGER.error(e)

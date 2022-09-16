@@ -1,11 +1,17 @@
 import base64
+import logging
+from multiprocessing import Queue
 
-from hippogym import HippoGym
-from hippogym.ui_elements.control_panel import (
+from hippogym import HippoGym, create_queues
+from hippogym.ui_elements import (
+    InfoPanel,
+    TextBox,
     ControlPanel,
+    GameWindow,
     image_sliders,
     standard_controls,
 )
+from hippogym.recorder.recorder import Recorder
 
 images = [
     "logo_vertical.png",
@@ -16,27 +22,54 @@ images = [
     "words_vertical.png",
 ]
 
+logging.basicConfig(level=20)
+
 
 def main():
     index = 0
     toggle_sliders = True
     toggle_info = True
-    hippo = HippoGym()
+    queues = create_queues()
+    out_q = queues["out_q"]
 
-    info_panel = hippo.get_info_panel()
-    text_box = hippo.add_text_box()
-    text_box.update(text="Hello Payas!", buttons=["save", "run", "clear"])
-    game_window = hippo.get_game_window()
-    game_window.update(
-        image=get_image(images[index // len(images)]), width=300, height=300
+    info_panel = InfoPanel(queues["info_q"], out_q=out_q)
+
+    text_box = TextBox(
+        queues["textbox_q"],
+        out_q=out_q,
+        text="Hello World!",
+        buttons=["save", "run", "clear"],
     )
+    game_window = GameWindow(
+        in_q=queues["window_q"],
+        out_q=out_q,
+        image=get_image(images[index // len(images)]),
+        width=300,
+        height=300,
+    )
+    game_window.send()
+    ui_elements = [info_panel, text_box, game_window]
 
-    control_panel = ControlPanel(hippo.out_q, buttons=standard_controls)
-    hippo.set_control_panel(control_panel)
+    json_recorder = Recorder(mode="json", clean_path=True)
+    pickle_recorder = Recorder(mode="pickle")
+    recorders = [json_recorder, pickle_recorder]
 
-    json_recorder = hippo.add_recorder(mode="json", clean_path=True)
-    pickle_recorder = hippo.add_recorder()
+    hippo = HippoGym(
+        queues=queues,
+        ui_elements=ui_elements,
+        recorders=recorders,
+    )
+    control_panel = ControlPanel(
+        queues["control_q"],
+        out_q=out_q,
+        hippo=hippo,
+        buttons=standard_controls,
+    )
+    hippo.ui_elements.append(control_panel)
+
     hippo.standby()
+    hippo.send()
+
     while True:
         for item in hippo.poll():
             button = item.get("BUTTONPRESSED", None)

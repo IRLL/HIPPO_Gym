@@ -15,7 +15,6 @@ LOGGER = getLogger(__name__)
 class Communicator:
     def __init__(
         self,
-        out_q: Queue,
         queues: Dict[str, Queue],
         address: Optional[str] = "localhost",
         port: int = 5000,
@@ -24,7 +23,7 @@ class Communicator:
         fullchain_path: str = "fullchain.pem",
         privkey_path: str = "privkey.pem",
     ):
-        self.out_q = out_q
+        self.out_q = queues["out_q"]
         self.address = address
         self.port = port
         self.ssl = use_ssl

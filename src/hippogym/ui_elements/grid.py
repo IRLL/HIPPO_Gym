@@ -3,15 +3,17 @@ from typing import TYPE_CHECKING, List, Optional, Set
 
 
 from hippogym.ui_elements.ui_element import UIElement
-
+from hippogym.message_handlers.grid import GridMessageHandler
 
 if TYPE_CHECKING:
     from multiprocessing import Queue
 
 
 class Grid(UIElement):
-    def __init__(self, queue: "Queue", rows: int = 10, columns: int = 10) -> None:
-        super().__init__(queue)
+    def __init__(
+        self, queue: "Queue", out_q: "Queue", rows: int = 10, columns: int = 10
+    ) -> None:
+        super().__init__(GridMessageHandler(self, queue), out_q=out_q)
         self.rows = rows
         self.columns = columns
         self.tiles: List[Tile] = []

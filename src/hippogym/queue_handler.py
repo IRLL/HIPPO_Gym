@@ -5,7 +5,7 @@ from typing import Dict, List
 def check_queue(queue: Queue) -> List[Dict[str, str]]:
     messages = []
     while not queue.empty():
-        messages.append(queue.get(False))
+        messages.append(queue.get_nowait())
     return messages
 
 

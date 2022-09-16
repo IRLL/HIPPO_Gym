@@ -2,14 +2,20 @@ from typing import TYPE_CHECKING, Optional
 
 from hippogym.message_handlers.message_handler import MessageHandler
 
+
 if TYPE_CHECKING:
+    from multiprocessing import Queue
     from hippogym import HippoGym
+    from hippogym.ui_elements.control_panel import ControlPanel
 
 
 class ControlMessageHandler(MessageHandler):
-    def __init__(self, hippo: "HippoGym"):
-        super().__init__(hippo.queues["control_q"])
+    def __init__(
+        self, control_panel: "ControlPanel", queue: "Queue", hippo: "HippoGym"
+    ):
+        super().__init__(queue)
         self.hippo = hippo
+        self.control_panel = control_panel
 
         self.handlers = {
             "userId": self.user,
@@ -44,8 +50,8 @@ class ControlMessageHandler(MessageHandler):
         )
 
     def slider(self, setting: str) -> None:
-        if self.hippo.control_panel is not None:
-            self.hippo.control_panel.set_slider_value(*setting)
+        if self.control_panel is not None:
+            self.control_panel.set_slider_value(*setting)
 
     def resume(self, _message: Optional[str] = None):
         self.hippo.start()

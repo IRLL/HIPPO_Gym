@@ -6,11 +6,14 @@ from typing import Optional
 
 from PIL import Image
 
+from hippogym.message_handlers.window import WindowMessageHandler
+
 
 class GameWindow:
     def __init__(
         self,
-        pipe: Queue,
+        in_q: "Queue",
+        out_q: "Queue",
         idx=0,
         width=700,
         height=600,
@@ -25,8 +28,10 @@ class GameWindow:
         self.frame = image
         self.text = text
         self.frame_id = 0
-        self.pipe = pipe
+        self.pipe = out_q
         self.events: Queue = Queue(maxsize=10)
+        self.message_handler = WindowMessageHandler(self, in_q)
+        self.message_handler.start()
 
     def update(self, idx=None, width=None, height=None, mode=None, image=0, text=None):
         if idx is not None:
