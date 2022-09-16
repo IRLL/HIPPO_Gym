@@ -3,48 +3,11 @@ import time
 
 import gym
 
-from hippogym import HippoGym
-from hippogym.ui_elements import InfoPanel, ControlPanel, standard_controls
+from hippogym import HippoGym, create_queues
+from hippogym.ui_elements import InfoPanel, GameWindow, ControlPanel, standard_controls
 
 logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
-
-
-def play(hippo: HippoGym):
-    window = hippo.get_game_window()
-
-    control_panel = ControlPanel(
-        hippo.out_q,
-        buttons=standard_controls,
-        keys=True,
-    )
-    hippo.set_control_panel(control_panel)
-
-    info_panel = hippo.get_info_panel()
-    info_panel.update(
-        text="Use keyboard to play the game",
-        items=["s = down", "a = left", "d = right"],
-    )
-
-    env = gym.make("LunarLander-v2")
-    LOGGER.debug("Env created")
-
-    send_render(env, window)
-    hippo.start()
-    while not hippo.stop:
-        action = 0
-        env.reset()
-        while hippo.run:
-            send_render(env, window)
-            new_action = check_action(hippo, action)
-            if new_action is not None:
-                action = new_action
-            if action < 0 or take_step(env, action, info_panel):
-                break
-
-            time.sleep(0.03)
-        time.sleep(1)
-    env.close()
 
 
 def send_render(env, window):
@@ -60,10 +23,8 @@ def check_action(hippo, old_action):
     for item in hippo.poll():
         action = item.get("ACTION", None)
         if action in combo:
-            print(action)
             action = action.replace(actions[old_action], "")
         if action in actions:
-            print(action)
             if not first_action:
                 first_action = action
             elif action == "noop":
@@ -92,8 +53,47 @@ def take_step(env, action, info_panel: InfoPanel):
 
 
 def main():
-    hippo = HippoGym()
-    hippo.standby(play)
+    queues = create_queues()
+    window = GameWindow(in_q=queues["window_q"], out_q=queues["out_q"])
+
+    info_panel = InfoPanel(
+        queue=queues["info_q"],
+        out_q=queues["out_q"],
+        text="Use keyboard to play the game",
+        items=["s = down", "a = left", "d = right"],
+    )
+
+    hippo = HippoGym(queues=queues, ui_elements=[window, info_panel])
+    control_panel = ControlPanel(
+        queue=queues["control_q"],
+        out_q=queues["out_q"],
+        hippo=hippo,
+        buttons=standard_controls,
+        keys=True,
+    )
+    hippo.ui_elements.append(control_panel)
+
+    env = gym.make("LunarLander-v2")
+    LOGGER.debug("Env created")
+
+    hippo.standby()
+    hippo.start()
+
+    while not hippo.stop:
+        action = 0
+        env.reset()
+        send_render(env, window)
+        while hippo.run:
+            new_action = check_action(hippo, action)
+            if new_action is not None:
+                action = new_action
+            if action < 0 or take_step(env, action, info_panel):
+                break
+            send_render(env, window)
+
+            time.sleep(0.03)
+        time.sleep(1)
+    env.close()
 
 
 if __name__ == "__main__":

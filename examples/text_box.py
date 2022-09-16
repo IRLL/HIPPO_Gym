@@ -47,17 +47,14 @@ def main():
         width=300,
         height=300,
     )
-    game_window.send()
-    ui_elements = [info_panel, text_box, game_window]
 
     json_recorder = Recorder(mode="json", clean_path=True)
     pickle_recorder = Recorder(mode="pickle")
-    recorders = [json_recorder, pickle_recorder]
 
     hippo = HippoGym(
         queues=queues,
-        ui_elements=ui_elements,
-        recorders=recorders,
+        ui_elements=[info_panel, text_box, game_window],
+        recorders=[json_recorder, pickle_recorder],
     )
     control_panel = ControlPanel(
         queues["control_q"],
