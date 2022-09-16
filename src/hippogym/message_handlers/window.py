@@ -18,7 +18,8 @@ class WindowMessageHandler(MessageHandler):
         }
 
     def resize(self, size):
-        self.game_window.set_size(size)
+        width, height = size
+        self.game_window.set_size(width, height)
 
     def mouse_down(self, event_action):
         event = "MOUSEBUTTONDOWN"
