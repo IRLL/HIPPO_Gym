@@ -12,7 +12,5 @@ def check_queue(queue: Queue) -> List[Dict[str, str]]:
 def check_queues(queues: Dict[str, Queue]) -> List[str]:
     response = []
     for queue in queues:
-        messages = check_queue(queue)
-        if messages:
-            response += messages
+        response += check_queue(queue)
     return response

@@ -56,7 +56,6 @@ class EventHandler:
 
     def handle_user_id(self, ids):
         message = {"userId": ids[0], "projectId": ids[1]}
-        print(self.control_q)
         put_in_queue(message, self.control_q)
 
     def handle_text_event(self, message):
@@ -76,7 +75,6 @@ class EventHandler:
             key = keyup[0]
             if key in self.key_map.keys() and key in self.pressed_keys:
                 self.pressed_keys.remove(key)
-                print(self.pressed_keys)
                 self.check_standard_message(key)
 
     def handle_button_event(self, message):
