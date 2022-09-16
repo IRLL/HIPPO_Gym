@@ -20,7 +20,6 @@ class Recorder:
         if clean_path:
             try:
                 rmtree(self.path)
-                print("Removed:", self.path)
             except:
                 pass
         makedirs(self.path, exist_ok=True)

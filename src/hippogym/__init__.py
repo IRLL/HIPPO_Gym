@@ -23,10 +23,10 @@ class HippoGym:
         self,
         queues: Dict[str, Queue],
         ui_elements: List["UIElement"],
-        recorders: List["Recorder"],
+        recorders: Optional[List["Recorder"]] = None,
     ) -> None:
         self.ui_elements = ui_elements
-        self.recorders = recorders
+        self.recorders = recorders if recorders is not None else []
 
         self._user_id: Optional[str] = None
         self.project_id: Optional[str] = None
