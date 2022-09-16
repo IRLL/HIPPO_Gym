@@ -1,0 +1,187 @@
+<diagram program="umletino" version="15.0.0"><zoom_level>3</zoom_level><help_text>Class diagram of the hippogym package</help_text><element><id>UMLClass</id><coordinates><x>124</x><y>105</y><w>63</w><h>57</h></coordinates><panel_attributes>HippoGym
+--
++project_id: Long
+-users: List[User]
+-communicator: Communicator
+-recoder: Recorder
+-trial_config: TrialConfig
+--
++deploy(s3:)
+--
+Responsibilities
+-- Handle experiment as whole
+-- Deployement for production</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>250</x><y>129</y><w>63</w><h>57</h></coordinates><panel_attributes>TrialConfig
+--
+-steps: Tuple[TrialStep]
+-sequence: Tuple[TrialStepOp]
+--
++sample(seed:int): Trial
+--
+Responsibilities
+-- Template for Trials
+-- Generate trials from seed</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>412</x><y>123</y><w>63</w><h>27</h></coordinates><panel_attributes>Sequence
+--
+-steps: Tuple[TrialStepOp]
+--
+--
+Responsibilities
+-- Group a sequence of steps</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>334</x><y>138</y><w>63</w><h>27</h></coordinates><panel_attributes>TrialStepOp
+--
+-steps: Tuple[TrialStep]
+--
+--
+Responsibilities
+-- Operation between TrialSteps</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>394</x><y>135</y><w>24</w><h>24</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;60;30;60;30;10;60;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>412</x><y>156</y><w>63</w><h>27</h></coordinates><panel_attributes>Split
+--
+-steps: Tuple[TrialStepOp]
+--
+--
+Responsibilities
+-- Split between steps</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>394</x><y>150</y><w>24</w><h>24</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;30;10;30;60;60;60</additional_attributes></element><element><id>Relation</id><coordinates><x>310</x><y>138</y><w>30</w><h>12</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;20;50;20;50;10;80;10</additional_attributes></element><element><id>Relation</id><coordinates><x>184</x><y>129</y><w>72</w><h>9</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;220;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>487</x><y>111</y><w>90</w><h>30</h></coordinates><panel_attributes>RandomSequence
+--
+-steps: Tuple[TrialStepOp]
+--
+sample(seed:int): Sequence
+--
+Responsibilities
+-- Randomize the order of a sequence of steps
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>487</x><y>144</y><w>90</w><h>30</h></coordinates><panel_attributes>RandomSplit
+--
+-steps: Tuple[TrialStepOp]
+--
+sample(seed:int): Split
+--
+Responsibilities
+-- Randomize the split between steps</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>472</x><y>123</y><w>21</w><h>9</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>10;10;50;10</additional_attributes></element><element><id>Relation</id><coordinates><x>472</x><y>156</y><w>21</w><h>9</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>10;10;50;10</additional_attributes></element><element><id>Relation</id><coordinates><x>232</x><y>135</y><w>24</w><h>81</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>60;10;10;10;10;250</additional_attributes></element><element><id>UMLClass</id><coordinates><x>346</x><y>192</y><w>78</w><h>42</h></coordinates><panel_attributes>Trial
+--
+-steps: Tuple[TrialStep]
+-user_id : str
+-seed: int
+--
++run()
+--
+Responsibilities
+-- Order TrialSteps in experiment for a user</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>310</x><y>147</y><w>42</w><h>54</h></coordinates><panel_attributes>lt=.&gt;</panel_attributes><additional_attributes>10;10;40;10;40;160;120;160</additional_attributes></element><element><id>Relation</id><coordinates><x>253</x><y>198</y><w>99</w><h>21</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>310;10;80;10;80;50;10;50</additional_attributes></element><element><id>UMLClass</id><coordinates><x>487</x><y>180</y><w>90</w><h>30</h></coordinates><panel_attributes>SurveySplit
+--
+-steps: Tuple[TrialStepOp]
+--
+filter(user_data:SurveyResult): Split
+--
+Responsibilities
+-- Split between steps depending on survey result</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>472</x><y>156</y><w>21</w><h>45</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>10;10;30;10;30;130;50;130</additional_attributes></element><element><id>UMLClass</id><coordinates><x>154</x><y>234</y><w>63</w><h>27</h></coordinates><panel_attributes>HtmlStep
+--
+-html_content: str
+--
+--
+Responsibilities
+-- Show a static page to user</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>229</x><y>234</y><w>63</w><h>51</h></coordinates><panel_attributes>GymStep
+--
+-ui_elements: Tuple[UIElement]
+--
++start()
++pause()
++resume()
++end()
+--
+Responsibilities
+-- Let the player interact with a gym
+environment (and possibly an agent)</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>193</x><y>210</y><w>63</w><h>9</h></coordinates><panel_attributes>/TrialStep/
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>223</x><y>216</y><w>45</w><h>24</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;40;130;40;130;60</additional_attributes></element><element><id>Relation</id><coordinates><x>184</x><y>216</y><w>48</w><h>24</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>140;10;140;40;10;40;10;60</additional_attributes></element><element><id>UMLClass</id><coordinates><x>265</x><y>300</y><w>72</w><h>45</h></coordinates><panel_attributes>UIElement
+--
+-messages_queue: Queue
+-message_handler: MessageHandler
+--
+
+--
+Responsibilities
+-- Represent a dynamic element that 
+the user can see and interact with</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>289</x><y>240</y><w>18</w><h>66</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;40;10;40;200</additional_attributes></element><element><id>UMLClass</id><coordinates><x>97</x><y>369</y><w>72</w><h>51</h></coordinates><panel_attributes>FrameWindow
+--
++width: int
++height: int
+--
+--
+Responsibilities
+-- Display clickable frames in
+a window to the user</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>334</x><y>369</y><w>72</w><h>51</h></coordinates><panel_attributes>TextBox
+--
++text: str
++width: int
++height: int
++buttons: str
+-messages_queue: Queue
+-message_handler: MessageHandler
+--
+--
+Responsibilities
+-- Display an editable text box to the user</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>253</x><y>369</y><w>72</w><h>51</h></coordinates><panel_attributes>InfoPanel
+--
++ text: str
++ items: List[str]
++ key_value: Dict[str, str]
+--
+--
+Responsibilities
+-- Display information to the user</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>412</x><y>369</y><w>72</w><h>51</h></coordinates><panel_attributes>Grid
+--
++tiles: List[List[Tile]]
+-rows: int
+-columns: int
+--
+--
+Responsibilities
+-- Display an interactive grid to the user</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>298</x><y>342</y><w>156</w><h>33</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;60;500;60;500;90</additional_attributes></element><element><id>Relation</id><coordinates><x>298</x><y>342</y><w>78</w><h>33</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;60;240;60;240;90</additional_attributes></element><element><id>Relation</id><coordinates><x>286</x><y>342</y><w>21</w><h>33</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>50;10;50;60;10;60;10;90</additional_attributes></element><element><id>Relation</id><coordinates><x>205</x><y>342</y><w>102</w><h>33</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>320;10;320;60;10;60;10;90</additional_attributes></element><element><id>UMLClass</id><coordinates><x>175</x><y>369</y><w>72</w><h>51</h></coordinates><panel_attributes>ControlPanel
+--
++buttons: Tuple[Button]
++sliders: Tuple[Slider]
+--
+--
+Responsibilities
+-- Display a pannel with buttons and 
+sliders the user can interact with</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>133</x><y>342</y><w>174</w><h>33</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>560;10;560;60;10;60;10;90</additional_attributes></element><element><id>UMLClass</id><coordinates><x>40</x><y>426</y><w>30</w><h>9</h></coordinates><panel_attributes>/MessageHandler/
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>52</x><y>312</y><w>219</w><h>120</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>710;10;10;10;10;380</additional_attributes></element><element><id>UMLClass</id><coordinates><x>175</x><y>441</y><w>72</w><h>42</h></coordinates><panel_attributes>ControlPanelMessageHander
+--
+-messages_queue: Queue
+--
+--
+Responsibilities
+-- Handle messages from buttons and 
+sliders</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>97</x><y>441</y><w>72</w><h>42</h></coordinates><panel_attributes>FrameWindowMessageHander
+--
+-messages_queue: Queue
+--
+--
+Responsibilities
+-- Handle mouse events and resizing
+of the FrameWindow.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>334</x><y>441</y><w>72</w><h>42</h></coordinates><panel_attributes>TextBoxMessageHander
+--
+-messages_queue: Queue
+--
+--
+Responsibilities
+-- Handle messages from buttons</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>412</x><y>441</y><w>72</w><h>42</h></coordinates><panel_attributes>GridMessageHander
+--
+-messages_queue: Queue
+--
+--
+Responsibilities
+-- Handle messages from tiles 
+interactions</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>67</x><y>426</y><w>399</w><h>21</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;1310;10;1310;50</additional_attributes></element><element><id>Relation</id><coordinates><x>67</x><y>426</y><w>321</w><h>21</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;1050;10;1050;50</additional_attributes></element><element><id>Relation</id><coordinates><x>67</x><y>426</y><w>252</w><h>21</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;820;10;510;10;510;50</additional_attributes></element><element><id>Relation</id><coordinates><x>67</x><y>426</y><w>252</w><h>21</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;820;10;270;10;270;50</additional_attributes></element><element><id>Relation</id><coordinates><x>130</x><y>417</y><w>9</w><h>30</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>10;10;10;80</additional_attributes></element><element><id>Relation</id><coordinates><x>208</x><y>417</y><w>9</w><h>30</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>10;10;10;80</additional_attributes></element><element><id>Relation</id><coordinates><x>367</x><y>417</y><w>9</w><h>30</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>10;10;10;80</additional_attributes></element><element><id>Relation</id><coordinates><x>445</x><y>417</y><w>9</w><h>30</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>10;10;10;80</additional_attributes></element><element><id>UMLClass</id><coordinates><x>208</x><y>54</y><w>78</w><h>42</h></coordinates><panel_attributes>Recoder
+--
+-uploader: Optional[Uploader]
+--
++record()
++write()
++upload()
+--
+Responsibilities
+-- Record Trials data and upload it</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>298</x><y>60</y><w>78</w><h>42</h></coordinates><panel_attributes>Uploader
+--
+-s3: boto3.Resource
+-bucket: str
+-key : str
+--
++run()
+--
+Responsibilities
+-- Upload data to cloud infrastructure</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>283</x><y>60</y><w>21</w><h>9</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;50;10</additional_attributes></element><element><id>Relation</id><coordinates><x>184</x><y>54</y><w>30</w><h>81</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;250;50;250;50;10;80;10</additional_attributes></element></diagram>
