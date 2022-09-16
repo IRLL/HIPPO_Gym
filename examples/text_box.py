@@ -1,8 +1,8 @@
 import base64
 import logging
-from multiprocessing import Queue
 
 from hippogym import HippoGym, create_queues
+from hippogym.event_handler import EventsQueues
 from hippogym.ui_elements import (
     InfoPanel,
     TextBox,
@@ -30,18 +30,19 @@ def main():
     toggle_sliders = True
     toggle_info = True
     queues = create_queues()
-    out_q = queues["out_q"]
+    out_q = queues[EventsQueues.OUTPUT]
 
-    info_panel = InfoPanel(queues["info_q"], out_q=out_q)
+    info_panel = InfoPanel(queues[EventsQueues.INFO_PANEL], out_q=out_q)
 
     text_box = TextBox(
-        queues["textbox_q"],
+        queues[EventsQueues.TEXTBOX],
         out_q=out_q,
         text="Hello World!",
         buttons=["save", "run", "clear"],
     )
+
     game_window = GameWindow(
-        in_q=queues["window_q"],
+        in_q=queues[EventsQueues.WINDOW],
         out_q=out_q,
         image=get_image(images[index // len(images)]),
         width=300,
@@ -57,7 +58,7 @@ def main():
         recorders=[json_recorder, pickle_recorder],
     )
     control_panel = ControlPanel(
-        queues["control_q"],
+        queues[EventsQueues.CONTROL_PANEL],
         out_q=out_q,
         hippo=hippo,
         buttons=standard_controls,

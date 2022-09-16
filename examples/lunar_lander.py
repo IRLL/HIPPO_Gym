@@ -4,6 +4,7 @@ import time
 import gym
 
 from hippogym import HippoGym, create_queues
+from hippogym.event_handler import EventsQueues
 from hippogym.ui_elements import InfoPanel, GameWindow, ControlPanel, standard_controls
 
 logging.basicConfig(level=logging.DEBUG)
@@ -54,19 +55,22 @@ def take_step(env, action, info_panel: InfoPanel):
 
 def main():
     queues = create_queues()
-    window = GameWindow(in_q=queues["window_q"], out_q=queues["out_q"])
+    window = GameWindow(
+        in_q=queues[EventsQueues.WINDOW],
+        out_q=queues[EventsQueues.OUTPUT],
+    )
 
     info_panel = InfoPanel(
-        queue=queues["info_q"],
-        out_q=queues["out_q"],
+        queue=queues[EventsQueues.INFO_PANEL],
+        out_q=queues[EventsQueues.OUTPUT],
         text="Use keyboard to play the game",
         items=["s = down", "a = left", "d = right"],
     )
 
     hippo = HippoGym(queues=queues, ui_elements=[window, info_panel])
     control_panel = ControlPanel(
-        queue=queues["control_q"],
-        out_q=queues["out_q"],
+        queue=queues[EventsQueues.CONTROL_PANEL],
+        out_q=queues[EventsQueues.OUTPUT],
         hippo=hippo,
         buttons=standard_controls,
         keys=True,

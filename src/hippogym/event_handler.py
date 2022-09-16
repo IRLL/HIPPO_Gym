@@ -1,31 +1,36 @@
+from typing import TYPE_CHECKING, Dict
 import logging
+
+from enum import Enum
+
+if TYPE_CHECKING:
+    from multiprocessing import Queue
 
 LOGGER = logging.getLogger(__name__)
 
 
+class EventsQueues(Enum):
+    """Events shared messages queues."""
+
+    KEYBOARD = "keyboard_q"
+    BUTTON = "button_q"
+    WINDOW = "window_q"
+    STANDARD = "standard_q"
+    CONTROL_PANEL = "control_q"
+    TEXTBOX = "textbox_q"
+    GRID = "grid_q"
+    USER = "user_q"
+    INFO_PANEL = "info_q"
+    OUTPUT = "out_q"
+
+
 class EventHandler:
-    def __init__(self, queues):
-        self.keyboard_q = queues.get("keyboard_q", None)
-        self.button_q = queues.get("button_q", None)
-        self.window_q = queues.get("window_q", None)
-        self.standard_q = queues.get("standard_q", None)
-        self.control_q = queues.get("control_q", None)
-        self.textbox_q = queues.get("textbox_q", None)
-        self.grid_q = queues.get("grid_q", None)
-        if not self.control_q:
-            LOGGER.debug("no control_q in EventHandler")
-        if not self.keyboard_q:
-            LOGGER.debug("no keyboard_q in EventHandler")
-        if not self.button_q:
-            LOGGER.debug("no button_q in EventHandler")
-        if not self.window_q:
-            LOGGER.debug("no window_q in EventHandler")
-        if not self.standard_q:
-            LOGGER.debug("no standard_q in EventHandler")
-        if not self.textbox_q:
-            LOGGER.debug("no textbox_q in EventHandler")
-        if not self.grid_q:
-            LOGGER.debug("no grid_q in EventHandler")
+    def __init__(self, queues: Dict[EventsQueues, "Queue"]):
+        for queue_name in EventsQueues:
+            if queue_name not in queues:
+                LOGGER.debug("No %s in EventHandler", queue_name)
+
+        self.queues = queues
         self.pressed_keys = set()
         self.key_map = {
             "w": "up",
@@ -54,15 +59,11 @@ class EventHandler:
             if key in self.handlers:
                 self.handlers[key](message[key])
 
-    def handle_user_id(self, ids):
-        message = {"userId": ids[0], "projectId": ids[1]}
-        put_in_queue(message, self.control_q)
+    def handle_text_event(self, message: dict):
+        put_in_queue(message, self.queues[EventsQueues.TEXTBOX])
 
-    def handle_text_event(self, message):
-        put_in_queue(message, self.textbox_q)
-
-    def handle_keyboard_event(self, message):
-        put_in_queue(message, self.keyboard_q)
+    def handle_keyboard_event(self, message: dict):
+        put_in_queue(message, self.queues[EventsQueues.KEYBOARD])
         # check for common keys to add to standard_q events
         keydown = message.get("KEYDOWN", None)
         if keydown:
@@ -77,23 +78,20 @@ class EventHandler:
                 self.pressed_keys.remove(key)
                 self.check_standard_message(key)
 
-    def handle_button_event(self, message):
-        put_in_queue(message, self.button_q)
+    def handle_button_event(self, message: dict):
+        put_in_queue(message, self.queues[EventsQueues.BUTTON])
         button = message.get("BUTTONPRESSED", None)
         if button:
             self.check_standard_message(button)
-        if button == "start":
-            put_in_queue({"start": True}, self.control_q)
-        if button == "pause":
-            put_in_queue({"pause": True}, self.control_q)
-        if button == "end":
-            put_in_queue({"end": True}, self.control_q)
+        if button in ("start", "pause", "end"):
+            new_message = {button: True}
+            put_in_queue(new_message, self.queues[EventsQueues.CONTROL_PANEL])
 
-    def handle_window_event(self, message):
-        put_in_queue(message, self.window_q)
+    def handle_window_event(self, message: dict):
+        put_in_queue(message, self.queues[EventsQueues.WINDOW])
 
-    def handle_grid_event(self, message):
-        put_in_queue(message, self.grid_q)
+    def handle_grid_event(self, message: dict):
+        put_in_queue(message, self.queues[EventsQueues.GRID])
 
     def check_standard_message(self, event):
         action = None
@@ -124,18 +122,20 @@ class EventHandler:
         elif event == " " or event == "fire":
             action = "fire"
         if action:
-            put_in_queue({"ACTION": action}, self.standard_q)
+            put_in_queue({"ACTION": action}, self.queues[EventsQueues.STANDARD])
 
-    def handle_slider_event(self, message):
-        put_in_queue(message, self.control_q)
+    def handle_slider_event(self, message: dict):
+        put_in_queue(message, self.queues[EventsQueues.CONTROL_PANEL])
 
-    def connect(self, message):
-        user_id = message.get("userId", None)
-        project_id = message.get("projectId", None)
-        return user_id, project_id
+    def connect(self, user_id: str, project_id: str):
+        message = {"userId": user_id, "projectId": project_id}
+        put_in_queue(message, self.queues[EventsQueues.USER])
 
-    def disconnect(self, user_id):
-        put_in_queue({"disconnect": user_id}, self.control_q)
+    def disconnect(self, user_id: str, project_id: str):
+        put_in_queue(
+            {"disconnect": user_id, "projectId": project_id},
+            self.queues[EventsQueues.USER],
+        )
 
 
 def put_in_queue(message, queue):

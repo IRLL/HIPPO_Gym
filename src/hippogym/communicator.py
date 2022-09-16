@@ -7,7 +7,7 @@ from typing import Dict, List, Optional
 
 from websockets.server import serve
 
-from hippogym.event_handler import EventHandler
+from hippogym.event_handler import EventHandler, EventsQueues
 
 LOGGER = getLogger(__name__)
 
@@ -23,7 +23,7 @@ class Communicator:
         fullchain_path: str = "fullchain.pem",
         privkey_path: str = "privkey.pem",
     ):
-        self.out_q = queues["out_q"]
+        self.out_q = queues[EventsQueues.OUTPUT]
         self.address = address
         self.port = port
         self.ssl = use_ssl
@@ -35,8 +35,6 @@ class Communicator:
         self.start()
 
     async def consumer_handler(self, websocket):
-        self.event_handler.handle_user_id(self.users[0])
-        LOGGER.info("Starting users: %s", str(self.users))
         async for message in websocket:
             try:
                 message = json.loads(message)
@@ -64,8 +62,14 @@ class Communicator:
 
     async def handler(self, websocket, path):
         message = await websocket.recv()
-        user_id, project_id = self.event_handler.connect(json.loads(message))
-        if user_id:
+        message_dict: dict = json.loads(message)
+
+        project_id = message_dict.get("projectId", None)
+        user_id = message_dict.get("userId", None)
+
+        if user_id is not None:
+            LOGGER.info("Project %s got new user: %s", project_id, user_id)
+            self.event_handler.connect(user_id, project_id)
             self.users.append((user_id, project_id))
         else:
             await websocket.send(json.dumps({"Request": ("USER", None)}))
@@ -83,7 +87,7 @@ class Communicator:
         await websocket.close()
         LOGGER.info("User Disconnected")
         self.users.remove((user_id, project_id))
-        self.event_handler.disconnect(user_id)
+        self.event_handler.disconnect(user_id, project_id)
 
     def start(self) -> None:
         if not self.force_ssl:

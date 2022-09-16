@@ -9,7 +9,9 @@ from typing import TYPE_CHECKING, Callable, Dict, List, Optional, Tuple
 from hippogym.bucketer import bucketer
 from hippogym.communicator import Communicator
 
+from hippogym.event_handler import EventsQueues
 from hippogym.queue_handler import check_queues
+from hippogym.message_handlers.user import UserMessageHandler
 
 if TYPE_CHECKING:
     from hippogym.recorder.recorder import Recorder
@@ -49,6 +51,8 @@ class HippoGym:
             daemon=True,
         )
         self.communicator.start()
+        self.user_hander = UserMessageHandler(self, queues[EventsQueues.USER])
+        self.user_hander.start()
 
     @property
     def user_id(self) -> Optional[str]:
@@ -85,9 +89,9 @@ class HippoGym:
     def poll(self) -> List[str]:
         return check_queues(
             [
-                self.queues["keyboard_q"],
-                self.queues["button_q"],
-                self.queues["standard_q"],
+                self.queues[EventsQueues.KEYBOARD],
+                self.queues[EventsQueues.BUTTON],
+                self.queues[EventsQueues.STANDARD],
             ]
         )
 
@@ -124,15 +128,4 @@ class TimeActor:
 
 
 def create_queues() -> Dict[str, Queue]:
-    keys = [
-        "keyboard_q",
-        "window_q",
-        "button_q",
-        "standard_q",
-        "control_q",
-        "textbox_q",
-        "grid_q",
-        "info_q",
-        "out_q",
-    ]
-    return {key: Queue() for key in keys}
+    return {queue_name: Queue() for queue_name in EventsQueues}
