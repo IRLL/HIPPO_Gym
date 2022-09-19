@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING, Any, Dict, List, Union
 
 from hippogym.message_handlers.control import ControlMessageHandler
-from hippogym.ui_elements.control_panel.button import Button
-from hippogym.ui_elements.control_panel.slider import Slider
+from hippogym.ui_elements.building_blocks.button import Button
+from hippogym.ui_elements.building_blocks.slider import Slider
 from hippogym.ui_elements.ui_element import UIElement
 
 if TYPE_CHECKING:

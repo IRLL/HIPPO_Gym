@@ -1,7 +1,7 @@
 import pytest
 import pytest_check as check
 
-from hippogym.ui_elements.control_panel.slider import Slider
+from hippogym.ui_elements.building_blocks.slider import Slider
 
 
 class TestSlider:
