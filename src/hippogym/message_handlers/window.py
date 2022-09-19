@@ -1,14 +1,17 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict
+
+from hippogym.event_handler import EventsQueues
 from hippogym.message_handlers.message_handler import MessageHandler
 
 if TYPE_CHECKING:
-    from hippogym.ui_elements.game_window import GameWindow
     from multiprocessing import Queue
+
+    from hippogym.ui_elements.game_window import GameWindow
 
 
 class WindowMessageHandler(MessageHandler):
-    def __init__(self, game_window: "GameWindow", queue: "Queue"):
-        super().__init__(queue)
+    def __init__(self, game_window: "GameWindow", queues: Dict[EventsQueues, "Queue"]):
+        super().__init__(queues, EventsQueues.WINDOW)
         self.game_window = game_window
         self.handlers = {
             "WINDOWRESIZED": self.resize,
@@ -22,13 +25,10 @@ class WindowMessageHandler(MessageHandler):
         self.game_window.set_size(width, height)
 
     def mouse_down(self, event_action):
-        event = "MOUSEBUTTONDOWN"
-        self.game_window.add_event({event: event_action})
+        self.game_window.add_event({"MOUSEBUTTONDOWN": event_action})
 
     def mouse_up(self, event_action):
-        event = "MOUSEBUTTONUP"
-        self.game_window.add_event({event: event_action})
+        self.game_window.add_event({"MOUSEBUTTONUP": event_action})
 
     def mouse_move(self, event_action):
-        event = "MOUSEMOTION"
-        self.game_window.add_event({event: event_action})
+        self.game_window.add_event({"MOUSEMOTION": event_action})

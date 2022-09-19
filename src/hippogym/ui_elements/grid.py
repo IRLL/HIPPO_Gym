@@ -1,31 +1,30 @@
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, List, Optional, Set
+from typing import TYPE_CHECKING, Dict, List, Optional, Set
 
-
-from hippogym.ui_elements.ui_element import UIElement
 from hippogym.message_handlers.grid import GridMessageHandler
+from hippogym.ui_elements.ui_element import UIElement
 
 if TYPE_CHECKING:
     from multiprocessing import Queue
 
+    from hippogym.event_handler import EventsQueues
+
 
 class Grid(UIElement):
     def __init__(
-        self, queue: "Queue", out_q: "Queue", rows: int = 10, columns: int = 10
+        self, queues: Dict["EventsQueues", "Queue"], rows: int = 10, columns: int = 10
     ) -> None:
-        super().__init__(GridMessageHandler(self, queue), out_q=out_q)
+        super().__init__("grid", GridMessageHandler(self, queues))
         self.rows = rows
         self.columns = columns
         self.tiles: List[Tile] = []
         self.selected_tiles: Set[Tile] = set()
 
-    def dict(self) -> dict:
+    def params_dict(self) -> dict:
         return {
-            "grid": {
-                "rows": self.rows,
-                "columns": self.columns,
-                "tiles": self.tiles,
-            }
+            "rows": self.rows,
+            "columns": self.columns,
+            "tiles": self.tiles,
         }
 
     def select(self, tile: "Tile") -> None:

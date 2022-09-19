@@ -1,7 +1,6 @@
-from typing import TYPE_CHECKING, Dict
 import logging
-
 from enum import Enum
+from typing import TYPE_CHECKING, Dict
 
 if TYPE_CHECKING:
     from multiprocessing import Queue
@@ -16,7 +15,7 @@ class EventsQueues(Enum):
     BUTTON = "button_q"
     WINDOW = "window_q"
     STANDARD = "standard_q"
-    CONTROL_PANEL = "control_q"
+    CONTROL = "control_q"
     TEXTBOX = "textbox_q"
     GRID = "grid_q"
     USER = "user_q"
@@ -85,7 +84,7 @@ class EventHandler:
             self.check_standard_message(button)
         if button in ("start", "pause", "end"):
             new_message = {button: True}
-            put_in_queue(new_message, self.queues[EventsQueues.CONTROL_PANEL])
+            put_in_queue(new_message, self.queues[EventsQueues.CONTROL])
 
     def handle_window_event(self, message: dict):
         put_in_queue(message, self.queues[EventsQueues.WINDOW])
@@ -125,7 +124,7 @@ class EventHandler:
             put_in_queue({"ACTION": action}, self.queues[EventsQueues.STANDARD])
 
     def handle_slider_event(self, message: dict):
-        put_in_queue(message, self.queues[EventsQueues.CONTROL_PANEL])
+        put_in_queue(message, self.queues[EventsQueues.CONTROL])
 
     def connect(self, user_id: str, project_id: str):
         message = {"userId": user_id, "projectId": project_id}

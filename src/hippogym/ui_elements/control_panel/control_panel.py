@@ -1,10 +1,14 @@
-from queue import Queue
-from typing import Any, List, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Union
 
+from hippogym.message_handlers.control import ControlMessageHandler
 from hippogym.ui_elements.control_panel.button import Button
 from hippogym.ui_elements.control_panel.slider import Slider
 from hippogym.ui_elements.ui_element import UIElement
-from hippogym.message_handlers.control import ControlMessageHandler
+
+if TYPE_CHECKING:
+    from multiprocessing import Queue
+
+    from hippogym.event_handler import EventsQueues
 
 
 class ControlPanel(UIElement):
@@ -12,14 +16,13 @@ class ControlPanel(UIElement):
 
     def __init__(
         self,
-        queue: Queue,
-        out_q: "Queue",
+        queues: Dict["EventsQueues", "Queue"],
         hippo,
         buttons=None,
         sliders=None,
         keys=False,
     ):
-        super().__init__(ControlMessageHandler(self, queue, hippo), out_q=out_q)
+        super().__init__("ControlPanel", ControlMessageHandler(self, queues, hippo))
         self.buttons: List[Button] = _ensure_list_type(buttons, Button)
         self.sliders: List[Slider] = _ensure_list_type(sliders, Slider)
         self.keys = keys if isinstance(keys, bool) else False
@@ -59,14 +62,12 @@ class ControlPanel(UIElement):
                 return
         raise ValueError(f"Could not find slider {slider_title}")
 
-    def dict(self) -> dict:
+    def params_dict(self) -> dict:
         """Represent the control panel as a serialized dictionary"""
         return {
-            "ControlPanel": {
-                "Buttons": [button.dict() for button in self.buttons],
-                "Sliders": [slider.dict() for slider in self.sliders],
-                "Keys": self.keys,
-            }
+            "Buttons": [button.dict() for button in self.buttons],
+            "Sliders": [slider.dict() for slider in self.sliders],
+            "Keys": self.keys,
         }
 
 

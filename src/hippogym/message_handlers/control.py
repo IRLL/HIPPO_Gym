@@ -1,19 +1,23 @@
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Dict, Optional
 
+from hippogym.event_handler import EventsQueues
 from hippogym.message_handlers.message_handler import MessageHandler
-
 
 if TYPE_CHECKING:
     from multiprocessing import Queue
+
     from hippogym import HippoGym
     from hippogym.ui_elements.control_panel import ControlPanel
 
 
 class ControlMessageHandler(MessageHandler):
     def __init__(
-        self, control_panel: "ControlPanel", queue: "Queue", hippo: "HippoGym"
+        self,
+        control_panel: "ControlPanel",
+        queues: Dict[EventsQueues, "Queue"],
+        hippo: "HippoGym",
     ):
-        super().__init__(queue)
+        super().__init__(queues, EventsQueues.CONTROL)
         self.hippo = hippo
         self.control_panel = control_panel
 

@@ -1,15 +1,18 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict
 
+from hippogym.event_handler import EventsQueues
 from hippogym.message_handlers.message_handler import MessageHandler
 
 if TYPE_CHECKING:
+
     from multiprocessing import Queue
+
     from hippogym.ui_elements.grid import Grid, Tile
 
 
 class GridMessageHandler(MessageHandler):
-    def __init__(self, grid: "Grid", queue: "Queue") -> None:
-        super().__init__(queue)
+    def __init__(self, grid: "Grid", queues: Dict[EventsQueues, "Queue"]) -> None:
+        super().__init__(queues, EventsQueues.GRID)
         self.grid = grid
         self.handlers = {
             "TILESELECTED": self.select,

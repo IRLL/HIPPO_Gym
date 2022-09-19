@@ -1,8 +1,9 @@
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict
 
-from hippogym.ui_elements.ui_element import UIElement
+from hippogym.event_handler import EventsQueues
 from hippogym.message_handlers.textbox import TextBoxMessageHandler
+from hippogym.ui_elements.ui_element import UIElement
 
 if TYPE_CHECKING:
     from multiprocessing import Queue
@@ -11,8 +12,7 @@ if TYPE_CHECKING:
 class TextBox(UIElement):
     def __init__(
         self,
-        queue: "Queue",
-        out_q: "Queue",
+        queues: Dict[EventsQueues, "Queue"],
         idx=0,
         width=700,
         height=600,
@@ -25,7 +25,7 @@ class TextBox(UIElement):
         syntax=None,
         buttons=None,
     ):
-        super().__init__(TextBoxMessageHandler(self, queue), out_q=out_q)
+        super().__init__("TextBox", TextBoxMessageHandler(self, queues))
         self.idx = idx
         self.width = width
         self.height = height
@@ -41,27 +41,25 @@ class TextBox(UIElement):
         self.updated = True
         self.send()
 
-    def dict(self) -> dict:
+    def params_dict(self) -> dict:
         return {
-            "TextBox": {
-                "idx": self.idx,
-                "size": (self.width, self.height),
-                "width": self.width,
-                "height": self.height,
-                "mode": self.mode,
-                "text": self.text,
-                "editable": self.editable,
-                "bgcolor": self.bgcolor,
-                "color": self.color,
-                "font": self.font,
-                "syntax": self.syntax,
-                "buttons": self.buttons,
-            }
+            "idx": self.idx,
+            "size": (self.width, self.height),
+            "width": self.width,
+            "height": self.height,
+            "mode": self.mode,
+            "text": self.text,
+            "editable": self.editable,
+            "bgcolor": self.bgcolor,
+            "color": self.color,
+            "font": self.font,
+            "syntax": self.syntax,
+            "buttons": self.buttons,
         }
 
     def request(self):
         request = {"Request": ["TEXTBOX", self.idx]}
-        self.messages_queue.put_nowait(request)
+        self.message_handler.send(request)
         self.updated = False
 
     def update(self, **kwargs):

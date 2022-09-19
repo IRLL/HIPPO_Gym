@@ -1,5 +1,6 @@
 import hippogym
 
+
 def main() -> None:
     print(hippogym.__doc__)
 

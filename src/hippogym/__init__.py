@@ -5,19 +5,19 @@ from logging import getLogger
 from multiprocessing import Process, Queue
 from typing import TYPE_CHECKING, Callable, Dict, List, Optional, Tuple
 
-
 from hippogym.bucketer import bucketer
 from hippogym.communicator import Communicator
-
 from hippogym.event_handler import EventsQueues
-from hippogym.queue_handler import check_queues
 from hippogym.message_handlers.user import UserMessageHandler
+from hippogym.queue_handler import check_queues, create_or_get_queue
 
 if TYPE_CHECKING:
     from hippogym.recorder.recorder import Recorder
     from hippogym.ui_elements import UIElement
 
 LOGGER = getLogger(__name__)
+
+POLL_QUEUES = (EventsQueues.KEYBOARD, EventsQueues.BUTTON, EventsQueues.STANDARD)
 
 
 class HippoGym:
@@ -36,6 +36,11 @@ class HippoGym:
         self.stop = False
 
         self.queues = queues
+        for queue in POLL_QUEUES:
+            create_or_get_queue(self.queues, queue)
+
+        self.user_hander = UserMessageHandler(self, self.queues)
+        self.user_hander.start()
 
         self.communicator = Process(
             target=Communicator,
@@ -51,8 +56,6 @@ class HippoGym:
             daemon=True,
         )
         self.communicator.start()
-        self.user_hander = UserMessageHandler(self, queues[EventsQueues.USER])
-        self.user_hander.start()
 
     @property
     def user_id(self) -> Optional[str]:
@@ -87,13 +90,7 @@ class HippoGym:
         return bucketer(self.user_id, num_groups)
 
     def poll(self) -> List[str]:
-        return check_queues(
-            [
-                self.queues[EventsQueues.KEYBOARD],
-                self.queues[EventsQueues.BUTTON],
-                self.queues[EventsQueues.STANDARD],
-            ]
-        )
+        return check_queues([self.queues[queue] for queue in POLL_QUEUES])
 
     def send(self) -> None:
         for ui_element in self.ui_elements:
@@ -125,7 +122,3 @@ class TimeActor:
         if delta >= self.interval:
             self.last_tick = time.time()
             self.func()
-
-
-def create_queues() -> Dict[str, Queue]:
-    return {queue_name: Queue() for queue_name in EventsQueues}

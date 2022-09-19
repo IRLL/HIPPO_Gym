@@ -1,27 +1,29 @@
 import base64
 import logging
 from io import BytesIO
-from queue import Queue
-from typing import Optional
+from multiprocessing import Queue
+from typing import TYPE_CHECKING, Dict, Optional
 
 from PIL import Image
 
-from hippogym.ui_elements.ui_element import UIElement
 from hippogym.message_handlers.window import WindowMessageHandler
+from hippogym.ui_elements.ui_element import UIElement
+
+if TYPE_CHECKING:
+    from hippogym.event_handler import EventsQueues
 
 
 class GameWindow(UIElement):
     def __init__(
         self,
-        in_q: "Queue",
-        out_q: "Queue",
+        queues: Dict["EventsQueues", Queue],
         width=700,
         height=600,
         mode="responsive",
         image=None,
         text=None,
     ) -> None:
-        super().__init__(WindowMessageHandler(self, in_q), out_q)
+        super().__init__("GameWindow", WindowMessageHandler(self, queues))
         self.width = width
         self.height = height
         self.mode = mode
@@ -30,16 +32,14 @@ class GameWindow(UIElement):
         self.frame_id = 0
         self.events: Queue = Queue(maxsize=10)
 
-    def dict(self) -> dict:
+    def params_dict(self) -> dict:
         return {
-            "GameWindow": {
-                "size": (self.width, self.height),
-                "width": self.width,
-                "height": self.height,
-                "mode": self.mode,
-                "frame": self.frame,
-                "frameId": self.frame_id,
-            }
+            "size": (self.width, self.height),
+            "width": self.width,
+            "height": self.height,
+            "mode": self.mode,
+            "frame": self.frame,
+            "frameId": self.frame_id,
         }
 
     def update(self, **kwargs):
