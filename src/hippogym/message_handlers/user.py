@@ -1,43 +1,27 @@
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING
 
 from hippogym.event_handler import EventsQueues
 from hippogym.message_handlers.message_handler import MessageHandler
 
 if TYPE_CHECKING:
-    from multiprocessing import Queue
-
     from hippogym import HippoGym
 
 
 class UserMessageHandler(MessageHandler):
-    def __init__(self, hippo: "HippoGym", queues: Dict[EventsQueues, "Queue"]):
-        super().__init__(queues, EventsQueues.USER)
-        self.hippo = hippo
+    def __init__(self):
+        super().__init__(EventsQueues.USER)
 
         self.handlers = {
-            "userId": self.user,
+            "userId": self.start_trial,
+            "disconnect": self.stop_trial,
             "projectId": self.project,
-            "disconnect": self.disconnect,
         }
-
-    def user(self, user_id: str):
-        if not self.hippo.user_id:
-            self.hippo.user_id = user_id
-            self.hippo.send()
-            return
-        raise ValueError(
-            "Two users conflicting: %s and %s", user_id, self.hippo.user_id
-        )
 
     def project(self, project_id: str) -> None:
         self.hippo.project_id = project_id
 
-    def disconnect(self, user_id: str) -> None:
-        if self.hippo.user_id == user_id:
-            self.hippo.user_id = None
-            return
-        raise ValueError(
-            "Cannot disconnect unkown user: %s. Known users: %s",
-            user_id,
-            self.hippo.user_id,
-        )
+    def start_trial(self, user_id: str) -> None:
+        self.hippo.start_trial(user_id)
+
+    def stop_trial(self, user_id: str) -> None:
+        self.hippo.stop_trial(user_id)

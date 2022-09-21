@@ -2,28 +2,24 @@ import base64
 import logging
 from io import BytesIO
 from multiprocessing import Queue
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import Optional
 
 from PIL import Image
 
 from hippogym.message_handlers.window import WindowMessageHandler
 from hippogym.ui_elements.ui_element import UIElement
 
-if TYPE_CHECKING:
-    from hippogym.event_handler import EventsQueues
-
 
 class GameWindow(UIElement):
     def __init__(
         self,
-        queues: Dict["EventsQueues", Queue],
         width=700,
         height=600,
         mode="responsive",
         image=None,
         text=None,
     ) -> None:
-        super().__init__("GameWindow", WindowMessageHandler(self, queues))
+        super().__init__("GameWindow", WindowMessageHandler(self))
         self.width = width
         self.height = height
         self.mode = mode

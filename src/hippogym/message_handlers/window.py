@@ -1,17 +1,15 @@
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING
 
 from hippogym.event_handler import EventsQueues
 from hippogym.message_handlers.message_handler import MessageHandler
 
 if TYPE_CHECKING:
-    from multiprocessing import Queue
-
     from hippogym.ui_elements.game_window import GameWindow
 
 
 class WindowMessageHandler(MessageHandler):
-    def __init__(self, game_window: "GameWindow", queues: Dict[EventsQueues, "Queue"]):
-        super().__init__(queues, EventsQueues.WINDOW)
+    def __init__(self, game_window: "GameWindow"):
+        super().__init__(EventsQueues.WINDOW)
         self.game_window = game_window
         self.handlers = {
             "WINDOWRESIZED": self.resize,

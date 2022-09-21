@@ -1,14 +1,9 @@
-from typing import TYPE_CHECKING, Any, Dict, List, Union
+from typing import Any, List, Union
 
 from hippogym.message_handlers.control import ControlMessageHandler
 from hippogym.ui_elements.building_blocks.button import Button
 from hippogym.ui_elements.building_blocks.slider import Slider
 from hippogym.ui_elements.ui_element import UIElement
-
-if TYPE_CHECKING:
-    from multiprocessing import Queue
-
-    from hippogym.event_handler import EventsQueues
 
 
 class ControlPanel(UIElement):
@@ -16,13 +11,11 @@ class ControlPanel(UIElement):
 
     def __init__(
         self,
-        queues: Dict["EventsQueues", "Queue"],
-        hippo,
         buttons=None,
         sliders=None,
         keys=False,
     ):
-        super().__init__("ControlPanel", ControlMessageHandler(self, queues, hippo))
+        super().__init__("ControlPanel", ControlMessageHandler(self))
         self.buttons: List[Button] = _ensure_list_type(buttons, Button)
         self.sliders: List[Slider] = _ensure_list_type(sliders, Slider)
         self.keys = keys if isinstance(keys, bool) else False

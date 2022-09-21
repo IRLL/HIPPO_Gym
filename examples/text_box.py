@@ -28,18 +28,15 @@ def main():
     index = 0
     toggle_sliders = True
     toggle_info = True
-    queues = {}
 
-    info_panel = InfoPanel(queues)
+    info_panel = InfoPanel()
 
     text_box = TextBox(
-        queues,
         text="Hello World!",
         buttons=["save", "run", "clear"],
     )
 
     game_window = GameWindow(
-        queues,
         image=get_image(images[index // len(images)]),
         width=300,
         height=300,
@@ -47,20 +44,12 @@ def main():
 
     json_recorder = Recorder(mode="json", clean_path=True)
     pickle_recorder = Recorder(mode="pickle")
+    control_panel = ControlPanel(buttons=standard_controls)
 
     hippo = HippoGym(
-        queues=queues,
-        ui_elements=[info_panel, text_box, game_window],
+        ui_elements=[info_panel, text_box, game_window, control_panel],
         recorders=[json_recorder, pickle_recorder],
     )
-    control_panel = ControlPanel(
-        queues,
-        hippo=hippo,
-        buttons=standard_controls,
-    )
-    hippo.ui_elements.append(control_panel)
-
-    print(queues.keys())
 
     hippo.standby()
     hippo.send()

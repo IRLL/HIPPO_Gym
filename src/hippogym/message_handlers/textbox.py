@@ -10,8 +10,8 @@ if TYPE_CHECKING:
 
 
 class TextBoxMessageHandler(MessageHandler):
-    def __init__(self, textbox: "TextBox", queues: Dict[EventsQueues, "Queue"]):
-        super().__init__(queues, EventsQueues.INFO_PANEL)
+    def __init__(self, textbox: "TextBox"):
+        super().__init__(EventsQueues.INFO_PANEL)
         self.textbox = textbox
         self.handlers = {
             "TEXTBUTTON": self.button,

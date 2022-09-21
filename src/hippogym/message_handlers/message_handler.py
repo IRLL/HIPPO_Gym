@@ -7,24 +7,36 @@ from hippogym.queue_handler import check_queue, create_or_get_queue
 
 if TYPE_CHECKING:
     from multiprocessing import Queue
+    from hippogym import HippoGym
 
 
 class MessageHandler(Thread):
     def __init__(
         self,
-        queues: Dict[EventsQueues, "Queue"],
         in_queue_type: EventsQueues,
         out_queue_type: EventsQueues = EventsQueues.OUTPUT,
     ) -> None:
         Thread.__init__(self, daemon=True)
-        self.in_queue = create_or_get_queue(queues, in_queue_type)
-        self.out_queue = create_or_get_queue(queues, out_queue_type)
+        self.hippo: Optional["HippoGym"] = None
+        self.in_queue_type = in_queue_type
+        self.out_queue_type = out_queue_type
+        self.in_queue = None
+        self.out_queue = None
         self.handlers = {}
+
+    def set_queues(self, queues: Dict[EventsQueues, "Queue"]):
+        self.in_queue = create_or_get_queue(queues, self.in_queue_type)
+        self.out_queue = create_or_get_queue(queues, self.out_queue_type)
+
+    def set_hippo(self, hippo: "HippoGym") -> None:
+        self.hippo = hippo
 
     def send(self, message: Any):
         self.out_queue.put_nowait(message)
 
     def recv_all(self) -> list:
+        if self.in_queue is None:
+            return []
         return check_queue(self.in_queue)
 
     def run(self) -> None:

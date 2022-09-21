@@ -1,6 +1,5 @@
 import logging
 import time
-
 import gym
 
 from hippogym import HippoGym
@@ -10,7 +9,7 @@ logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
 
-def send_render(env, window):
+def send_render(env: gym.Env, window: GameWindow):
     render = window.convert_numpy_array_to_base64(env.render("rgb_array"))
     window.update(image=render)
 
@@ -53,39 +52,37 @@ def take_step(env, action, info_panel: InfoPanel):
 
 
 def main():
-    queues = {}
-    window = GameWindow(queues)
-
+    window = GameWindow()
     info_panel = InfoPanel(
-        queues,
         text="Use keyboard to play the game",
         items=["s = down", "a = left", "d = right"],
     )
-
-    hippo = HippoGym(queues=queues, ui_elements=[window, info_panel])
     control_panel = ControlPanel(
-        queues,
-        hippo=hippo,
         buttons=standard_controls,
         keys=True,
     )
-    hippo.ui_elements.append(control_panel)
+
+    hippo = HippoGym(ui_elements=[window, info_panel, control_panel])
 
     env = gym.make("LunarLander-v2")
     LOGGER.debug("Env created")
 
     hippo.standby()
-    hippo.start()
+    hippo.send()
 
+    env.reset()
     while not hippo.stop:
         action = 0
-        env.reset()
+
         send_render(env, window)
         while hippo.run:
             new_action = check_action(hippo, action)
             if new_action is not None:
                 action = new_action
-            if action < 0 or take_step(env, action, info_panel):
+
+            done = take_step(env, action, info_panel) or action < 0
+            if done:
+                env.reset()
                 break
             send_render(env, window)
 

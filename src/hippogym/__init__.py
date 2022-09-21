@@ -23,25 +23,33 @@ POLL_QUEUES = (EventsQueues.KEYBOARD, EventsQueues.BUTTON, EventsQueues.STANDARD
 class HippoGym:
     def __init__(
         self,
-        queues: Dict[str, Queue],
         ui_elements: List["UIElement"],
         recorders: Optional[List["Recorder"]] = None,
     ) -> None:
-        self.ui_elements = ui_elements
+
         self.recorders = recorders if recorders is not None else []
 
-        self._user_id: Optional[str] = None
+        self.user_id: Optional[str] = None
         self.project_id: Optional[str] = None
         self.run = False
         self.stop = False
 
-        self.queues = queues
+        # Setup UIElements and their messages queues
+        self.ui_elements: List["UIElement"] = []
+        self.queues = {}
         for queue in POLL_QUEUES:
             create_or_get_queue(self.queues, queue)
+        for ui_element in ui_elements:
+            self.add_ui_element(ui_element)
+            ui_element.message_handler.start()
 
-        self.user_hander = UserMessageHandler(self, self.queues)
+        # Setup handler for user connect / disconnect
+        self.user_hander = UserMessageHandler()
+        self.user_hander.set_queues(self.queues)
+        self.user_hander.set_hippo(self)
         self.user_hander.start()
 
+        # Setup Communicator for all messages events on a child process
         self.communicator = Process(
             target=Communicator,
             args=(self.queues,),
@@ -57,17 +65,13 @@ class HippoGym:
         )
         self.communicator.start()
 
-    @property
-    def user_id(self) -> Optional[str]:
-        return self._user_id
+    def start_trial(self, user_id: str):
+        LOGGER.info("Trial started by user: %s", user_id)
+        self.user_id = user_id
 
-    @user_id.setter
-    def user_id(self, new_user_id: Optional[str]):
-        if new_user_id is not None:
-            LOGGER.info("User connected: %s", new_user_id)
-        else:
-            LOGGER.info("User disconnected: %s", self._user_id)
-        self._user_id = new_user_id
+    def stop_trial(self, user_id: str):
+        LOGGER.info("Trial ended by user: %s", user_id)
+        self.user_id = None
 
     def start(self) -> None:
         self.stop = False
@@ -80,10 +84,6 @@ class HippoGym:
         self.run = False
         self.stop = True
 
-    def disconnect(self) -> None:
-        self.queues["out_q"].put_nowait("done")
-        # self.__init__(False)  # TODO Need an alternative to this
-
     def group(self, num_groups: int) -> int:
         if self.user_id is None:
             raise TypeError("User must not be None in order to get user group.")
@@ -93,10 +93,11 @@ class HippoGym:
         return check_queues([self.queues[queue] for queue in POLL_QUEUES])
 
     def send(self) -> None:
+        print(self.ui_elements)
         for ui_element in self.ui_elements:
             ui_element.send()
 
-    def standby(self, function: Optional[Callable] = None) -> None:
+    def standby(self) -> None:
         def _log_standby():
             LOGGER.debug("HippoGym in standby")
 
@@ -105,8 +106,10 @@ class HippoGym:
             time.sleep(0.01)
             time_printer.tick()
 
-        if function:
-            function(self)
+    def add_ui_element(self, ui_element: "UIElement"):
+        self.ui_elements.append(ui_element)
+        ui_element.set_queues(self.queues)
+        ui_element.set_hippo(self)
 
 
 class TimeActor:

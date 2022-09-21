@@ -1,18 +1,12 @@
 import time
-from typing import TYPE_CHECKING, Dict
 
-from hippogym.event_handler import EventsQueues
 from hippogym.message_handlers.textbox import TextBoxMessageHandler
 from hippogym.ui_elements.ui_element import UIElement
-
-if TYPE_CHECKING:
-    from multiprocessing import Queue
 
 
 class TextBox(UIElement):
     def __init__(
         self,
-        queues: Dict[EventsQueues, "Queue"],
         idx=0,
         width=700,
         height=600,
@@ -25,7 +19,7 @@ class TextBox(UIElement):
         syntax=None,
         buttons=None,
     ):
-        super().__init__("TextBox", TextBoxMessageHandler(self, queues))
+        super().__init__("TextBox", TextBoxMessageHandler(self))
         self.idx = idx
         self.width = width
         self.height = height
@@ -39,7 +33,6 @@ class TextBox(UIElement):
         self.syntax = syntax
         self.buttons = buttons
         self.updated = True
-        self.send()
 
     def params_dict(self) -> dict:
         return {

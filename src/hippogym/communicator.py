@@ -40,8 +40,8 @@ class Communicator:
                 message = json.loads(message)
                 self.event_handler.parse(message)
 
-            except Exception as e:
-                LOGGER.error(e)
+            except Exception as error:
+                LOGGER.error(repr(error))
 
     async def producer_handler(self, websocket):
         done = False
