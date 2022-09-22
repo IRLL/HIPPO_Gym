@@ -1,4 +1,3 @@
-from typing import Callable
 import pytest
 import pytest_check as check
 from pytest_mock import MockerFixture
@@ -7,20 +6,7 @@ from hippogym.hippogym import HippoGym
 from hippogym.trial import TrialConfig, Trial
 from hippogym.trialsteps import TrialStep
 
-
-class FakeProcess:
-    def __init__(
-        self,
-        target: Callable,
-        args: tuple = None,
-        kwargs: dict = None,
-    ) -> None:
-        self.target = target
-        self.args = args if args is not None else tuple()
-        self.kwargs = kwargs if kwargs is not None else {}
-
-    def start(self):
-        self.target(*self.args, **self.kwargs)
+from tests.fakes import FakeProcess
 
 
 class TestHippoGym:
@@ -28,6 +14,8 @@ class TestHippoGym:
 
     @pytest.fixture(autouse=True)
     def setup(self, mocker: MockerFixture):
+        self.process_patch = mocker.patch("hippogym.hippogym.Process", mocker.Mock)
+        self.com_patch = mocker.patch("hippogym.hippogym.Communicator", mocker.Mock)
         self.trial = mocker.Mock()
         self.trial_config = mocker.Mock()
         self.trial_config.sample = lambda _: self.trial
