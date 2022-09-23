@@ -1,7 +1,10 @@
-from typing import TYPE_CHECKING, List
+from copy import deepcopy
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 if TYPE_CHECKING:
+    from multiprocessing import Queue
     from hippogym.trialsteps import TrialStep
+    from hippogym.event_handler import EventsQueues
 
 
 class Trial:
@@ -9,7 +12,12 @@ class Trial:
 
     def __init__(self, steps: List["TrialStep"]) -> None:
         self.steps = steps
-        self.queues = {}
+        self.queues: Dict["EventsQueues", "Queue"] = {}
+
+    def start(self):
+        """Initialize the Trial queues for every step."""
+        for step in self.steps:
+            step.start(self.queues)
 
     def run(self):
         """Run the Trial step by step."""
@@ -23,7 +31,7 @@ class TrialConfig:
     def __init__(self, steps: List["TrialStep"]) -> None:
         self.steps = steps
 
-    def sample(self, seed: int) -> Trial:
+    def sample(self, _seed: Optional[int] = None) -> Trial:
         """Sample a new Trial from a given seed.
 
         Args:
@@ -46,8 +54,7 @@ class DeterministicTrialConfig(TrialConfig):
         Args:
             trial (Trial): Trial to use as a model for generation.
         """
-        self.trial = trial
-        super().__init__(self.trial.steps)
+        self.trial_model = deepcopy(trial)
 
-    def sample(self, seed: int) -> Trial:
-        return self.trial.new()
+    def sample(self, _seed: Optional[int] = None) -> Trial:
+        return deepcopy(self.trial_model)

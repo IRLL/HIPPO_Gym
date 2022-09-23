@@ -4,14 +4,12 @@ from hippogym.event_handler import EventsQueues
 from hippogym.message_handlers.message_handler import MessageHandler
 
 if TYPE_CHECKING:
-    from multiprocessing import Queue
-
     from hippogym.ui_elements.text_box import TextBox
 
 
 class TextBoxMessageHandler(MessageHandler):
     def __init__(self, textbox: "TextBox"):
-        super().__init__(EventsQueues.INFO_PANEL)
+        super().__init__(EventsQueues.TEXTBOX)
         self.textbox = textbox
         self.handlers = {
             "TEXTBUTTON": self.button,

@@ -6,11 +6,12 @@ from typing import TYPE_CHECKING, Callable, Optional, Tuple, Union
 
 from websockets.server import serve, WebSocketServerProtocol
 
+from hippogym.event_handler import EventHandler
+
 
 if TYPE_CHECKING:
     from hippogym.hippogym import HippoGym
 
-from hippogym.event_handler import EventHandler
 
 LOGGER = getLogger(__name__)
 
@@ -46,7 +47,9 @@ class WebSocketCommunicator:
         if self.ssl_certificate is not None:
             ssl_server = start_ssl_server(self.handler, self.ssl_certificate, self.port)
             servers.append(ssl_server)
-        await asyncio.gather(*servers)
+        _, pending = await asyncio.wait(servers, return_when=asyncio.FIRST_COMPLETED)
+        for task in pending:  # Shutdown all servers if any is shutdown
+            task.cancel()
 
     async def user_handler(self, websocket: WebSocketServerProtocol) -> Tuple[str, str]:
         """Handle the first message of the websocket which should contain user data.
@@ -76,7 +79,7 @@ class WebSocketCommunicator:
 
         Args:
             websocket (WebSocketServerProtocol): WebSocket server side connexion.
-            _path (str): WebSocket connexion path, usually root (\\).
+            _path (str): WebSocket connexion path, usually root (/).
         """
         try:
             user_id, _project_id = await self.user_handler(websocket)

@@ -1,15 +1,14 @@
 import time
-from threading import Thread
 from typing import TYPE_CHECKING, Any, Callable, Optional
 
 from hippogym.event_handler import EventsQueues
 from hippogym.queue_handler import check_queue, create_or_get_queue
 
 if TYPE_CHECKING:
-    from hippogym.trial import Trial
+    from hippogym.trialsteps import InteractiveStep
 
 
-class MessageHandler(Thread):
+class MessageHandler:
     """Handle messages between a UIElement and the client."""
 
     def __init__(
@@ -25,19 +24,18 @@ class MessageHandler(Thread):
             out_queue_type (EventsQueues, optional): Output queue for events.
                 Defaults to EventsQueues.OUTPUT.
         """
-        Thread.__init__(self, daemon=True)
-        self.trial: Optional["Trial"] = None
+        self.trialstep: Optional["InteractiveStep"] = None
         self.in_queue_type = in_queue_type
         self.out_queue_type = out_queue_type
         self.in_queue = None
         self.out_queue = None
         self.handlers = {}
 
-    def set_trial(self, trial: "Trial") -> None:
+    def set_step(self, trialstep: "InteractiveStep") -> None:
         """Associate the MessageHandler to a Trial instance."""
-        self.trial = trial
-        self.in_queue = create_or_get_queue(self.trial.queues, self.in_queue_type)
-        self.out_queue = create_or_get_queue(self.trial.queues, self.out_queue_type)
+        self.trialstep = trialstep
+        self.in_queue = create_or_get_queue(self.trialstep.queues, self.in_queue_type)
+        self.out_queue = create_or_get_queue(self.trialstep.queues, self.out_queue_type)
 
     def send(self, message: Any):
         """Send a message to the output queue."""

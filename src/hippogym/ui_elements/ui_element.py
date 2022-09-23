@@ -1,12 +1,10 @@
 from abc import ABC, abstractmethod
+from threading import Thread
 from typing import TYPE_CHECKING, Dict
 
 
 if TYPE_CHECKING:
-    from multiprocessing import Queue
-
-    from hippogym import HippoGym
-    from hippogym.event_handler import EventsQueues
+    from hippogym.trialsteps import InteractiveStep
     from hippogym.message_handlers.message_handler import MessageHandler
 
 DO_NOT_UPDATE = "DO_NOT_UPDATE&@"
@@ -18,6 +16,12 @@ class UIElement(ABC):
     def __init__(self, name: str, message_handler: "MessageHandler") -> None:
         self.name = name
         self.message_handler = message_handler
+
+    def start(self, trialstep: "InteractiveStep") -> None:
+        """Start the UIElement on the given TrialStep."""
+        self.message_handler.set_step(trialstep)
+        message_handler_thread = Thread(target=self.message_handler.run)
+        message_handler_thread.start()
 
     @abstractmethod
     def params_dict(self) -> dict:
@@ -49,9 +53,3 @@ class UIElement(ABC):
 
         if kwargs.get("send", True):
             self.send()
-
-    def set_queues(self, queues: Dict["EventsQueues", "Queue"]) -> None:
-        self.message_handler.set_queues(queues)
-
-    def set_hippo(self, hippo: "HippoGym") -> None:
-        self.message_handler.set_hippo(hippo)

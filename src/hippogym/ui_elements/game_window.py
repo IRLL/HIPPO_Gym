@@ -2,22 +2,28 @@ import base64
 import logging
 from io import BytesIO
 from multiprocessing import Queue
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from PIL import Image
 
 from hippogym.message_handlers.window import WindowMessageHandler
 from hippogym.ui_elements.ui_element import UIElement
+from hippogym.log import get_logger
+
+LOGGER = get_logger(__name__)
+
+if TYPE_CHECKING:
+    from hippogym.trialsteps.trialstep import InteractiveStep
 
 
 class GameWindow(UIElement):
     def __init__(
         self,
-        width=700,
-        height=600,
+        width: int = 700,
+        height: int = 600,
         mode="responsive",
-        image=None,
-        text=None,
+        image: Optional[str] = None,
+        text: Optional[str] = None,
     ) -> None:
         super().__init__("GameWindow", WindowMessageHandler(self))
         self.width = width
@@ -25,8 +31,12 @@ class GameWindow(UIElement):
         self.mode = mode
         self.frame = image
         self.text = text
-        self.frame_id = 0
+        self.frame_id: int = 0
+        self.events: Optional[Queue] = None
+
+    def start(self, trialstep: "InteractiveStep") -> None:
         self.events: Queue = Queue(maxsize=10)
+        super().start(trialstep)
 
     def params_dict(self) -> dict:
         return {
@@ -81,6 +91,5 @@ class GameWindow(UIElement):
             frame = base64.b64encode(fp.getvalue()).decode("utf-8")
             fp.close()
             return frame
-        except Exception as e:
-            logging.info("Failed to convert numpy array to Base64")
-            logging.info(f"Numpy Array conversion error: {e}")
+        except Exception as error:
+            LOGGER.warning("Failed to convert numpy array to Base64: %s", error)

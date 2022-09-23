@@ -5,7 +5,7 @@ from multiprocessing import Process
 from hippogym.trial import Trial, TrialConfig, DeterministicTrialConfig
 from hippogym.trialsteps.trialstep import TrialStep
 from hippogym.log import get_logger
-from hippogym.communicator import WebSocketCommunicator
+from hippogym.communicator import WebSocketCommunicator, SSLCertificate
 
 from websockets.server import WebSocketServerProtocol
 
@@ -39,7 +39,7 @@ class HippoGym:
         self,
         host: str = "localhost",
         port: int = 5000,
-        ssl_certificate: Optional["SSLCertificate"] = None,
+        ssl_certificate: Optional[SSLCertificate] = None,
     ):
         """Start hippogym server side.
 
@@ -75,6 +75,7 @@ class HippoGym:
             ValueError: If user is already in trial.
         """
         trial = self.trial_config.sample(self._trial_seed)
+        trial.start()
         new_trial_process = Process(target=trial.run)
         if user_id in self.trials:
             raise ValueError(f"{user_id=} already in trial")
