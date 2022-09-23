@@ -2,7 +2,7 @@ import asyncio
 import json
 import ssl
 from logging import getLogger
-from typing import TYPE_CHECKING, Callable, Dict, Optional
+from typing import TYPE_CHECKING, Callable, Optional, Tuple, Union
 
 from websockets.server import serve, WebSocketServerProtocol
 
@@ -16,6 +16,8 @@ LOGGER = getLogger(__name__)
 
 
 class WebSocketCommunicator:
+    """A websocket communicator handling connexions to a HippoGym experiment."""
+
     def __init__(
         self,
         hippo: "HippoGym",
@@ -23,6 +25,15 @@ class WebSocketCommunicator:
         port: int = 5000,
         ssl_certificate: Optional["SSLCertificate"] = None,
     ):
+        """A websocket communicator handling connexions to a HippoGym experiment.
+
+        Args:
+            hippo (HippoGym): HippoGym experiment.
+            host (Optional[str], optional): Host of the websocket server. Defaults to "localhost".
+            port (int, optional): Port of the websocket server. Defaults to 5000.
+            ssl_certificate (SSLCertificate, optional): SLL certificate of the websocket
+                server host. Defaults to None.
+        """
         self.hippo = hippo
         self.host = host
         self.port = port
@@ -37,7 +48,18 @@ class WebSocketCommunicator:
             servers.append(ssl_server)
         await asyncio.gather(*servers)
 
-    async def user_handler(self, websocket: WebSocketServerProtocol):
+    async def user_handler(self, websocket: WebSocketServerProtocol) -> Tuple[str, str]:
+        """Handle the first message of the websocket which should contain user data.
+
+        Args:
+            websocket (WebSocketServerProtocol): WebSocket server side connexion.
+
+        Raises:
+            ValueError: If user_id could not be found in the first message.
+
+        Returns:
+            Tuple[str, str]: User unique id and project id.
+        """
         message = await websocket.recv()
         message_dict: dict = json.loads(message)
 
@@ -50,6 +72,12 @@ class WebSocketCommunicator:
         return user_id, project_id
 
     async def handler(self, websocket: WebSocketServerProtocol, _path: str):
+        """Main function being run on a new websocket connexion.
+
+        Args:
+            websocket (WebSocketServerProtocol): WebSocket server side connexion.
+            _path (str): WebSocket connexion path, usually root (\\).
+        """
         try:
             user_id, _project_id = await self.user_handler(websocket)
             trial = self.hippo.start_trial(user_id)
@@ -74,18 +102,27 @@ class WebSocketCommunicator:
         websocket: WebSocketServerProtocol,
         event_handler: EventHandler,
     ):
+        """Handle incomming messages from client side of the WebSocket connexion.
+
+        Args:
+            websocket (WebSocketServerProtocol): WebSocket server side connexion.
+            event_handler (EventHandler): Handler to transcribe messages into HippoGym events.
+        """
         async for message in websocket:
-            try:
-                message = json.loads(message)
-                event_handler.parse(message)
-            except Exception as error:
-                LOGGER.error(repr(error))
+            message = json.loads(message)  # Messages should be json deserialisable.
+            event_handler.parse(message)
 
     async def producer_handler(
         self,
         websocket: WebSocketServerProtocol,
         event_handler: EventHandler,
     ):
+        """Handle messages to send to the client side of the WebSocket connexion.
+
+        Args:
+            websocket (WebSocketServerProtocol): WebSocket server side connexion.
+            event_handler (EventHandler): Handler to transcribe messages into HippoGym events.
+        """
         done = False
         while not done:
             message = await self.producer(event_handler)
@@ -95,16 +132,29 @@ class WebSocketCommunicator:
                     done = True
                 await websocket.send(json.dumps(message))
 
-    async def producer(self, event_handler: EventHandler):
+    async def producer(self, event_handler: EventHandler) -> Optional[Union[dict, str]]:
+        """Produce messages to send to the client side of the WebSocket connexion.
+
+        Args:
+            websocket (WebSocketServerProtocol): WebSocket server side connexion.
+            event_handler (EventHandler): Handler to transcribe messages into HippoGym events.
+        """
         message = None
         if not event_handler.out_q.empty():
             message = event_handler.out_q.get()
         return message
 
 
-async def start_non_ssl_server(handler: Callable, address: str, port: int) -> None:
-    async with serve(handler, address, port) as websocket:
-        LOGGER.info("Non-SSL websocket started at %s:%i", address, port)
+async def start_non_ssl_server(handler: Callable, host: str, port: int) -> None:
+    """Start a non-ssl WebSocket server.
+
+    Args:
+        handler (Callable): Function to serve on the websocket.
+        host (str): Host of the websocket server.
+        port (int): Port of the websocket server.
+    """
+    async with serve(handler, host, port) as websocket:
+        LOGGER.info("Non-SSL websocket started at %s:%i", host, port)
         await websocket.serve_forever()
 
 
@@ -118,6 +168,13 @@ async def start_ssl_server(
     ssl_certificate: SSLCertificate,
     port: int,
 ) -> None:
+    """Start a ssl WebSocket server.
+
+    Args:
+        handler (Callable): Function to serve on the websocket.
+        ssl_certificate (SSLCertificate): SLL certificate of the websocket server host.
+        port (int): Port of the websocket server.
+    """
     ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     ssl_context.load_cert_chain(
         ssl_certificate.certfile, keyfile=ssl_certificate.privkey
