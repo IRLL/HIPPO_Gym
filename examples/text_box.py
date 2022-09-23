@@ -45,6 +45,8 @@ class TextBoxStep(InteractiveStep):
         return self.images[self.index % len(self.images)]
 
     def run(self) -> None:
+        toggle_info = True
+        toggle_sliders = True
         while True:
             for item in self.poll():
                 button = item.get("BUTTONPRESSED", None)

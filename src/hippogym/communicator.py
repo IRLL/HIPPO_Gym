@@ -51,11 +51,11 @@ class WebSocketCommunicator:
         for task in pending:  # Shutdown all servers if any is shutdown
             task.cancel()
 
-    async def user_handler(self, websocket: WebSocketServerProtocol) -> Tuple[str, str]:
+    async def user_handler(self, server: WebSocketServerProtocol) -> Tuple[str, str]:
         """Handle the first message of the websocket which should contain user data.
 
         Args:
-            websocket (WebSocketServerProtocol): WebSocket server side connexion.
+            server (WebSocketServerProtocol): WebSocket server side connexion.
 
         Raises:
             ValueError: If user_id could not be found in the first message.
@@ -63,7 +63,7 @@ class WebSocketCommunicator:
         Returns:
             Tuple[str, str]: User unique id and project id.
         """
-        message = await websocket.recv()
+        message = await server.recv()
         message_dict: dict = json.loads(message)
 
         project_id = message_dict.get("projectId", None)
@@ -74,56 +74,56 @@ class WebSocketCommunicator:
         LOGGER.info("User %s connected on project %s", user_id, project_id)
         return user_id, project_id
 
-    async def handler(self, websocket: WebSocketServerProtocol, _path: str):
+    async def handler(self, server: WebSocketServerProtocol, _path: str):
         """Main function being run on a new websocket connexion.
 
         Args:
-            websocket (WebSocketServerProtocol): WebSocket server side connexion.
+            server (WebSocketServerProtocol): WebSocket server side connexion.
             _path (str): WebSocket connexion path, usually root (/).
         """
-        try:
-            user_id, _project_id = await self.user_handler(websocket)
-            trial = self.hippo.start_trial(user_id)
-            event_handler = EventHandler(trial.queues)
-            consumer_task = asyncio.create_task(
-                self.consumer_handler(websocket, event_handler)
-            )
-            producer_task = asyncio.create_task(
-                self.producer_handler(websocket, event_handler)
-            )
-            _done, pending = await asyncio.wait(
-                [consumer_task, producer_task], return_when=asyncio.FIRST_COMPLETED
-            )
-            for task in pending:
-                task.cancel()
-        finally:
-            LOGGER.info("User Disconnected")
-            self.hippo.stop_trial(user_id)
+        user_id, _project_id = await self.user_handler(server)
+        trial = self.hippo.start_trial(user_id)
+        event_handler = EventHandler(trial.queues)
+        consumer_task = asyncio.ensure_future(
+            self.consumer_handler(server, event_handler)
+        )
+        producer_task = asyncio.ensure_future(
+            self.producer_handler(server, event_handler)
+        )
+        _done, pending = await asyncio.wait(
+            [consumer_task, producer_task], return_when=asyncio.FIRST_COMPLETED
+        )
+        for task in pending:
+            task.cancel()
+        await server.close()
+        LOGGER.info("User Disconnected")
+        self.hippo.stop_trial(user_id)
 
     async def consumer_handler(
         self,
-        websocket: WebSocketServerProtocol,
+        server: WebSocketServerProtocol,
         event_handler: EventHandler,
     ):
         """Handle incomming messages from client side of the WebSocket connexion.
 
         Args:
-            websocket (WebSocketServerProtocol): WebSocket server side connexion.
+            server (WebSocketServerProtocol): WebSocket server side connexion.
             event_handler (EventHandler): Handler to transcribe messages into HippoGym events.
         """
-        async for message in websocket:
+        async for message in server:
             message = json.loads(message)  # Messages should be json deserialisable.
             event_handler.parse(message)
+            await asyncio.sleep(0.01)
 
     async def producer_handler(
         self,
-        websocket: WebSocketServerProtocol,
+        server: WebSocketServerProtocol,
         event_handler: EventHandler,
     ):
         """Handle messages to send to the client side of the WebSocket connexion.
 
         Args:
-            websocket (WebSocketServerProtocol): WebSocket server side connexion.
+            server (WebSocketServerProtocol): WebSocket server side connexion.
             event_handler (EventHandler): Handler to transcribe messages into HippoGym events.
         """
         done = False
@@ -133,19 +133,17 @@ class WebSocketCommunicator:
                 if message == "done":
                     message = {"done": True}
                     done = True
-                await websocket.send(json.dumps(message))
+                await server.send(json.dumps(message))
+            await asyncio.sleep(0.01)
 
     async def producer(self, event_handler: EventHandler) -> Optional[Union[dict, str]]:
         """Produce messages to send to the client side of the WebSocket connexion.
 
         Args:
-            websocket (WebSocketServerProtocol): WebSocket server side connexion.
             event_handler (EventHandler): Handler to transcribe messages into HippoGym events.
         """
-        message = None
         if not event_handler.out_q.empty():
-            message = event_handler.out_q.get()
-        return message
+            return event_handler.out_q.get()
 
 
 async def start_non_ssl_server(handler: Callable, host: str, port: int) -> None:

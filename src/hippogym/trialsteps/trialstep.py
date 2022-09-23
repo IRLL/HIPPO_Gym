@@ -23,7 +23,7 @@ class TrialStep(ABC):
 
     @abstractmethod
     def start(self, queues: Optional[Dict[EventsQueues, "Queue"]] = None) -> None:
-        """Initialize the trial step."""
+        """Initialize the TrialStep multiprocessing Queues or Threads."""
         create_or_get_queue(self.queues, EventsQueues.OUTPUT)
 
 
