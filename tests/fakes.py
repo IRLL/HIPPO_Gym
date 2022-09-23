@@ -5,14 +5,18 @@ class FakeProcess:
     def __init__(
         self,
         target: Callable,
-        target_args: tuple = None,
-        target_kwargs: dict = None,
-        *args,
-        **kwargs
+        args: tuple = None,
+        kwargs: dict = None,
+        *other_args,
+        **other_kwargs
     ) -> None:
         self.target = target
-        self.args = target_args if target_args is not None else tuple()
-        self.kwargs = target_kwargs if target_kwargs is not None else {}
+        self.target_obj = None
+        self.args = args if args is not None else tuple()
+        self.kwargs = kwargs if kwargs is not None else {}
 
     def start(self):
-        self.target(*self.args, **self.kwargs)
+        self.target_obj = self.target(*self.args, **self.kwargs)
+
+    def close(self):
+        pass

@@ -15,7 +15,6 @@ class TestHippoGym:
     @pytest.fixture(autouse=True)
     def setup(self, mocker: MockerFixture):
         self.process_patch = mocker.patch("hippogym.hippogym.Process", mocker.Mock)
-        self.com_patch = mocker.patch("hippogym.hippogym.Communicator", mocker.Mock)
         self.trial = mocker.Mock()
         self.trial_config = mocker.Mock()
         self.trial_config.sample = lambda _: self.trial
@@ -51,8 +50,8 @@ class TestHippoGym:
     def test_stop_trial(self, mocker: MockerFixture):
         """should stop the current Trial for the given user"""
         process_patch = mocker.Mock()
-        process_patch.terminate = mocker.Mock()
+        process_patch.close = mocker.Mock()
         self.hippo.trials["fake_user"] = process_patch
         self.hippo.stop_trial("fake_user")
         check.equal(len(self.hippo.trials), 0)
-        check.is_true(process_patch.terminate.called)
+        check.is_true(process_patch.close.called)

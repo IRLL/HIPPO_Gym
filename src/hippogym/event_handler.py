@@ -1,6 +1,6 @@
 import logging
 from enum import Enum
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING, Any, Dict
 
 if TYPE_CHECKING:
     from multiprocessing import Queue
@@ -23,6 +23,9 @@ class EventsQueues(Enum):
     OUTPUT = "out_q"
 
 
+POLL_QUEUES = (EventsQueues.KEYBOARD, EventsQueues.BUTTON, EventsQueues.STANDARD)
+
+
 class EventHandler:
     def __init__(self, queues: Dict[EventsQueues, "Queue"]):
         for queue_name in EventsQueues:
@@ -30,6 +33,7 @@ class EventHandler:
                 LOGGER.debug("No %s in EventHandler", queue_name)
 
         self.queues = queues
+        self.out_q = queues[EventsQueues.OUTPUT]
         self.pressed_keys = set()
         self.key_map = {
             "w": "up",
@@ -137,7 +141,7 @@ class EventHandler:
         )
 
 
-def put_in_queue(message, queue):
+def put_in_queue(message: Any, queue: "Queue"):
     try:
         if queue.full():
             queue.get_nowait()

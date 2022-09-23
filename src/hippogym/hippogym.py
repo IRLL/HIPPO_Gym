@@ -1,11 +1,13 @@
-import time
-
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 from multiprocessing import Process
+
 
 from hippogym.trial import Trial, TrialConfig, DeterministicTrialConfig
 from hippogym.trialsteps.trialstep import TrialStep
-from hippogym.log import TimeActor, get_logger
+from hippogym.log import get_logger
+from hippogym.communicator import WebSocketCommunicator
+
+from websockets.server import WebSocketServerProtocol
 
 LOGGER = get_logger(__name__)
 
@@ -33,6 +35,36 @@ class HippoGym:
         self.trials: Dict[UserID, Process] = {}
         self._trial_seed = 0  # TODO use yield
 
+    async def start_server(
+        self,
+        host: str = "localhost",
+        port: int = 5000,
+        ssl_certificate: Optional["SSLCertificate"] = None,
+    ):
+        """Start hippogym server side.
+
+        Args:
+            ssl_certificate (Optional[SSLCertificate]): SSL certificate for ssl server.
+            host (str): Host for non-ssl server.
+            port (int): Port for ssl server, non-ssl server will be on port + 1.
+        """
+        communicator = WebSocketCommunicator(self, host, port, ssl_certificate)
+        await communicator.start()
+
+    async def start_connexion(self, websocket: WebSocketServerProtocol, _path: str):
+        """Handle a new websocket connexion.
+
+        Args:
+            websocket (WebSocketServerProtocol): Websocket just created.
+        """
+        try:
+            user_message: dict = await websocket.recv()
+            user_id = user_message.get("userId")
+            LOGGER.info("User connected: %s", user_id)
+            self.start_trial(user_id)
+        finally:
+            self.stop_trial(user_id)
+
     def start_trial(self, user_id: UserID):
         """Start a trial for the given user.
 
@@ -49,6 +81,7 @@ class HippoGym:
         self.trials[user_id] = new_trial_process
         self._trial_seed += 1
         new_trial_process.start()
+        return trial
 
     def stop_trial(self, user_id: UserID):
         """Stop the trial for the given user.
@@ -57,16 +90,4 @@ class HippoGym:
             user_id (UserID): Unique ID of the user.
         """
         trial_process = self.trials.pop(user_id)
-        trial_process.terminate()
-
-    def standby(self) -> None:
-        """Wait until a connection is done by a user."""
-
-        def _log_standby():
-            LOGGER.debug("HippoGym in standby")
-
-        standby_printer = TimeActor(_log_standby, 2)
-        while True:
-            time.sleep(0.01)
-            if not self.trials:
-                standby_printer.tick()
+        trial_process.close()
