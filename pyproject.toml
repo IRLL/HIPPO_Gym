@@ -35,8 +35,7 @@ dependencies = { file = ["requirements.txt"] }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-log_cli = true
-log_cli_level = "DEBUG"
+log_level = "DEBUG"
 
 [tool.coverage.run]
 source = ["src"]
