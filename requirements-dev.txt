@@ -2,6 +2,7 @@ pylint
 pytest
 pytest-cov
 pytest-check
+pytest-asyncio
 pytest-mock
 black
 mypy

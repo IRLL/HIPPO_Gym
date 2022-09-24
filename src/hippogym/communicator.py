@@ -2,7 +2,7 @@ import asyncio
 import json
 import ssl
 from logging import getLogger
-from typing import TYPE_CHECKING, Callable, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Callable, Optional, Tuple, Union, final
 
 from websockets.server import serve, WebSocketServerProtocol
 
@@ -47,7 +47,10 @@ class WebSocketCommunicator:
         if self.ssl_certificate is not None:
             ssl_server = start_ssl_server(self.handler, self.ssl_certificate, self.port)
             servers.append(ssl_server)
-        _, pending = await asyncio.wait(servers, return_when=asyncio.FIRST_COMPLETED)
+        servers_tasks = [asyncio.create_task(server) for server in servers]
+        _, pending = await asyncio.wait(
+            servers_tasks, return_when=asyncio.FIRST_COMPLETED
+        )
         for task in pending:  # Shutdown all servers if any is shutdown
             task.cancel()
 
@@ -84,14 +87,12 @@ class WebSocketCommunicator:
         user_id, _project_id = await self.user_handler(server)
         trial = self.hippo.start_trial(user_id)
         event_handler = EventHandler(trial.queues)
-        consumer_task = asyncio.ensure_future(
-            self.consumer_handler(server, event_handler)
-        )
-        producer_task = asyncio.ensure_future(
-            self.producer_handler(server, event_handler)
-        )
         _done, pending = await asyncio.wait(
-            [consumer_task, producer_task], return_when=asyncio.FIRST_COMPLETED
+            [
+                asyncio.create_task(self.producer_handler(server, event_handler)),
+                asyncio.create_task(self.consumer_handler(server, event_handler)),
+            ],
+            return_when=asyncio.FIRST_COMPLETED,
         )
         for task in pending:
             task.cancel()
@@ -129,12 +130,10 @@ class WebSocketCommunicator:
         done = False
         while not done:
             message = await self.producer(event_handler)
-            if message:
-                if message == "done":
-                    message = {"done": True}
-                    done = True
-                await server.send(json.dumps(message))
-            await asyncio.sleep(0.01)
+            if message == "done":
+                message = {"done": True}
+                done = True
+            await server.send(json.dumps(message))
 
     async def producer(self, event_handler: EventHandler) -> Optional[Union[dict, str]]:
         """Produce messages to send to the client side of the WebSocket connexion.
@@ -142,8 +141,9 @@ class WebSocketCommunicator:
         Args:
             event_handler (EventHandler): Handler to transcribe messages into HippoGym events.
         """
-        if not event_handler.out_q.empty():
-            return event_handler.out_q.get()
+        while event_handler.out_q.empty():
+            await asyncio.sleep(0.01)
+        return event_handler.out_q.get()
 
 
 async def start_non_ssl_server(handler: Callable, host: str, port: int) -> None:

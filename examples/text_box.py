@@ -1,7 +1,7 @@
 import asyncio
 import base64
 import logging
-from typing import List
+from typing import List, Optional
 
 from hippogym.hippogym import HippoGym
 from hippogym.trialsteps import InteractiveStep
@@ -83,10 +83,13 @@ class TextBoxStep(InteractiveStep):
                     self.text_box.send()
 
 
-def main():
+def get_image(filename):
+    with open(f"img/{filename}", "rb") as infile:
+        frame = base64.b64encode(infile.read()).decode("utf-8")
+    return frame
 
-    # json_recorder = Recorder(mode="json", clean_path=True)
-    # pickle_recorder = Recorder(mode="pickle")
+
+def build_experiment() -> HippoGym:
     images_paths = [
         "logo_vertical.png",
         "icon_dark.png",
@@ -95,21 +98,24 @@ def main():
         "icon_light.png",
         "words_vertical.png",
     ]
-
+    # json_recorder = Recorder(mode="json", clean_path=True)
+    # pickle_recorder = Recorder(mode="pickle")
     text_box_step = TextBoxStep(images_paths)
-    hippo = HippoGym(text_box_step)
-    asyncio.run(hippo.start_server())
+    return HippoGym(text_box_step)
 
 
-def tryme(hg):
-    print(hg)
-    print("hello, this worked")
+def start(
+    hippo: HippoGym,
+    host: str = "localhost",
+    port: int = 5000,
+    ssl_certificate: Optional["SSLCertificate"] = None,
+):
+    asyncio.run(hippo.start_server(host, port, ssl_certificate))
 
 
-def get_image(filename):
-    with open(f"img/{filename}", "rb") as infile:
-        frame = base64.b64encode(infile.read()).decode("utf-8")
-    return frame
+def main():
+    hippo = build_experiment()
+    start(hippo)
 
 
 if __name__ == "__main__":
