@@ -14,14 +14,15 @@ class Trial:
         self.steps = steps
         self.queues: Dict["EventsQueues", "Queue"] = {}
 
-    def start(self):
-        """Initialize the Trial queues for every step."""
+    def build(self):
+        """Build multiprocessing queues for every step."""
         for step in self.steps:
-            step.start(self.queues)
+            step.build(self.queues)
 
     def run(self):
         """Run the Trial step by step."""
         for step in self.steps:
+            step.start()
             step.run()
 
 

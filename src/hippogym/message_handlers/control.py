@@ -25,10 +25,14 @@ class ControlMessageHandler(MessageHandler):
             self.control_panel.set_slider_value(*setting)
 
     def resume(self, _message: Optional[str] = None):
-        self.hippo.start()
+        if hasattr(self.trialstep, "running"):
+            self.trialstep.running = True
 
     def pause(self, _message: Optional[str] = None):
-        self.hippo.pause()
+        if hasattr(self.trialstep, "running"):
+            self.trialstep.running = False
 
     def end(self, _message: Optional[str] = None):
-        self.hippo.end()
+        if hasattr(self.trialstep, "stop"):
+            self.trialstep.stop = True
+            self.trialstep.running = False

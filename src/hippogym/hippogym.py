@@ -1,3 +1,4 @@
+import asyncio
 from typing import Dict, Optional, Union
 from multiprocessing import Process
 
@@ -35,10 +36,18 @@ class HippoGym:
         self.trials: Dict[UserID, Process] = {}
         self._trial_seed = 0  # TODO use yield
 
-    async def start_server(
+    def start(
         self,
         host: str = "localhost",
         port: int = 5000,
+        ssl_certificate: Optional["SSLCertificate"] = None,
+    ):
+        asyncio.run(self.start_server(host, port, ssl_certificate))
+
+    async def start_server(
+        self,
+        host: str,
+        port: int,
         ssl_certificate: Optional[SSLCertificate] = None,
     ):
         """Start hippogym server side.
@@ -75,8 +84,8 @@ class HippoGym:
             ValueError: If user is already in trial.
         """
         trial = self.trial_config.sample(self._trial_seed)
-        trial.start()
-        new_trial_process = Process(target=trial.run)
+        trial.build()
+        new_trial_process = Process(target=trial.run, daemon=True)
         if user_id in self.trials:
             raise ValueError(f"{user_id=} already in trial")
         self.trials[user_id] = new_trial_process
@@ -91,4 +100,4 @@ class HippoGym:
             user_id (UserID): Unique ID of the user.
         """
         trial_process = self.trials.pop(user_id)
-        trial_process.close()
+        trial_process.kill()

@@ -18,13 +18,17 @@ class TrialStep(ABC):
         self.queues = {}
 
     @abstractmethod
-    def run(self) -> None:
-        """Run the trial step"""
+    def build(self, queues: Optional[Dict[EventsQueues, "Queue"]] = None) -> None:
+        """Build the TrialStep multiprocessing Queues."""
+        create_or_get_queue(self.queues, EventsQueues.OUTPUT)
 
     @abstractmethod
-    def start(self, queues: Optional[Dict[EventsQueues, "Queue"]] = None) -> None:
-        """Initialize the TrialStep multiprocessing Queues or Threads."""
-        create_or_get_queue(self.queues, EventsQueues.OUTPUT)
+    def start(self) -> None:
+        """Initialize the TrialStep."""
+
+    @abstractmethod
+    def run(self) -> None:
+        """Run the trial step"""
 
 
 class HtmlStep(TrialStep):
@@ -34,8 +38,12 @@ class HtmlStep(TrialStep):
         self.html_content = html_content
         super().__init__()
 
-    def start(self, queues: Optional[Dict[EventsQueues, "Queue"]] = None) -> None:
-        """Initialize the trial step."""
+    def build(self, queues: Optional[Dict[EventsQueues, "Queue"]] = None) -> None:
+        """Build multiprocessing queues for html."""
+        raise NotImplementedError
+
+    def start(self) -> None:
+        """Initialize the TrialStep."""
         raise NotImplementedError
 
     def run(self) -> None:
@@ -50,13 +58,18 @@ class InteractiveStep(TrialStep):
         self.ui_elements: List["UIElement"] = ui_elements
         super().__init__()
 
-    def start(self, queues: Optional[Dict[EventsQueues, "Queue"]] = None) -> None:
-        """Initialize queues and message handler thread."""
+    def build(self, queues: Optional[Dict[EventsQueues, "Queue"]] = None) -> None:
+        """Initialize multiprocessing queues."""
         self.queues = queues if queues is not None else {}
         for queue in POLL_QUEUES:
             create_or_get_queue(self.queues, queue)
         for ui_element in self.ui_elements:
-            ui_element.start(self)
+            ui_element.build(self)
+
+    def start(self):
+        """Start UIElements Threads."""
+        for ui_element in self.ui_elements:
+            ui_element.start()
         self.send()
 
     def poll(self) -> List[dict]:

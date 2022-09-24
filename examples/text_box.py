@@ -104,18 +104,9 @@ def build_experiment() -> HippoGym:
     return HippoGym(text_box_step)
 
 
-def start(
-    hippo: HippoGym,
-    host: str = "localhost",
-    port: int = 5000,
-    ssl_certificate: Optional["SSLCertificate"] = None,
-):
-    asyncio.run(hippo.start_server(host, port, ssl_certificate))
-
-
 def main():
     hippo = build_experiment()
-    start(hippo)
+    hippo.start()
 
 
 if __name__ == "__main__":

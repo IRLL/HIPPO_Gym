@@ -34,9 +34,9 @@ class GameWindow(UIElement):
         self.frame_id: int = 0
         self.events: Optional[Queue] = None
 
-    def start(self, trialstep: "InteractiveStep") -> None:
+    def build(self, trialstep: "InteractiveStep") -> None:
         self.events: Queue = Queue(maxsize=10)
-        super().start(trialstep)
+        super().build(trialstep)
 
     def params_dict(self) -> dict:
         return {

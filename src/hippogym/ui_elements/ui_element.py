@@ -17,9 +17,12 @@ class UIElement(ABC):
         self.name = name
         self.message_handler = message_handler
 
-    def start(self, trialstep: "InteractiveStep") -> None:
-        """Start the UIElement on the given TrialStep."""
+    def build(self, trialstep: "InteractiveStep") -> None:
+        """Build multiprocessing queues for the TrialStep."""
         self.message_handler.set_step(trialstep)
+
+    def start(self) -> None:
+        """Start the UIElement on the given TrialStep."""
         message_handler_thread = Thread(target=self.message_handler.run)
         message_handler_thread.start()
 

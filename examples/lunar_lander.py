@@ -1,11 +1,14 @@
 import logging
 import time
 import gym
+import numpy as np
 
-from hippogym import HippoGym
+from hippogym.agent import Agent
+from hippogym.hippogym import HippoGym
 from hippogym.ui_elements import InfoPanel, GameWindow, ControlPanel, standard_controls
+from hippogym.trialsteps import GymStep
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 
 
@@ -14,81 +17,88 @@ def send_render(env: gym.Env, window: GameWindow):
     window.update(image=render)
 
 
-def check_action(hippo, old_action):
-    actions = ["noop", "right", "down", "left"]
-    combo = ["upleft", "upright", "downleft", "downright"]
-    first_action = None
-    action = None
-    for item in hippo.poll():
-        action = item.get("ACTION", None)
-        if action in combo:
-            action = action.replace(actions[old_action], "")
+class RandomAgent(Agent):
+    def act(self, observation):
+        actions = ["noop", "right", "down", "left"]
+        action = np.random.choice(actions)
         if action in actions:
-            if not first_action:
-                first_action = action
-            elif action == "noop":
-                action = first_action
-        button = item.get("BUTTONPRESSED", None)
-        if button == "reset":
-            print("RESETTING")
-            return -1
+            return actions.index(action)
+        return None
 
-    print("action", action)
-    if action in actions:
+
+class HumanAgent(Agent):
+    def __init__(self) -> None:
+        self.last_action = "noop"
+        self.trialstep: "GymStep" = None
+
+    def act(self, observation):
+        actions = ["noop", "right", "down", "left"]
+        action = self.last_action
+        for message in self.trialstep.poll():
+            action = message.get("ACTION")
+            button: str = message.get("BUTTONPRESSED", "")
+            if button.lower() == "reset":
+                return -1
+
+        if action not in actions:
+            action = self.last_action
+        else:
+            self.last_action = action
         return actions.index(action)
-    return None
 
 
-def take_step(env, action, info_panel: InfoPanel):
-    observation, reward, done, _ = env.step(action)
-    info_panel.update(
-        text="Observation:",
-        items=observation.tolist(),
-        key_value={"Reward": reward},
-    )
-    if done:
-        info_panel.update(kv={"Score": reward})
-    return done
+class LunarLanderV2Step(GymStep):
+    def __init__(self, agent):
+        self.info_panel = InfoPanel(
+            text="Use keyboard to play the game",
+            items=["s = down", "a = left", "d = right"],
+        )
+        self.control_panel = ControlPanel(
+            buttons=standard_controls,
+            keys=True,
+        )
+        self.score = 0
+        super().__init__(
+            "LunarLander-v2",
+            agent,
+            ui_elements=[self.info_panel, self.control_panel],
+        )
+
+    def step(
+        self,
+        observation,
+        action,
+        new_observation,
+        reward: float,
+        done: bool,
+        info: dict,
+    ) -> None:
+
+        if done:
+            self.info_panel.update(key_value={"Score": reward})
+            self.score = 0
+        else:
+            observation_msg = ", ".join([f"{x:.2f}" for x in new_observation])
+            observation_msg = f"[{observation_msg}]"
+            self.score += reward
+            self.info_panel.update(
+                key_value={
+                    "Score": self.score,
+                    "Reward": reward,
+                    "Observation": observation_msg,
+                },
+            )
+
+
+def build_experiment() -> HippoGym:
+    agent = HumanAgent()
+    lunarstep = LunarLanderV2Step(agent)
+    return HippoGym(lunarstep)
 
 
 def main():
-    window = GameWindow()
-    info_panel = InfoPanel(
-        text="Use keyboard to play the game",
-        items=["s = down", "a = left", "d = right"],
-    )
-    control_panel = ControlPanel(
-        buttons=standard_controls,
-        keys=True,
-    )
-
-    hippo = HippoGym(ui_elements=[window, info_panel, control_panel])
-
-    env = gym.make("LunarLander-v2")
-    LOGGER.debug("Env created")
-
-    hippo.standby()
-    hippo.send()
-
-    env.reset()
-    while not hippo.stop:
-        action = 0
-
-        send_render(env, window)
-        while hippo.run:
-            new_action = check_action(hippo, action)
-            if new_action is not None:
-                action = new_action
-
-            done = take_step(env, action, info_panel) or action < 0
-            if done:
-                env.reset()
-                break
-            send_render(env, window)
-
-            time.sleep(0.03)
-        time.sleep(1)
-    env.close()
+    hippo = build_experiment()
+    hippo.start()
 
 
 if __name__ == "__main__":
