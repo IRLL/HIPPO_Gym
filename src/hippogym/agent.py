@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional
 
-
 if TYPE_CHECKING:
     from gym import Space
+
     from hippogym.trialsteps.trialstep import TrialStep
 
 

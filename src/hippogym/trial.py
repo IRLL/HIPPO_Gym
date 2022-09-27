@@ -3,8 +3,9 @@ from typing import TYPE_CHECKING, Dict, List, Optional
 
 if TYPE_CHECKING:
     from multiprocessing import Queue
-    from hippogym.trialsteps import TrialStep
+
     from hippogym.event_handler import EventsQueues
+    from hippogym.trialsteps import TrialStep
 
 
 class Trial:

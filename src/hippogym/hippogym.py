@@ -1,14 +1,13 @@
 import asyncio
-from typing import Dict, Optional, Union
 from multiprocessing import Process
-
-
-from hippogym.trial import Trial, TrialConfig, DeterministicTrialConfig
-from hippogym.trialsteps.trialstep import TrialStep
-from hippogym.log import get_logger
-from hippogym.communicator import WebSocketCommunicator, SSLCertificate
+from typing import Dict, Optional, Union
 
 from websockets.server import WebSocketServerProtocol
+
+from hippogym.communicator import SSLCertificate, WebSocketCommunicator
+from hippogym.log import get_logger
+from hippogym.trial import DeterministicTrialConfig, Trial, TrialConfig
+from hippogym.trialsteps.trialstep import TrialStep
 
 LOGGER = get_logger(__name__)
 

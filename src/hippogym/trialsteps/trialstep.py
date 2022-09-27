@@ -1,14 +1,14 @@
 from abc import ABC, abstractmethod
-
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
-from hippogym.event_handler import EventsQueues, POLL_QUEUES
+from hippogym.event_handler import POLL_QUEUES, EventsQueues
 from hippogym.queue_handler import check_queues, create_or_get_queue
 
 if TYPE_CHECKING:
-    from hippogym.ui_elements.ui_element import UIElement
     from multiprocessing import Queue
+
+    from hippogym.ui_elements.ui_element import UIElement
 
 
 class TrialStep(ABC):

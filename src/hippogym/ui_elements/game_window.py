@@ -6,9 +6,9 @@ from typing import TYPE_CHECKING, Optional
 
 from PIL import Image
 
+from hippogym.log import get_logger
 from hippogym.message_handlers.window import WindowMessageHandler
 from hippogym.ui_elements.ui_element import UIElement
-from hippogym.log import get_logger
 
 LOGGER = get_logger(__name__)
 

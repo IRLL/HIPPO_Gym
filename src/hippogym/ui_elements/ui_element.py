@@ -2,10 +2,9 @@ from abc import ABC, abstractmethod
 from threading import Thread
 from typing import TYPE_CHECKING, Dict
 
-
 if TYPE_CHECKING:
-    from hippogym.trialsteps import InteractiveStep
     from hippogym.message_handlers.message_handler import MessageHandler
+    from hippogym.trialsteps import InteractiveStep
 
 DO_NOT_UPDATE = "DO_NOT_UPDATE&@"
 

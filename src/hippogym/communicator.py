@@ -2,12 +2,11 @@ import asyncio
 import json
 import ssl
 from logging import getLogger
-from typing import TYPE_CHECKING, Callable, Optional, Tuple, Union, final
+from typing import TYPE_CHECKING, Callable, Optional, Tuple, Union
 
-from websockets.server import serve, WebSocketServerProtocol
+from websockets.server import WebSocketServerProtocol, serve
 
 from hippogym.event_handler import EventHandler
-
 
 if TYPE_CHECKING:
     from hippogym.hippogym import HippoGym

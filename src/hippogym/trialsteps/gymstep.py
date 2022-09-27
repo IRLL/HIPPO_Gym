@@ -1,16 +1,17 @@
+import time
 from typing import TYPE_CHECKING, Dict, List, Optional, TypeVar, Union
 
-import time
 import gym
 
+from hippogym.agent import Agent
 from hippogym.trialsteps.trialstep import InteractiveStep
 from hippogym.ui_elements import GameWindow
-from hippogym.agent import Agent
 
 if TYPE_CHECKING:
-    from hippogym.ui_elements import UIElement
-    from hippogym.event_handler import EventsQueues
     from multiprocessing import Queue
+
+    from hippogym.event_handler import EventsQueues
+    from hippogym.ui_elements import UIElement
 
 Observation = TypeVar("Observation")
 Action = TypeVar("Action")
