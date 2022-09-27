@@ -1,7 +1,5 @@
 import logging
-import time
 import gym
-import numpy as np
 
 from hippogym.agent import Agent
 from hippogym.hippogym import HippoGym
@@ -17,19 +15,11 @@ def send_render(env: gym.Env, window: GameWindow):
     window.update(image=render)
 
 
-class RandomAgent(Agent):
-    def act(self, observation):
-        actions = ["noop", "right", "down", "left"]
-        action = np.random.choice(actions)
-        if action in actions:
-            return actions.index(action)
-        return None
-
-
 class HumanAgent(Agent):
-    def __init__(self) -> None:
+    def __init__(self, observation_space=None, action_space=None) -> None:
         self.last_action = "noop"
         self.trialstep: "GymStep" = None
+        super().__init__(observation_space, action_space)
 
     def act(self, observation):
         actions = ["noop", "right", "down", "left"]

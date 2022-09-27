@@ -37,6 +37,7 @@ class GymStep(InteractiveStep):
             env = gym.make(env, render_mode="rgb_array", **kwargs)
         self.env = env
         self.agent = agent
+        self.agent.set_spaces(self.env.observation_space, self.env.action_space)
 
         self.stop = False
         self.running = False
