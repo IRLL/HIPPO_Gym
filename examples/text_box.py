@@ -1,7 +1,6 @@
-import asyncio
 import base64
 import logging
-from typing import List, Optional
+from typing import List
 
 from hippogym.hippogym import HippoGym
 from hippogym.trialsteps import InteractiveStep
@@ -26,6 +25,8 @@ class TextBoxStep(InteractiveStep):
         for img_path in images_paths:
             self.images.append(get_image(img_path))
 
+        # self.json_recorder = Recorder(mode="json", clean_path=True)
+        # self.pickle_recorder = Recorder(mode="pickle")
         self.info_panel = InfoPanel()
         self.text_box = TextBox(text="Hello World!", buttons=["save", "run", "clear"])
         self.control_panel = ControlPanel(buttons=standard_controls)
@@ -53,8 +54,8 @@ class TextBoxStep(InteractiveStep):
                 if button == "save":
                     self.text_box.request()
                     text = self.text_box.get_text()
-                    # json_recorder.record({"text": text})
-                    # pickle_recorder.record({"text": text})
+                    # self.json_recorder.record({"text": text})
+                    # self.pickle_recorder.record({"text": text})
                 action = item.get("ACTION", None)
                 if action == "right":
                     self.index += 1
@@ -98,8 +99,6 @@ def build_experiment() -> HippoGym:
         "icon_light.png",
         "words_vertical.png",
     ]
-    # json_recorder = Recorder(mode="json", clean_path=True)
-    # pickle_recorder = Recorder(mode="pickle")
     text_box_step = TextBoxStep(images_paths)
     return HippoGym(text_box_step)
 

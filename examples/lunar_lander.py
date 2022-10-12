@@ -1,18 +1,11 @@
 import logging
-import gym
 
-from hippogym.agent import Agent
-from hippogym.hippogym import HippoGym
-from hippogym.ui_elements import InfoPanel, GameWindow, ControlPanel, standard_controls
+from hippogym import HippoGym, Agent
+from hippogym.ui_elements import InfoPanel, ControlPanel, standard_controls
 from hippogym.trialsteps import GymStep
 
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
-
-
-def send_render(env: gym.Env, window: GameWindow):
-    render = window.convert_numpy_array_to_base64(env.render("rgb_array"))
-    window.update(image=render)
 
 
 class HumanAgent(Agent):
@@ -67,17 +60,18 @@ class LunarLanderV2Step(GymStep):
         if done:
             self.info_panel.update(key_value={"Score": reward})
             self.score = 0
-        else:
-            observation_msg = ", ".join([f"{x:.2f}" for x in new_observation])
-            observation_msg = f"[{observation_msg}]"
-            self.score += reward
-            self.info_panel.update(
-                key_value={
-                    "Score": self.score,
-                    "Reward": reward,
-                    "Observation": observation_msg,
-                },
-            )
+            return
+
+        observation_msg = ", ".join([f"{x:.2f}" for x in new_observation])
+        observation_msg = f"[{observation_msg}]"
+        self.score += reward
+        self.info_panel.update(
+            key_value={
+                "Score": self.score,
+                "Reward": reward,
+                "Observation": observation_msg,
+            },
+        )
 
 
 def build_experiment() -> HippoGym:
