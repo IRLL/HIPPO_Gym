@@ -15,6 +15,7 @@ class Agent(ABC):
     ) -> None:
         self.observation_space = observation_space
         self.action_space = action_space
+        self.trialstep: "TrialStep" = None
 
     @abstractmethod
     def act(self, observation):
