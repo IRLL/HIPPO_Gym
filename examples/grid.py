@@ -1,27 +1,41 @@
+import logging
 import time
+
 from hippogym import HippoGym
-from hippogym.ui_elements.control_panel import ControlPanel, standard_controls
+from hippogym.ui_elements import ControlPanel, InfoPanel, Grid, standard_controls
+from hippogym.trialsteps import InteractiveStep
+
+logging.basicConfig(level=10)
 
 
-def play_grid(hippo: HippoGym):
-    grid = hippo.get_grid(rows=41, columns=42)
-    grid.add_tile(20, 21, text="Hello")
-    grid.send()
-    info = hippo.get_info_panel()
+class GridStep(InteractiveStep):
+    def __init__(self) -> None:
+        self.grid = Grid(rows=41, columns=42)
+        self.grid.tiles[20][21].text = "Hello"
+        self.control_panel = ControlPanel(standard_controls)
+        self.info = InfoPanel()
+        super().__init__([self.grid, self.control_panel, self.info])
 
-    control_panel = ControlPanel(hippo.out_q, buttons=standard_controls)
-    hippo.set_control_panel(control_panel)
+    def run(self) -> None:
+        done = False
+        while not done:
+            for item in self.poll():
+                button = item.get("BUTTONPRESSED", "")
+                if button.lower() == "next":
+                    done = True
+            self.info.update(
+                text=f"Selected Tiles: {str(self.grid.selected_tiles_list)}"
+            )
+            time.sleep(1)
 
-    while not hippo.stop:
-        info.update(text="Selected Tiles:", items=grid.get_selected())
-        time.sleep(1)
-    hippo.disconnect()
+
+def build_experiment():
+    return HippoGym(GridStep())
 
 
 def main():
-    hippo = HippoGym()
-    while True:
-        hippo.standby(play_grid)
+    hippo = build_experiment()
+    hippo.start()
 
 
 if __name__ == "__main__":
