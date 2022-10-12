@@ -1,43 +1,42 @@
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Dict, List, Optional, Set
+from typing import List, Optional, Set
 
 from hippogym.message_handlers.grid import GridMessageHandler
 from hippogym.ui_elements.ui_element import UIElement
 
-if TYPE_CHECKING:
-    from multiprocessing import Queue
-
-    from hippogym.event_handler import EventsQueues
-
 
 class Grid(UIElement):
-    def __init__(
-        self, queues: Dict["EventsQueues", "Queue"], rows: int = 10, columns: int = 10
-    ) -> None:
-        super().__init__("grid", GridMessageHandler(self, queues))
+    def __init__(self, rows: int = 10, columns: int = 10) -> None:
+        super().__init__("grid", GridMessageHandler(self))
         self.rows = rows
         self.columns = columns
-        self.tiles: List[Tile] = []
+        self.tiles: List[List[Tile]] = [
+            [Tile() for _ in range(rows)] for _ in range(columns)
+        ]
         self.selected_tiles: Set[Tile] = set()
 
     def params_dict(self) -> dict:
         return {
             "rows": self.rows,
             "columns": self.columns,
-            "tiles": self.tiles,
+            "tiles": [str(tile for tile in self.tiles)],
         }
 
-    def select(self, tile: "Tile") -> None:
-        self.selected_tiles.add(tile)
+    def select(self, row: int, column: int) -> None:
+        tile = self.tiles[row][column]
+        tile.bgcolor = "#f9cd09"
+        self.selected_tiles.add((row, column))
 
-    def unselect(self, tile: "Tile") -> None:
-        self.selected_tiles.discard(tile)
+    def unselect(self, row: int, column: int) -> None:
+        tile = self.tiles[row][column]
+        tile.bgcolor = None
+        self.selected_tiles.discard((row, column))
 
-    def click(self, tile: "Tile") -> None:
-        if tile in self.selected_tiles:
-            self.selected_tiles.remove(tile)
+    def click(self, row: int, column: int) -> None:
+        if (row, column) in self.selected_tiles:
+            self.unselect(row, column)
         else:
-            self.selected_tiles.add(tile)
+            self.select(row, column)
 
     @property
     def selected_tiles_list(self) -> List["Tile"]:
@@ -45,17 +44,10 @@ class Grid(UIElement):
 
 
 @dataclass
-class TileContent:
+class Tile:
     text: Optional[str] = field(default=None)
     image: Optional[str] = field(default=None)
     icon: Optional[str] = field(default=None)
     color: Optional[str] = field(default=None)
     bgcolor: Optional[str] = field(default=None)
     border: Optional[str] = field(default=None)
-
-
-@dataclass
-class Tile(dict):
-    row: int
-    col: int
-    content: Optional[TileContent] = field(default=None, compare=False)
