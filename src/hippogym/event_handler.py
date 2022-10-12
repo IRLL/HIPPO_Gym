@@ -91,9 +91,13 @@ class EventHandler:
             put_in_queue(new_message, self.queues[EventsQueues.CONTROL])
 
     def handle_window_event(self, message: dict):
+        if EventsQueues.WINDOW not in self.queues:
+            return
         put_in_queue(message, self.queues[EventsQueues.WINDOW])
 
     def handle_grid_event(self, message: dict):
+        if EventsQueues.GRID not in self.queues:
+            return
         put_in_queue(message, self.queues[EventsQueues.GRID])
 
     def check_standard_message(self, event):
