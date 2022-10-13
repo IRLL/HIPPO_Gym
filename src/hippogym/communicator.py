@@ -76,7 +76,7 @@ class WebSocketCommunicator:
         LOGGER.info("User %s connected on project %s", user_id, project_id)
         return user_id, project_id
 
-    async def handler(self, server: WebSocketServerProtocol, _path: str):
+    async def handler(self, server: WebSocketServerProtocol, _path: str) -> None:
         """Main function being run on a new websocket connexion.
 
         Args:
@@ -103,7 +103,7 @@ class WebSocketCommunicator:
         self,
         server: WebSocketServerProtocol,
         event_handler: EventHandler,
-    ):
+    ) -> None:
         """Handle incomming messages from client side of the WebSocket connexion.
 
         Args:
@@ -119,7 +119,7 @@ class WebSocketCommunicator:
         self,
         server: WebSocketServerProtocol,
         event_handler: EventHandler,
-    ):
+    ) -> None:
         """Handle messages to send to the client side of the WebSocket connexion.
 
         Args:

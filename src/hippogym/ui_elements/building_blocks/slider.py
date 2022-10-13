@@ -1,5 +1,5 @@
 from dataclasses import asdict, dataclass, field
-from typing import Optional
+from typing import Any, Dict, Optional
 
 
 @dataclass
@@ -15,7 +15,7 @@ class Slider:
     def __post_init__(self):
         self._value = self.clip(self.init_value)
 
-    def dict(self) -> dict:
+    def dict(self) -> Dict[str, Any]:
         """Convert Slider to a dict"""
         dataclass_dict = asdict(self)
         dataclass_dict.update({"value": self.value})
@@ -27,7 +27,7 @@ class Slider:
         return self._value
 
     @value.setter
-    def value(self, new_value: float):
+    def value(self, new_value: float) -> None:
         self._value = self.clip(new_value)
 
     def clip(self, value: float) -> float:

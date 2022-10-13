@@ -40,7 +40,7 @@ class HippoGym:
         host: str = "localhost",
         port: int = 5000,
         ssl_certificate: Optional["SSLCertificate"] = None,
-    ):
+    ) -> None:
         asyncio.run(self.start_server(host, port, ssl_certificate))
 
     async def start_server(
@@ -48,7 +48,7 @@ class HippoGym:
         host: str,
         port: int,
         ssl_certificate: Optional[SSLCertificate] = None,
-    ):
+    ) -> None:
         """Start hippogym server side.
 
         Args:
@@ -59,25 +59,32 @@ class HippoGym:
         communicator = WebSocketCommunicator(self, host, port, ssl_certificate)
         await communicator.start()
 
-    async def start_connexion(self, websocket: WebSocketServerProtocol, _path: str):
+    async def start_connexion(
+        self, websocket: WebSocketServerProtocol, _path: str
+    ) -> None:
         """Handle a new websocket connexion.
 
         Args:
             websocket (WebSocketServerProtocol): Websocket just created.
         """
+        user_message: Dict[str, str] = await websocket.recv()
+        user_id = user_message.get("userId")
+        if user_id is None:
+            raise RuntimeError("User connected without anouncing userId first.")
+        LOGGER.info("User connected: %s", user_id)
         try:
-            user_message: dict = await websocket.recv()
-            user_id = user_message.get("userId")
-            LOGGER.info("User connected: %s", user_id)
             self.start_trial(user_id)
         finally:
             self.stop_trial(user_id)
 
-    def start_trial(self, user_id: UserID):
+    def start_trial(self, user_id: UserID) -> Trial:
         """Start a trial for the given user.
 
         Args:
             user_id (UserID): Unique ID for the user.
+
+        Return:
+            Trial: Trial being ran in a new process.
 
         Raises:
             ValueError: If user is already in trial.
@@ -92,7 +99,7 @@ class HippoGym:
         new_trial_process.start()
         return trial
 
-    def stop_trial(self, user_id: UserID):
+    def stop_trial(self, user_id: UserID) -> None:
         """Stop the trial for the given user.
 
         Args:

@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 from threading import Thread
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING, Any, Dict
 
 if TYPE_CHECKING:
     from hippogym.message_handlers.message_handler import MessageHandler
-    from hippogym.trialsteps import InteractiveStep
+    from hippogym.trialsteps.trialstep import InteractiveStep
 
 DO_NOT_UPDATE = "DO_NOT_UPDATE&@"
 
@@ -45,7 +45,7 @@ class UIElement(ABC):
         """Hide the UI element."""
         self.message_handler.send({self.name: None})
 
-    def update(self, **kwargs) -> None:
+    def update(self, **kwargs: Any) -> None:
         """Update the UIElement with new attr values."""
 
         for attr_name in dir(self):

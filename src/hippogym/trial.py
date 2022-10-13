@@ -3,9 +3,8 @@ from typing import TYPE_CHECKING, Dict, List, Optional
 
 if TYPE_CHECKING:
     from multiprocessing import Queue
-
     from hippogym.event_handler import EventsQueues
-    from hippogym.trialsteps import TrialStep
+    from hippogym.trialsteps.trialstep import TrialStep
 
 
 class Trial:
@@ -42,8 +41,6 @@ class TrialConfig:
         Returns:
             Trial: A new independant Trial.
         """
-        if len(self.steps) == 1:
-            return self.steps[0]
         raise NotImplementedError
 
 

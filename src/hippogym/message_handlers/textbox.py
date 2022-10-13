@@ -21,6 +21,6 @@ class TextBoxMessageHandler(MessageHandler):
 
     def button(self, message: Dict[int, str]) -> None:
         if message[0].lower() == "clear":
-            self.textbox.clear(message[1])
+            self.textbox.clear(text=message[1])
         else:
-            self.textbox.update(message[1])
+            self.textbox.update(text=message[1])

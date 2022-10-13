@@ -1,5 +1,6 @@
 from dataclasses import asdict, dataclass, field
 from enum import Enum
+from typing import Any, Dict, Optional
 
 
 @dataclass
@@ -9,11 +10,11 @@ class Button:
     color: str
     bgcolor: str
     value: str
-    icon: str = field(default=None)
-    text: str = field(default=None)
-    image: str = field(default=None)
+    icon: Optional[str] = field(default=None)
+    text: Optional[str] = field(default=None)
+    image: Optional[str] = field(default=None)
 
-    def dict(self) -> dict:
+    def dict(self) -> Dict[str, Any]:
         """Convert Button to a dict."""
         return {"Button": asdict(self)}
 
@@ -27,7 +28,7 @@ class Direction(Enum):
     RIGHT: str = "right"
 
 
-def build_arrow_button(direction: Direction):
+def build_arrow_button(direction: Direction) -> Button:
     """Build an arrow button in the given direction."""
     if not isinstance(direction, Direction):
         direction = Direction(direction)

@@ -1,4 +1,4 @@
-from typing import Any, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 from hippogym.message_handlers.control import ControlMessageHandler
 from hippogym.ui_elements.building_blocks.button import Button
@@ -11,21 +11,16 @@ class ControlPanel(UIElement):
 
     def __init__(
         self,
-        buttons=None,
-        sliders=None,
-        keys=False,
-    ):
+        buttons: Optional[List[Button]] = None,
+        sliders: Optional[List[Slider]] = None,
+        keys: bool = False,
+    ) -> None:
         super().__init__("ControlPanel", ControlMessageHandler(self))
         self.buttons: List[Button] = _ensure_list_type(buttons, Button)
         self.sliders: List[Slider] = _ensure_list_type(sliders, Slider)
         self.keys = keys if isinstance(keys, bool) else False
 
-    def update(
-        self,
-        buttons: List[Button] = None,
-        sliders: List[Slider] = None,
-        keys: bool = None,
-    ):
+    def update(self, **kwargs: Any) -> None:
         """Update the control panel with given values.
 
         Non given values will not stay the same.
@@ -38,6 +33,10 @@ class ControlPanel(UIElement):
         Raises:
             TypeError: If given values were not in expected type.
         """
+        buttons: Optional[List[Button]] = kwargs.get("buttons")
+        sliders: Optional[List[Slider]] = kwargs.get("sliders")
+        keys: Optional[bool] = kwargs.get("keys")
+
         if buttons is not None:
             self.buttons = _ensure_list_type(buttons, Button)
         if sliders is not None:
@@ -48,7 +47,7 @@ class ControlPanel(UIElement):
             self.keys = keys
         self.send()
 
-    def set_slider_value(self, slider_title: str, value: float):
+    def set_slider_value(self, slider_title: str, value: float) -> None:
         for slider in self.sliders:
             if slider_title == slider.title:
                 slider.value = value

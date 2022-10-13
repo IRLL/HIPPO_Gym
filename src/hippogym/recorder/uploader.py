@@ -12,7 +12,9 @@ class Uploader:
         self.bucket = getenv("BUCKET")
         self.key = getenv("S3_KEY")
 
-    def run(self, path, filename) -> None:
+    def run(self, path: str, filename: str) -> None:
+        if self.key is None:
+            raise ValueError
         if self.key[-1] != "/":
             key = f"{self.key}/{filename}"
         else:
@@ -22,5 +24,5 @@ class Uploader:
         Process(target=upload, args=(self.s3, file_path, self.bucket, key)).start()
 
 
-def upload(s3, file_path, bucket, key) -> None:
+def upload(s3, file_path: str, bucket, key: str) -> None:
     s3.meta.client.upload_file(file_path, bucket, key)

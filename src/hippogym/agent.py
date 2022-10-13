@@ -24,7 +24,7 @@ class Agent(ABC):
         Return the agent action given its obsevation.
         """
 
-    def set_step(self, trialstep: "TrialStep"):
+    def set_step(self, trialstep: "TrialStep") -> None:
         self.trialstep = trialstep
 
     def set_spaces(self, observation_space: "Space", action_space: "Space") -> None:

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Tuple
 
 from hippogym.event_handler import EventsQueues
 from hippogym.message_handlers.message_handler import MessageHandler
@@ -18,10 +18,15 @@ class GridMessageHandler(MessageHandler):
         }
 
     def select(self, tile_data: str) -> None:
-        self.grid.select(*tuple(tile_data))
+        self.grid.select(*read_tile_data(tile_data))
 
     def unselect(self, tile_data: str) -> None:
-        self.grid.unselect(*tuple(tile_data))
+        self.grid.unselect(*read_tile_data(tile_data))
 
     def click(self, tile_data: str) -> None:
-        self.grid.click(*tuple(tile_data))
+        self.grid.click(*read_tile_data(tile_data))
+
+
+def read_tile_data(tile_data: str) -> Tuple[int, int]:
+    row, column = tuple(tile_data)
+    return int(row), int(column)

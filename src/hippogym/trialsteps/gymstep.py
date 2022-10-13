@@ -2,6 +2,7 @@ import time
 from typing import TYPE_CHECKING, Dict, List, Optional, TypeVar, Union
 
 import gym
+import numpy as np
 
 from hippogym.agent import Agent
 from hippogym.trialsteps.trialstep import InteractiveStep
@@ -22,12 +23,12 @@ class GymStep(InteractiveStep):
 
     def __init__(
         self,
-        env: Union[str, gym.Env],
+        env: gym.Env,
         agent: Agent,
         ui_elements: List["UIElement"],
         render_window: Optional[GameWindow] = None,
-        **kwargs
-    ):
+        **kwargs: dict
+    ) -> None:
         self.render_window = (
             render_window if render_window is not None else GameWindow()
         )
@@ -93,5 +94,7 @@ class GymStep(InteractiveStep):
 
     def send_render(self):
         rgb_array = self.env.render()
+        if not isinstance(rgb_array, np.ndarray):
+            raise TypeError("Env render should output a numpy array.")
         render = self.render_window.convert_numpy_array_to_base64(rgb_array)
         self.render_window.update(image=render)

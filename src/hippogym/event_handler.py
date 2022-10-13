@@ -1,6 +1,6 @@
 import logging
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING, Any, Dict, Set
 
 if TYPE_CHECKING:
     from multiprocessing import Queue
@@ -27,14 +27,14 @@ POLL_QUEUES = (EventsQueues.KEYBOARD, EventsQueues.BUTTON, EventsQueues.STANDARD
 
 
 class EventHandler:
-    def __init__(self, queues: Dict[EventsQueues, "Queue"]):
+    def __init__(self, queues: Dict[EventsQueues, "Queue"]) -> None:
         for queue_name in EventsQueues:
             if queue_name not in queues:
                 LOGGER.debug("No %s in EventHandler", queue_name)
 
         self.queues = queues
         self.out_q = queues[EventsQueues.OUTPUT]
-        self.pressed_keys = set()
+        self.pressed_keys: Set[str] = set()
         self.key_map = {
             "w": "up",
             "a": "left",
@@ -57,15 +57,15 @@ class EventHandler:
             "GridEvent": self.handle_grid_event,
         }
 
-    def parse(self, message):
+    def parse(self, message: Dict[str, Any]) -> None:
         for key in message.keys():
             if key in self.handlers:
                 self.handlers[key](message[key])
 
-    def handle_text_event(self, message: dict):
+    def handle_text_event(self, message: Dict[str, Any]) -> None:
         put_in_queue(message, self.queues[EventsQueues.TEXTBOX])
 
-    def handle_keyboard_event(self, message: dict):
+    def handle_keyboard_event(self, message: Dict[str, Any]) -> None:
         put_in_queue(message, self.queues[EventsQueues.KEYBOARD])
         # check for common keys to add to standard_q events
         keydown = message.get("KEYDOWN", None)
@@ -81,7 +81,7 @@ class EventHandler:
                 self.pressed_keys.remove(key)
                 self.check_standard_message(key)
 
-    def handle_button_event(self, message: dict):
+    def handle_button_event(self, message: dict) -> None:
         put_in_queue(message, self.queues[EventsQueues.BUTTON])
         button = message.get("BUTTONPRESSED", None)
         if button:
@@ -90,17 +90,17 @@ class EventHandler:
             new_message = {button: True}
             put_in_queue(new_message, self.queues[EventsQueues.CONTROL])
 
-    def handle_window_event(self, message: dict):
+    def handle_window_event(self, message: dict) -> None:
         if EventsQueues.WINDOW not in self.queues:
             return
         put_in_queue(message, self.queues[EventsQueues.WINDOW])
 
-    def handle_grid_event(self, message: dict):
+    def handle_grid_event(self, message: dict) -> None:
         if EventsQueues.GRID not in self.queues:
             return
         put_in_queue(message, self.queues[EventsQueues.GRID])
 
-    def check_standard_message(self, event):
+    def check_standard_message(self, event: str) -> None:
         action = None
         if event in self.key_map.keys():
             if len(self.pressed_keys) == 0:
@@ -131,21 +131,21 @@ class EventHandler:
         if action:
             put_in_queue({"ACTION": action}, self.queues[EventsQueues.STANDARD])
 
-    def handle_slider_event(self, message: dict):
+    def handle_slider_event(self, message: dict) -> None:
         put_in_queue(message, self.queues[EventsQueues.CONTROL])
 
-    def connect(self, user_id: str, project_id: str):
+    def connect(self, user_id: str, project_id: str) -> None:
         message = {"userId": user_id, "projectId": project_id}
         put_in_queue(message, self.queues[EventsQueues.USER])
 
-    def disconnect(self, user_id: str, project_id: str):
+    def disconnect(self, user_id: str, project_id: str) -> None:
         put_in_queue(
             {"disconnect": user_id, "projectId": project_id},
             self.queues[EventsQueues.USER],
         )
 
 
-def put_in_queue(message: Any, queue: "Queue"):
+def put_in_queue(message: Any, queue: "Queue") -> None:
     try:
         if queue.full():
             queue.get_nowait()

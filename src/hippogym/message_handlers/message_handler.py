@@ -1,11 +1,12 @@
 import time
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any, Callable, Dict, Optional
 
 from hippogym.event_handler import EventsQueues
 from hippogym.queue_handler import check_queue, create_or_get_queue
 
 if TYPE_CHECKING:
-    from hippogym.trialsteps import InteractiveStep
+    from hippogym.trialsteps.trialstep import TrialStep
+    from multiprocessing import Queue
 
 
 class MessageHandler:
@@ -24,21 +25,23 @@ class MessageHandler:
             out_queue_type (EventsQueues, optional): Output queue for events.
                 Defaults to EventsQueues.OUTPUT.
         """
-        self.trialstep: Optional["InteractiveStep"] = None
+        self.trialstep: "TrialStep" = None
         self.in_queue_type = in_queue_type
         self.out_queue_type = out_queue_type
-        self.in_queue = None
-        self.out_queue = None
-        self.handlers = {}
+        self.in_queue: Optional["Queue"] = None
+        self.out_queue: Optional["Queue"] = None
+        self.handlers: Dict[str, Callable] = {}
 
-    def set_step(self, trialstep: "InteractiveStep") -> None:
+    def set_step(self, trialstep: "TrialStep") -> None:
         """Associate the MessageHandler to a Trial instance."""
         self.trialstep = trialstep
         self.in_queue = create_or_get_queue(self.trialstep.queues, self.in_queue_type)
         self.out_queue = create_or_get_queue(self.trialstep.queues, self.out_queue_type)
 
-    def send(self, message: Any):
+    def send(self, message: Any) -> None:
         """Send a message to the output queue."""
+        if self.out_queue is None:
+            raise RuntimeError
         self.out_queue.put_nowait(message)
 
     def recv_all(self) -> list:
@@ -58,7 +61,7 @@ class MessageHandler:
                 self.call_handlers(message)
             time.sleep(0.01)
 
-    def call_handlers(self, message: dict):
+    def call_handlers(self, message: dict) -> None:
         """Call handlers relevant the incomming message.
 
         Args:

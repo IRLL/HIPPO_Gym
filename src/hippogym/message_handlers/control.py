@@ -4,12 +4,13 @@ from hippogym.event_handler import EventsQueues
 from hippogym.message_handlers.message_handler import MessageHandler
 
 if TYPE_CHECKING:
-    from hippogym import HippoGym
     from hippogym.ui_elements.control_panel import ControlPanel
+    from hippogym.trialsteps.gymstep import GymStep
 
 
 class ControlMessageHandler(MessageHandler):
     def __init__(self, control_panel: "ControlPanel"):
+        self.trialstep: "GymStep" = None
         super().__init__(EventsQueues.CONTROL)
         self.control_panel = control_panel
 
@@ -24,15 +25,15 @@ class ControlMessageHandler(MessageHandler):
         if self.control_panel is not None:
             self.control_panel.set_slider_value(*setting)
 
-    def resume(self, _message: Optional[str] = None):
+    def resume(self, _message: Optional[str] = None) -> None:
         if hasattr(self.trialstep, "running"):
             self.trialstep.running = True
 
-    def pause(self, _message: Optional[str] = None):
+    def pause(self, _message: Optional[str] = None) -> None:
         if hasattr(self.trialstep, "running"):
             self.trialstep.running = False
 
-    def end(self, _message: Optional[str] = None):
+    def end(self, _message: Optional[str] = None) -> None:
         if hasattr(self.trialstep, "stop"):
             self.trialstep.stop = True
             self.trialstep.running = False

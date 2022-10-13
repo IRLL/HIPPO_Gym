@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Optional, Set
+from typing import List, Optional, Set, Tuple
 
 from hippogym.message_handlers.grid import GridMessageHandler
 from hippogym.ui_elements.ui_element import UIElement
@@ -13,7 +13,7 @@ class Grid(UIElement):
         self.tiles: List[List[Tile]] = [
             [Tile() for _ in range(rows)] for _ in range(columns)
         ]
-        self.selected_tiles: Set[Tile] = set()
+        self.selected_tiles: Set[Tuple[int, int]] = set()
 
     def params_dict(self) -> dict:
         return {
@@ -39,7 +39,7 @@ class Grid(UIElement):
             self.select(row, column)
 
     @property
-    def selected_tiles_list(self) -> List["Tile"]:
+    def selected_tiles_list(self) -> List[Tuple[int, int]]:
         return list(self.selected_tiles)
 
 

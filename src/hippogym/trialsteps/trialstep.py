@@ -15,7 +15,7 @@ class TrialStep(ABC):
     """Abstract class for single trial step."""
 
     def __init__(self) -> None:
-        self.queues = {}
+        self.queues: Dict[EventsQueues, "Queue"] = {}
 
     @abstractmethod
     def build(self, queues: Optional[Dict[EventsQueues, "Queue"]] = None) -> None:
