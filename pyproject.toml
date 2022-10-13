@@ -6,7 +6,7 @@ name = "hippogym"
 
 dynamic = ["version", "readme", "dependencies"]
 license = { text = "Apache-2.0" }
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 authors = [
     { name = "Nick Nissen", email = "nnissen@ualberta.ca" },
     { name = "Mathïs Fédérico", email = "mathfederico@gmail.com" },
@@ -41,6 +41,8 @@ log_level = "DEBUG"
 source = ["src"]
 
 [tool.mypy]
+files = "src"
+plugins = "numpy.typing.mypy_plugin"
 check_untyped_defs = true
 disallow_any_generics = true
 disallow_incomplete_defs = true
