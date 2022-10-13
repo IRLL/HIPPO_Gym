@@ -21,7 +21,7 @@ class GridStep(InteractiveStep):
         while not done:
             for item in self.poll():
                 button = item.get("BUTTONPRESSED", "")
-                if button.lower() == "next":
+                if button.lower() in ("next", "end"):
                     done = True
             self.info.update(
                 text=f"Selected Tiles: {str(self.grid.selected_tiles_list)}"
