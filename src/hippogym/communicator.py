@@ -41,11 +41,14 @@ class WebSocketCommunicator:
 
     async def start(self):
         """Start the communicator serverside."""
-        non_ssl_server = start_non_ssl_server(self.handler, self.host, self.port + 1)
-        servers = [non_ssl_server]
+        servers = []
+        non_ssl_port = self.port
         if self.ssl_certificate is not None:
+            non_ssl_port += 1
             ssl_server = start_ssl_server(self.handler, self.ssl_certificate, self.port)
             servers.append(ssl_server)
+        non_ssl_server = start_non_ssl_server(self.handler, self.host, non_ssl_port)
+        servers.append(non_ssl_server)
         servers_tasks = [asyncio.create_task(server) for server in servers]
         _, pending = await asyncio.wait(
             servers_tasks, return_when=asyncio.FIRST_COMPLETED
