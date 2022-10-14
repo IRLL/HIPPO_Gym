@@ -9,10 +9,10 @@ from websockets.client import connect
 import asyncio
 
 
-def test_grid():
+def test_grid(unused_tcp_port: int):
     user_id = "fake_user"
     host = "localhost"
-    port = 8765
+    port = unused_tcp_port
     uri = f"ws://{host}:{port+1}"
 
     step = GridStep()
