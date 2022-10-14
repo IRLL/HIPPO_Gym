@@ -42,7 +42,7 @@ class TestHippoGym:
         user_id = "fake_user"
         host = "localhost"
         port = unused_tcp_port
-        uri = f"ws://{host}:{port+1}"
+        uri = f"ws://{host}:{port}"
 
         async def main():
             server_task = asyncio.create_task(self.hippo.start_server(host, port))

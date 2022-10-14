@@ -13,7 +13,7 @@ def test_grid(unused_tcp_port: int):
     user_id = "fake_user"
     host = "localhost"
     port = unused_tcp_port
-    uri = f"ws://{host}:{port+1}"
+    uri = f"ws://{host}:{port}"
 
     step = GridStep()
     hippo = HippoGym(step)
