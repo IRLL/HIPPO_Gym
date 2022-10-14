@@ -11,14 +11,6 @@ from hippogym.hippogym import HippoGym
 from tests.fakes import FakeProcess
 
 
-async def fake_user_connect(uri: str, user_id: str):
-    """Connect send user_id then close connextion"""
-    connexion_msg = json.dumps({"userId": user_id})
-    async with connect(uri) as websocket:
-        await websocket.send(connexion_msg)
-        print(f"{user_id} > {connexion_msg}")
-
-
 class TestHippoGym:
     """HippoGym"""
 
@@ -31,8 +23,17 @@ class TestHippoGym:
         self.trial_config.sample = lambda _: self.trial
         self.hippo = HippoGym(self.trial_config)
 
-    def test_trial_run_on_user_connect(self, mocker: MockerFixture):
+    def test_trial_run_on_user_connect(
+        self, mocker: MockerFixture, unused_tcp_port: int
+    ):
         """should start a Trial if a user connects."""
+
+        async def fake_user_connect(uri: str, user_id: str):
+            """Connect send user_id then close connextion"""
+            connexion_msg = json.dumps({"userId": user_id})
+            async with connect(uri) as websocket:
+                await websocket.send(connexion_msg)
+                print(f"{user_id} > {connexion_msg}")
 
         mocker.patch("hippogym.communicator.EventHandler")
         mocker.patch("hippogym.communicator.WebSocketCommunicator.producer_handler")
@@ -40,7 +41,7 @@ class TestHippoGym:
 
         user_id = "fake_user"
         host = "localhost"
-        port = 8765
+        port = unused_tcp_port
         uri = f"ws://{host}:{port+1}"
 
         async def main():
