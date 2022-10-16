@@ -9,14 +9,14 @@ pip install git+https://github.com/MathisFederico/gym-minigrid.git
 from enum import Enum
 import logging
 
-import gym
+import gymnasium as gym
+from minigrid.minigrid_env import MiniGridEnv
 
 from hippogym import HippoGym, Agent
 from hippogym.ui_elements import InfoPanel, ControlPanel
-from hippogym.ui_elements.building_blocks.button import *
+from hippogym.ui_elements.building_blocks import Button
 from hippogym.trialsteps import GymStep
 
-from gym_minigrid.minigrid import MiniGridEnv
 
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
@@ -37,11 +37,21 @@ class HumanAgent(Agent):
         self,
     ) -> None:
         self.trialstep: "GymStep" = None
-        super().__init__()  # ?
+        super().__init__()
 
     def act(self, observation):
 
-        button_value_to_action = {
+        keyboard_to_value = {
+            "ArrowRight": HumanValue.RIGHT,
+            "ArrowLeft": HumanValue.LEFT,
+            "ArrowUp": HumanValue.UP,
+            " ": HumanValue.TOGGLE,
+            "c": HumanValue.PICKUP,
+            "v": HumanValue.DROP,
+            "Enter": HumanValue.END,
+        }
+
+        value_to_action = {
             HumanValue.LEFT: MiniGridEnv.Actions.left.value,
             HumanValue.RIGHT: MiniGridEnv.Actions.right.value,
             HumanValue.UP: MiniGridEnv.Actions.forward.value,
@@ -52,14 +62,23 @@ class HumanAgent(Agent):
         }
 
         for message in self.trialstep.poll():
-            button: str = message.get("BUTTONPRESSED", "")
+
+            human_input = None
+
+            if "BUTTONPRESSED" in message:
+                human_input: str = message["BUTTONPRESSED"]
+                human_input = human_input.lower()
+
+            if "KEYDOWN" in message:
+                key_pressed, _ = message["KEYDOWN"]
+                human_input = keyboard_to_value[key_pressed]
 
             try:
-                human_input = HumanValue(button.lower())
+                human_input = HumanValue(human_input)
             except ValueError:
                 continue
 
-            return button_value_to_action[human_input]
+            return value_to_action[human_input]
 
 
 class MiniGridStep(GymStep):
@@ -80,14 +99,14 @@ class MiniGridStep(GymStep):
             Button(text=val.name.capitalize(), value=val.value, **buttons_params[val])
             for val in HumanValue
         ]
- 
+
         self.control_panel = ControlPanel(
             buttons=controls,
             keys=True,
         )
 
         self.score = 0
-        self.env: MiniGridEnv = gym.make("MiniGrid-MultiRoom-N6-v0")
+        self.env: MiniGridEnv = gym.make("MiniGrid-KeyCorridorS5R3-v0")
         super().__init__(
             self.env,
             agent,
@@ -121,9 +140,8 @@ class MiniGridStep(GymStep):
         )
 
     def send_render(self):
-        image = self.env.gen_obs()["image"]
-        rgb_array = self.env.get_obs_render(image, tile_size=64)
-        render = self.render_window.convert_numpy_array_to_base64(rgb_array)
+        rgb_frame = self.env.get_frame(tile_size=64, agent_pov=True)
+        render = self.render_window.convert_numpy_array_to_base64(rgb_frame)
         self.render_window.update(image=render)
 
 
