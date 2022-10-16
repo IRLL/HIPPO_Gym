@@ -1,5 +1,5 @@
 import time
-from typing import TYPE_CHECKING, Dict, List, Optional, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, TypeVar, Union
 
 import gym
 import numpy as np
@@ -27,7 +27,8 @@ class GymStep(InteractiveStep):
         agent: Agent,
         ui_elements: List["UIElement"],
         render_window: Optional[GameWindow] = None,
-        **kwargs: dict
+        run_from_start: bool = True,
+        **kwargs: dict,
     ) -> None:
         self.render_window = (
             render_window if render_window is not None else GameWindow()
@@ -42,7 +43,8 @@ class GymStep(InteractiveStep):
         self.agent.set_spaces(self.env.observation_space, self.env.action_space)
 
         self.stop = False
-        self.running = False
+        self.run_from_start = run_from_start
+        self.running = self.run_from_start
 
     def build(self, queues: Optional[Dict["EventsQueues", "Queue"]] = None) -> None:
         """Initialize queues and message handler thread."""
@@ -71,26 +73,55 @@ class GymStep(InteractiveStep):
 
     def run(self) -> None:
         self.stop = False
-        self.running = False
-        observation, info = self.env.reset()
+        self.running = self.run_from_start
+
+        observation, info = self.gym_reset()
+
         while not self.stop:
             self.send_render()
             while self.running:
 
-                action = self.agent.act(observation)
-                new_observation, reward, done, truncated, info = self.env.step(action)
+                action = None
+                while action is None:
+                    action = self.agent.act(observation)
 
-                self.step(observation, action, new_observation, reward, done, info)
+                new_observation, reward, terminated, truncated, info = self.gym_step(
+                    action
+                )
+                done = terminated or truncated
+                self.step(
+                    observation, action, new_observation, reward, terminated, info
+                )
 
-                if done or truncated:
+                if done:
                     self.stop = True
-                    new_observation, info = self.env.reset()
+                    observation, info = self.gym_reset()
 
                 observation = new_observation
                 self.send_render()
                 time.sleep(0.03)
             time.sleep(1)
         self.env.close()
+
+    def gym_step(self, action: Any) -> Tuple[Any, float, bool, bool, dict]:
+        step_data = self.env.step(action)
+        if len(step_data) == 5:
+            return step_data
+        if len(step_data) == 4:
+            new_observation, reward, terminated, info = step_data
+            truncated = False
+            return new_observation, reward, terminated, truncated, info
+        raise ValueError(
+            f"Unexpected step data size : {len(step_data)}. Step data: {step_data}"
+        )
+
+    def gym_reset(self) -> Tuple[Any, dict]:
+        reset_data = self.env.reset()
+        if len(reset_data) == 2 and isinstance(reset_data[1], dict):
+            return reset_data
+        observation = reset_data
+        info = {}
+        return observation, info
 
     def send_render(self):
         rgb_array = self.env.render()
