@@ -7,9 +7,9 @@ from typing import Any, Dict, Optional
 class Button:
     """Button for the control panel."""
 
-    color: str
-    bgcolor: str
     value: str
+    color: str = field(default="black")
+    bgcolor: str = field(default="white")
     icon: Optional[str] = field(default=None)
     text: Optional[str] = field(default=None)
     image: Optional[str] = field(default=None)
