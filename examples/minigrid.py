@@ -70,9 +70,9 @@ class MiniGridStep(GymStep):
             HumanValue.LEFT: {"icon": "FaArrowLeft"},
             HumanValue.RIGHT: {"icon": "FaArrowRight"},
             HumanValue.UP: {"icon": "FaArrowUp"},
-            HumanValue.TOGGLE: {"icon": "FaHandSparkles"},
-            HumanValue.PICKUP: {},
-            HumanValue.DROP: {},
+            HumanValue.TOGGLE: {"icon": "IoToggle"},
+            HumanValue.PICKUP: {"icon": "GiCardPickup"},
+            HumanValue.DROP: {"icon": "GiDropWeapon"},
             HumanValue.END: {},
         }
 
@@ -80,7 +80,7 @@ class MiniGridStep(GymStep):
             Button(text=val.name.capitalize(), value=val.value, **buttons_params[val])
             for val in HumanValue
         ]
-
+ 
         self.control_panel = ControlPanel(
             buttons=controls,
             keys=True,
