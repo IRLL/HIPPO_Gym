@@ -25,7 +25,7 @@ class GymStep(InteractiveStep):
         self,
         env: gym.Env,
         agent: Agent,
-        ui_elements: List["UIElement"],
+        ui_elements: Optional[List["UIElement"]] = None,
         render_window: Optional[GameWindow] = None,
         run_from_start: bool = True,
         **kwargs: dict,
@@ -33,6 +33,8 @@ class GymStep(InteractiveStep):
         self.render_window = (
             render_window if render_window is not None else GameWindow()
         )
+        if ui_elements is None:
+            ui_elements = []
         if self.render_window not in ui_elements:
             ui_elements.append(self.render_window)
         super().__init__(ui_elements)
