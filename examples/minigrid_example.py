@@ -1,7 +1,7 @@
 """ To try this example you must install the minigrid environment
 
 ```bash
-pip install git+https://github.com/MathisFederico/gym-minigrid.git
+pip install git+https://github.com/MathisFedericoMinigrid.git
 ```
 
 """
@@ -33,9 +33,7 @@ class HumanValue(Enum):
 
 
 class HumanAgent(Agent):
-    def __init__(
-        self,
-    ) -> None:
+    def __init__(self) -> None:
         self.trialstep: "GymStep" = None
         super().__init__()
 
