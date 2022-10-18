@@ -1,2 +1,7 @@
+# Minigrid
 gymnasium
 git+https://github.com/Farama-Foundation/Minigrid.git@master#egg=Minigrid
+
+# Crafting
+pygame
+git+https://github.com/IRLL/Crafting.git@master#egg=crafting
