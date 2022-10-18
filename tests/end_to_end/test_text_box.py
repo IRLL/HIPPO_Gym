@@ -7,6 +7,8 @@ from examples.text_box import build_experiment
 from websockets.client import connect
 import asyncio
 
+from tests.end_to_end import server_client_interaction
+
 
 def test_text_box(unused_tcp_port: int):
     user_id = "fake_user"
@@ -40,13 +42,9 @@ def test_text_box(unused_tcp_port: int):
                     any(expected_ui_element in msg for msg in ui_elements_messages)
                 )
 
-    async def main():
-        server_task = asyncio.create_task(hippo.start_server(host, port))
-        client_task = asyncio.create_task(fake_user_connect(uri, user_id))
-        _done, pending = await asyncio.wait(
-            [server_task, client_task], return_when=asyncio.FIRST_COMPLETED
+    asyncio.run(
+        server_client_interaction(
+            server_coroutine=hippo.start_server(host, port),
+            client_coroutine=fake_user_connect(uri, user_id),
         )
-        for task in pending:  # Kill server when client is done
-            task.cancel()
-
-    asyncio.run(main())
+    )
