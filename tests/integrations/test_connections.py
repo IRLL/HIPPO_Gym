@@ -20,6 +20,7 @@ class TestHippoGym:
 
         self.trial = mocker.Mock()
         self.trial_config = mocker.Mock()
+        self.trial.run = mocker.Mock()
         self.trial_config.sample = lambda _: self.trial
         self.hippo = HippoGym(self.trial_config)
 
