@@ -7,15 +7,10 @@ from examples.text_box import build_experiment
 from websockets.client import connect
 import asyncio
 
-from tests.end_to_end import server_client_interaction
+from tests import server_client_interaction, get_uri
 
 
 def test_text_box(unused_tcp_port: int):
-    user_id = "fake_user"
-    host = "localhost"
-    port = unused_tcp_port
-    uri = f"ws://{host}:{port}"
-
     hippo = build_experiment()
 
     async def fake_user_connect(uri: str, user_id: str):
@@ -42,6 +37,10 @@ def test_text_box(unused_tcp_port: int):
                     any(expected_ui_element in msg for msg in ui_elements_messages)
                 )
 
+    user_id = "fake_user"
+    host = "localhost"
+    port = unused_tcp_port
+    uri = get_uri(host, port)
     asyncio.run(
         server_client_interaction(
             server_coroutine=hippo.start_server(host, port),

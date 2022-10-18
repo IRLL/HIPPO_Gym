@@ -3,22 +3,16 @@ import json
 import pytest
 import pytest_check as check
 
-from examples.grid import GridStep
+from examples.grid import build_experiment
 from hippogym.hippogym import HippoGym
 from websockets.client import connect
 import asyncio
 
-from tests.end_to_end import server_client_interaction
+from tests import server_client_interaction, get_uri
 
 
 def test_grid(unused_tcp_port: int):
-    user_id = "fake_user"
-    host = "localhost"
-    port = unused_tcp_port
-    uri = f"ws://{host}:{port}"
-
-    step = GridStep()
-    hippo = HippoGym(step)
+    hippo = build_experiment()
 
     async def fake_user_connect(uri: str, user_id: str):
         """Connect send user_id then close connextion"""
@@ -41,6 +35,10 @@ def test_grid(unused_tcp_port: int):
                     f"Expected UIElement was not found: {expected_ui_element}",
                 )
 
+    user_id = "fake_user"
+    host = "localhost"
+    port = unused_tcp_port
+    uri = get_uri(host, port)
     asyncio.run(
         server_client_interaction(
             server_coroutine=hippo.start_server(host, port),
