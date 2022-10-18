@@ -11,7 +11,7 @@ from tests import server_client_interaction, get_uri
 
 def test_crafting(unused_tcp_port: int):
     """crafting example should start a trial on connexion and give expected UIElements"""
-    hippo = build_experiment()
+    hippo = build_experiment(render_mode="console")
 
     async def fake_user_connect(uri: str, user_id: str):
         """Connect send user_id then close connextion"""
