@@ -1,7 +1,7 @@
 """ To try this example you must install the minigrid environment
 
 ```bash
-pip install git+https://github.com/MathisFedericoMinigrid.git
+pip install git+https://github.com/Farama-Foundation/Minigrid.git
 ```
 
 """
@@ -37,9 +37,7 @@ class HumanAgent(Agent):
         self.trialstep: "GymStep" = None
         super().__init__()
 
-    def act(self, observation):
-
-        keyboard_to_value = {
+        self.keyboard_to_value = {
             "ArrowRight": HumanValue.RIGHT,
             "ArrowLeft": HumanValue.LEFT,
             "ArrowUp": HumanValue.UP,
@@ -49,7 +47,7 @@ class HumanAgent(Agent):
             "Enter": HumanValue.END,
         }
 
-        value_to_action = {
+        self.value_to_action = {
             HumanValue.LEFT: MiniGridEnv.Actions.left.value,
             HumanValue.RIGHT: MiniGridEnv.Actions.right.value,
             HumanValue.UP: MiniGridEnv.Actions.forward.value,
@@ -58,6 +56,8 @@ class HumanAgent(Agent):
             HumanValue.DROP: MiniGridEnv.Actions.drop.value,
             HumanValue.END: MiniGridEnv.Actions.done.value,
         }
+
+    def act(self, observation):
 
         for message in self.trialstep.poll():
 
@@ -69,14 +69,14 @@ class HumanAgent(Agent):
 
             if "KEYDOWN" in message:
                 key_pressed, _ = message["KEYDOWN"]
-                human_input = keyboard_to_value[key_pressed]
+                human_input = self.keyboard_to_value[key_pressed]
 
             try:
                 human_input = HumanValue(human_input)
             except ValueError:
                 continue
 
-            return value_to_action[human_input]
+            return self.value_to_action[human_input]
 
 
 class MiniGridStep(GymStep):
