@@ -82,9 +82,9 @@ class HumanCraftingAgent(Agent):
 
 
 class MineCraftingStep(GymStep):
-    def __init__(self, agent):
+    def __init__(self, agent, render_mode: str = "rgb_array"):
         self.score = 0
-        env = MineCraftingEnv(verbose=1, max_step=50, render_mode="rgb_array")
+        env = MineCraftingEnv(verbose=1, max_step=50, render_mode=render_mode)
         task = TaskObtainItem(env.world, env.world.item_from_name["enchanting_table"])
         env.add_task(task)
         super().__init__(env, agent)
@@ -115,9 +115,9 @@ def rel_to_abs_coords(x_rel: float, y_rel: float) -> Tuple[int, int]:
     return int(x_rel * width), int(y_rel * height)
 
 
-def build_experiment() -> HippoGym:
+def build_experiment(render_mode: str = "rgb_array") -> HippoGym:
     agent = HumanCraftingAgent()
-    lunarstep = MineCraftingStep(agent)
+    lunarstep = MineCraftingStep(agent, render_mode=render_mode)
     return HippoGym(lunarstep)
 
 
