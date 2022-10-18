@@ -20,7 +20,6 @@ class TestHippoGym:
 
         self.trial = mocker.Mock()
         self.trial_config = mocker.Mock()
-        self.trial.run = mocker.Mock()
         self.trial_config.sample = lambda _: self.trial
         self.hippo = HippoGym(self.trial_config)
 
@@ -35,6 +34,8 @@ class TestHippoGym:
             async with connect(uri) as websocket:
                 await websocket.send(connexion_msg)
                 print(f"{user_id} > {connexion_msg}")
+                server_message = await websocket.recv()
+                print(f"{user_id} < {server_message}")
 
         mocker.patch("hippogym.communicator.EventHandler")
         mocker.patch("hippogym.communicator.WebSocketCommunicator.producer_handler")
