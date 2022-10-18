@@ -50,8 +50,8 @@ class TestHippoGym:
     def test_stop_trial(self, mocker: MockerFixture):
         """should stop the current Trial for the given user"""
         process_patch = mocker.Mock()
-        process_patch.kill = mocker.Mock()
         self.hippo.trials["fake_user"] = process_patch
         self.hippo.stop_trial("fake_user")
         check.equal(len(self.hippo.trials), 0)
-        check.is_true(process_patch.kill.called)
+        check.is_true(process_patch.terminate.called)
+        check.is_true(process_patch.close.called)

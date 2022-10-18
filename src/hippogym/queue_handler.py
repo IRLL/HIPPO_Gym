@@ -7,7 +7,10 @@ from hippogym.event_handler import EventsQueues
 def check_queue(queue: Queue) -> List[Dict[str, str]]:
     messages = []
     while not queue.empty():
-        messages.append(queue.get_nowait())
+        try:
+            messages.append(queue.get_nowait())
+        except Exception:
+            break
     return messages
 
 

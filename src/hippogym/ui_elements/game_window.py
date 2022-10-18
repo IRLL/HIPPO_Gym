@@ -2,7 +2,7 @@ import base64
 import logging
 from io import BytesIO
 from multiprocessing import Queue
-from typing import TYPE_CHECKING, Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple
 
 from PIL import Image
 
@@ -65,6 +65,10 @@ class GameWindow(UIElement):
     def set_size(self, width: int, height: int) -> None:
         self.width = width
         self.height = height
+
+    @property
+    def size(self) -> Tuple[int, int]:
+        return (self.width, self.height)
 
     def add_event(self, event: Dict[str, Any]) -> None:
         if self.events is None:
