@@ -9,6 +9,7 @@ from pytest_mock import MockerFixture
 from hippogym.hippogym import HippoGym
 
 from tests.fakes import FakeProcess
+from tests import server_client_interaction, get_uri
 
 
 class TestHippoGym:
@@ -28,32 +29,29 @@ class TestHippoGym:
     ):
         """should start a Trial if a user connects."""
 
+        mocker.patch("hippogym.communicator.EventHandler")
+        mocker.patch("hippogym.communicator.WebSocketCommunicator.producer_handler")
+        mocker.patch("hippogym.communicator.WebSocketCommunicator.consumer_handler")
+
         async def fake_user_connect(uri: str, user_id: str):
             """Connect send user_id then close connextion"""
             connexion_msg = json.dumps({"userId": user_id})
             async with connect(uri) as websocket:
                 await websocket.send(connexion_msg)
                 print(f"{user_id} > {connexion_msg}")
-
-        mocker.patch("hippogym.communicator.EventHandler")
-        mocker.patch("hippogym.communicator.WebSocketCommunicator.producer_handler")
-        mocker.patch("hippogym.communicator.WebSocketCommunicator.consumer_handler")
+                server_message = await websocket.recv()
+                print(f"{user_id} < {server_message}")
 
         user_id = "fake_user"
         host = "localhost"
         port = unused_tcp_port
-        uri = f"ws://{host}:{port}"
+        uri = get_uri(host, port)
 
-        async def main():
-            server_task = asyncio.create_task(self.hippo.start_server(host, port))
-            client_task = asyncio.create_task(fake_user_connect(uri, user_id))
-            _done, pending = await asyncio.wait(
-                [server_task, client_task],
-                return_when=asyncio.FIRST_COMPLETED,
+        asyncio.run(
+            server_client_interaction(
+                server_coroutine=self.hippo.start_server(host, port),
+                client_coroutine=fake_user_connect(uri, user_id),
             )
-            for task in pending:  # Kill server when client is done
-                task.cancel()
-
-        asyncio.run(main(), debug=True)
+        )
         check.is_true(self.trial.run.called)
         check.is_not_in(user_id, self.hippo.trials)
