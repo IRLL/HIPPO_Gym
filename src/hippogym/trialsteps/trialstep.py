@@ -1,13 +1,10 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, List, Optional, Union
 
-from hippogym.event_handler import POLL_QUEUES, EventsQueues
-from hippogym.queue_handler import check_queues, create_or_get_queue
+from hippogym.event_handler import EventHandler
 
 if TYPE_CHECKING:
-    from multiprocessing import Queue
-
     from hippogym.ui_elements.ui_element import UIElement
 
 
@@ -15,12 +12,11 @@ class TrialStep(ABC):
     """Abstract class for single trial step."""
 
     def __init__(self) -> None:
-        self.queues: Dict[EventsQueues, "Queue"] = {}
+        self.event_handler: Optional[EventHandler] = None
 
-    @abstractmethod
-    def build(self, queues: Optional[Dict[EventsQueues, "Queue"]] = None) -> None:
-        """Build the TrialStep multiprocessing Queues."""
-        create_or_get_queue(self.queues, EventsQueues.OUTPUT)
+    def build(self, event_handler: EventHandler) -> None:
+        """Build the TrialStep events architecture."""
+        self.event_handler = event_handler
 
     @abstractmethod
     def start(self) -> None:
@@ -38,10 +34,6 @@ class HtmlStep(TrialStep):
         self.html_content = html_content
         super().__init__()
 
-    def build(self, queues: Optional[Dict[EventsQueues, "Queue"]] = None) -> None:
-        """Build multiprocessing queues for html."""
-        raise NotImplementedError
-
     def start(self) -> None:
         """Initialize the TrialStep."""
         raise NotImplementedError
@@ -58,11 +50,9 @@ class InteractiveStep(TrialStep):
         self.ui_elements: List["UIElement"] = ui_elements
         super().__init__()
 
-    def build(self, queues: Optional[Dict[EventsQueues, "Queue"]] = None) -> None:
+    def build(self, event_handler: EventHandler) -> None:
         """Initialize multiprocessing queues."""
-        self.queues = queues if queues is not None else {}
-        for queue in POLL_QUEUES:
-            create_or_get_queue(self.queues, queue)
+        super().build(event_handler)
         for ui_element in self.ui_elements:
             ui_element.build(self)
 
@@ -71,10 +61,6 @@ class InteractiveStep(TrialStep):
         for ui_element in self.ui_elements:
             ui_element.start()
         self.send()
-
-    def poll(self) -> List[dict]:
-        """Get messages from poll queues (KEYBOARD, BUTTON, STANDARD)."""
-        return check_queues([self.queues[queue] for queue in POLL_QUEUES])
 
     def send(self) -> None:
         """Send ui_elements to frontend."""

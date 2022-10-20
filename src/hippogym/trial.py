@@ -1,9 +1,8 @@
 from copy import deepcopy
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 if TYPE_CHECKING:
-    from multiprocessing import Queue
-    from hippogym.event_handler import EventsQueues
+    from hippogym.event_handler import EventHandler
     from hippogym.trialsteps.trialstep import TrialStep
 
 
@@ -12,12 +11,13 @@ class Trial:
 
     def __init__(self, steps: List["TrialStep"]) -> None:
         self.steps = steps
-        self.queues: Dict["EventsQueues", "Queue"] = {}
+        self.event_handler: Optional["EventHandler"] = None
 
-    def build(self):
-        """Build multiprocessing queues for every step."""
+    def build(self, event_handler: "EventHandler"):
+        """Build trial events architecture."""
+        self.event_handler = event_handler
         for step in self.steps:
-            step.build(self.queues)
+            step.build(event_handler)
 
     def run(self):
         """Run the Trial step by step."""

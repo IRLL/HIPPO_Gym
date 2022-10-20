@@ -88,12 +88,15 @@ class WebSocketCommunicator:
         """
         user_id, _project_id = await self.user_handler(server)
         trial = self.hippo.start_trial(user_id)
-        event_handler = EventHandler(trial.queues)
+
+        producer_coroutine = self.producer_handler(server, trial.event_handler)
+        producer_task = asyncio.create_task(producer_coroutine)
+
+        consumer_coroutine = self.consumer_handler(server, trial.event_handler)
+        consumer_task = asyncio.create_task(consumer_coroutine)
+
         _done, pending = await asyncio.wait(
-            [
-                asyncio.create_task(self.producer_handler(server, event_handler)),
-                asyncio.create_task(self.consumer_handler(server, event_handler)),
-            ],
+            [producer_task, consumer_task],
             return_when=asyncio.FIRST_COMPLETED,
         )
         for task in pending:
@@ -115,7 +118,7 @@ class WebSocketCommunicator:
         """
         async for message in server:
             message = json.loads(message)  # Messages should be json deserialisable.
-            event_handler.parse(message)
+            event_handler.emit(message)
             await asyncio.sleep(0.01)
 
     async def producer_handler(

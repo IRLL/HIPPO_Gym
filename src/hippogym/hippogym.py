@@ -1,13 +1,14 @@
 import asyncio
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 from typing import Dict, Optional, Union
 
 from websockets.server import WebSocketServerProtocol
 
 from hippogym.communicator import SSLCertificate, WebSocketCommunicator
-from hippogym.log import get_logger
 from hippogym.trial import DeterministicTrialConfig, Trial, TrialConfig
 from hippogym.trialsteps.trialstep import TrialStep
+from hippogym.event_handler import EventHandler
+from hippogym.log import get_logger
 
 LOGGER = get_logger(__name__)
 
@@ -90,7 +91,8 @@ class HippoGym:
             ValueError: If user is already in trial.
         """
         trial = self.trial_config.sample(self._trial_seed)
-        trial.build()
+        event_handler = EventHandler(Queue(), Queue())
+        trial.build(event_handler)
         new_trial_process = Process(target=trial.run, daemon=True)
         if user_id in self.trials:
             raise ValueError(f"{user_id=} already in trial")
