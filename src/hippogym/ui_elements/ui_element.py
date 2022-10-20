@@ -17,7 +17,7 @@ class UIElement(ABC):
         self.message_handler = message_handler
 
     def build(self, trialstep: "InteractiveStep") -> None:
-        """Build multiprocessing queues for the TrialStep."""
+        """Build the UIElement for the given step."""
         self.message_handler.set_step(trialstep)
 
     def start(self) -> None:
