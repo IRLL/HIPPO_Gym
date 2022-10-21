@@ -1,13 +1,12 @@
 from dataclasses import dataclass, field
 from typing import List, Optional, Set, Tuple
 
-from hippogym.message_handlers.grid import GridMessageHandler
 from hippogym.ui_elements.ui_element import UIElement
 
 
 class Grid(UIElement):
     def __init__(self, rows: int = 10, columns: int = 10) -> None:
-        super().__init__("grid", GridMessageHandler(self))
+        super().__init__("grid")
         self.rows = rows
         self.columns = columns
         self.tiles: List[List[Tile]] = [
@@ -41,6 +40,21 @@ class Grid(UIElement):
     @property
     def selected_tiles_list(self) -> List[Tuple[int, int]]:
         return list(self.selected_tiles)
+
+    def on_grid_event(self, event_type: "GridEvent", tile_data: str) -> None:
+        grid_event_handlers = {
+            "TILESELECTED": self.select,
+            "TILEUNSELECTED": self.unselect,
+            "TILECLICKED": self.click,
+        }
+        tile_data = read_tile_data(tile_data)
+        handler = grid_event_handlers[event_type]
+        handler(*tile_data)
+
+
+def read_tile_data(tile_data: str) -> Tuple[int, int]:
+    row, column = tuple(tile_data)
+    return int(row), int(column)
 
 
 @dataclass

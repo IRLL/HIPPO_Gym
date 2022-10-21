@@ -1,6 +1,5 @@
 import time
 
-from hippogym.message_handlers.textbox import TextBoxMessageHandler
 from hippogym.ui_elements.ui_element import UIElement
 
 
@@ -19,7 +18,7 @@ class TextBox(UIElement):
         syntax=None,
         buttons=None,
     ):
-        super().__init__("TextBox", TextBoxMessageHandler(self))
+        super().__init__("TextBox")
         self.idx = idx
         self.width = width
         self.height = height
@@ -49,11 +48,6 @@ class TextBox(UIElement):
             "syntax": self.syntax,
             "buttons": self.buttons,
         }
-
-    def request(self):
-        request = {"Request": ["TEXTBOX", self.idx]}
-        self.message_handler.send(request)
-        self.updated = False
 
     def update(self, **kwargs):
         new_text = kwargs.pop("text", None)

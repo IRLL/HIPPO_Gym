@@ -1,6 +1,5 @@
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, List, Optional, Union
 
-from hippogym.message_handlers.control import ControlMessageHandler
 from hippogym.ui_elements.building_blocks.button import Button
 from hippogym.ui_elements.building_blocks.slider import Slider
 from hippogym.ui_elements.ui_element import UIElement
@@ -13,12 +12,10 @@ class ControlPanel(UIElement):
         self,
         buttons: Optional[List[Button]] = None,
         sliders: Optional[List[Slider]] = None,
-        keys: bool = False,
     ) -> None:
-        super().__init__("ControlPanel", ControlMessageHandler(self))
+        super().__init__("ControlPanel")
         self.buttons: List[Button] = _ensure_list_type(buttons, Button)
         self.sliders: List[Slider] = _ensure_list_type(sliders, Slider)
-        self.keys = keys if isinstance(keys, bool) else False
 
     def update(self, **kwargs: Any) -> None:
         """Update the control panel with given values.
@@ -35,16 +32,10 @@ class ControlPanel(UIElement):
         """
         buttons: Optional[List[Button]] = kwargs.get("buttons")
         sliders: Optional[List[Slider]] = kwargs.get("sliders")
-        keys: Optional[bool] = kwargs.get("keys")
-
         if buttons is not None:
             self.buttons = _ensure_list_type(buttons, Button)
         if sliders is not None:
             self.sliders = _ensure_list_type(sliders, Slider)
-        if keys is not None:
-            if not isinstance(keys, bool):
-                raise TypeError("Keys must be a bool")
-            self.keys = keys
         self.send()
 
     def set_slider_value(self, slider_title: str, value: float) -> None:
@@ -54,12 +45,36 @@ class ControlPanel(UIElement):
                 return
         raise ValueError(f"Could not find slider {slider_title}")
 
+    def on_button_event(self, event_type: "ButtonEvent", value: str):
+        button_handlers = {
+            "start": self.resume,
+            "pause": self.pause,
+            "end": self.end,
+        }
+        handler = button_handlers.get(value, None)
+        if handler is not None:
+            handler()
+
+    def resume(self) -> None:
+        if hasattr(self.trialstep, "running"):
+            self.trialstep.running = True
+
+    def pause(self) -> None:
+        if hasattr(self.trialstep, "running"):
+            self.trialstep.running = False
+
+    def end(self) -> None:
+        if hasattr(self.trialstep, "stop"):
+            self.trialstep.stop = True
+        if hasattr(self.trialstep, "running"):
+            self.trialstep.running = False
+
     def params_dict(self) -> dict:
         """Represent the control panel as a serialized dictionary"""
         return {
             "Buttons": [button.dict() for button in self.buttons],
             "Sliders": [slider.dict() for slider in self.sliders],
-            "Keys": self.keys,
+            "Keys": True,
         }
 
 

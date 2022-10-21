@@ -1,6 +1,4 @@
 from typing import Dict, List
-from hippogym.event_handler import EventsQueues
-from hippogym.message_handlers.message_handler import MessageHandler
 from hippogym.ui_elements.ui_element import UIElement
 
 
@@ -11,7 +9,7 @@ class InfoPanel(UIElement):
         items: List[str] = None,
         key_value: Dict[str, str] = None,
     ):
-        super().__init__("InfoPanel", MessageHandler(EventsQueues.INFO_PANEL))
+        super().__init__("InfoPanel")
         self.text = text
         self.items = items if items is not None else []
         self.key_value = key_value if key_value is not None else {}
