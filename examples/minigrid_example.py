@@ -6,8 +6,10 @@ pip install git+https://github.com/Farama-Foundation/Minigrid.git
 
 """
 
+from copy import copy
 from enum import Enum
 import logging
+from typing import Optional
 
 import gymnasium as gym
 from minigrid.minigrid_env import MiniGridEnv
@@ -35,6 +37,7 @@ class HumanValue(Enum):
 class HumanAgent(Agent):
     def __init__(self) -> None:
         self.trialstep: "GymStep" = None
+        self.action = None
         super().__init__()
 
         self.keyboard_to_value = {
@@ -57,26 +60,30 @@ class HumanAgent(Agent):
             HumanValue.END: MiniGridEnv.Actions.done.value,
         }
 
+    def on_button_event(self, event_type: "ButtonEvent", value: str):
+        if event_type == "BUTTONPRESSED":
+            human_input = value.lower()
+            self.input_to_action(human_input)
+
+    def on_keyboard_event(self, event_type: "KeyboardEvent", key: "KeyboardKey"):
+        keyname = key[0]
+        if event_type == "KEYDOWN":
+            human_input = self.keyboard_to_value.get(keyname, None)
+            self.input_to_action(human_input)
+
+    def input_to_action(self, human_input: Optional[str]):
+        try:
+            human_input = HumanValue(human_input)
+        except ValueError:
+            return
+        self.action = self.value_to_action.get(human_input, None)
+
     def act(self, observation):
-
-        for message in self.trialstep.poll():
-
-            human_input = None
-
-            if "BUTTONPRESSED" in message:
-                human_input: str = message["BUTTONPRESSED"]
-                human_input = human_input.lower()
-
-            if "KEYDOWN" in message:
-                key_pressed, _ = message["KEYDOWN"]
-                human_input = self.keyboard_to_value[key_pressed]
-
-            try:
-                human_input = HumanValue(human_input)
-            except ValueError:
-                continue
-
-            return self.value_to_action[human_input]
+        if self.action is not None:
+            action = copy(self.action)
+            self.action = None
+            return action
+        return self.action
 
 
 class MiniGridStep(GymStep):
@@ -98,10 +105,7 @@ class MiniGridStep(GymStep):
             for val in HumanValue
         ]
 
-        self.control_panel = ControlPanel(
-            buttons=controls,
-            keys=True,
-        )
+        self.control_panel = ControlPanel(buttons=controls)
 
         self.score = 0
         self.env: MiniGridEnv = gym.make("MiniGrid-KeyCorridorS5R3-v0")
