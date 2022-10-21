@@ -3,7 +3,6 @@
 from multiprocessing import Queue
 from hippogym.event_handler import EventHandler
 from hippogym.trialsteps.trialstep import InteractiveStep
-from hippogym.message_handlers.message_handler import MessageHandler
 from hippogym.ui_elements.ui_element import UIElement
 
 import pytest
@@ -28,8 +27,8 @@ class TestEventArchitecture:
         self.out_q = Queue()
         self.event_handler = EventHandler(self.in_q, self.out_q)
 
-        self.uie1 = DummyUIElement("UIE1", MessageHandler())
-        self.uie2 = DummyUIElement("UIE2", MessageHandler())
+        self.uie1 = DummyUIElement("UIE1")
+        self.uie2 = DummyUIElement("UIE2")
 
         self.intstep = DummyInteractiveStep([self.uie1, self.uie2])
         self.intstep.build(self.event_handler)
@@ -37,16 +36,15 @@ class TestEventArchitecture:
     def test_UIElements_send(self):
         """Anything sent by a UIElement should go in the output queue."""
 
-        messages_sent = set()
+        messages_sent = []
         for ui_element in (self.uie1, self.uie2):
-            message = f"Hi! I'm a {ui_element.name}!"
-            ui_element.message_handler.send(message)
-            messages_sent.add(message)
+            ui_element.send()
+            messages_sent.append({ui_element.name: {"name": ui_element.name}})
 
-        messages_recv = set()
+        messages_recv = []
         while not self.out_q.empty():
             message_recv = self.out_q.get_nowait()
-            messages_recv.add(message_recv)
+            messages_recv.append(message_recv)
 
         check.equal(messages_sent, messages_recv)
 
