@@ -57,9 +57,7 @@ class InteractiveStep(TrialStep):
             ui_element.build(self)
 
     def start(self):
-        """Start UIElements Threads."""
-        for ui_element in self.ui_elements:
-            ui_element.start()
+        """Start UIElements."""
         self.send()
 
     def send(self) -> None:

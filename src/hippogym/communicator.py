@@ -1,12 +1,11 @@
 import asyncio
 import json
+from multiprocessing import Queue
 import ssl
 from logging import getLogger
 from typing import TYPE_CHECKING, Callable, Optional, Tuple, Union
 
 from websockets.server import WebSocketServerProtocol, serve
-
-from hippogym.event_handler import EventHandler
 
 if TYPE_CHECKING:
     from hippogym.hippogym import HippoGym
@@ -87,12 +86,12 @@ class WebSocketCommunicator:
             _path (str): WebSocket connexion path, usually root (/).
         """
         user_id, _project_id = await self.user_handler(server)
-        trial = self.hippo.start_trial(user_id)
+        in_q, out_q = self.hippo.start_trial(user_id)
 
-        producer_coroutine = self.producer_handler(server, trial.event_handler)
+        producer_coroutine = self.producer_handler(server, out_q)
         producer_task = asyncio.create_task(producer_coroutine)
 
-        consumer_coroutine = self.consumer_handler(server, trial.event_handler)
+        consumer_coroutine = self.consumer_handler(server, in_q)
         consumer_task = asyncio.create_task(consumer_coroutine)
 
         _done, pending = await asyncio.wait(
@@ -108,7 +107,7 @@ class WebSocketCommunicator:
     async def consumer_handler(
         self,
         server: WebSocketServerProtocol,
-        event_handler: EventHandler,
+        in_q: Queue,
     ) -> None:
         """Handle incomming messages from client side of the WebSocket connexion.
 
@@ -118,13 +117,13 @@ class WebSocketCommunicator:
         """
         async for message in server:
             message = json.loads(message)  # Messages should be json deserialisable.
-            event_handler.emit(message)
+            in_q.put_nowait(message)
             await asyncio.sleep(0.01)
 
     async def producer_handler(
         self,
         server: WebSocketServerProtocol,
-        event_handler: EventHandler,
+        out_q: Queue,
     ) -> None:
         """Handle messages to send to the client side of the WebSocket connexion.
 
@@ -134,21 +133,21 @@ class WebSocketCommunicator:
         """
         done = False
         while not done:
-            message = await self.producer(event_handler)
+            message = await self.producer(out_q)
             if message == "done":
                 message = {"done": True}
                 done = True
             await server.send(json.dumps(message))
 
-    async def producer(self, event_handler: EventHandler) -> Optional[Union[dict, str]]:
+    async def producer(self, out_q: Queue) -> Optional[Union[dict, str]]:
         """Produce messages to send to the client side of the WebSocket connexion.
 
         Args:
             event_handler (EventHandler): Handler to transcribe messages into HippoGym events.
         """
-        while event_handler.out_q.empty():
+        while out_q.empty():
             await asyncio.sleep(0.01)
-        return event_handler.out_q.get()
+        return out_q.get()
 
 
 async def start_non_ssl_server(handler: Callable, host: str, port: int) -> None:

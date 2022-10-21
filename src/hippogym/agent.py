@@ -1,5 +1,8 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import TYPE_CHECKING, Optional
+
+
+from hippogym.message_handler import MessageHandler
 
 if TYPE_CHECKING:
     from gym import Space
@@ -7,7 +10,7 @@ if TYPE_CHECKING:
     from hippogym.trialsteps.trialstep import TrialStep
 
 
-class Agent(ABC):
+class Agent(MessageHandler):
     def __init__(
         self,
         observation_space: Optional["Space"] = None,
@@ -24,8 +27,9 @@ class Agent(ABC):
         Return the agent action given its obsevation.
         """
 
-    def set_step(self, trialstep: "TrialStep") -> None:
+    def build(self, trialstep: "TrialStep") -> None:
         self.trialstep = trialstep
+        MessageHandler.build(self, self.trialstep)
 
     def set_spaces(self, observation_space: "Space", action_space: "Space") -> None:
         self.observation_space = observation_space

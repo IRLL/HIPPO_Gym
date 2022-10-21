@@ -1,17 +1,16 @@
 import time
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, TypeVar, Union
+from typing import TYPE_CHECKING, Any, List, Optional, Tuple, TypeVar
 
 import gym
 import numpy as np
 
 from hippogym.agent import Agent
+
 from hippogym.trialsteps.trialstep import InteractiveStep
 from hippogym.ui_elements import GameWindow
 
 if TYPE_CHECKING:
-    from multiprocessing import Queue
-
-    from hippogym.event_handler import EventsQueues
+    from hippogym.event_handler import EventHandler
     from hippogym.ui_elements import UIElement
 
 Observation = TypeVar("Observation")
@@ -48,10 +47,10 @@ class GymStep(InteractiveStep):
         self.run_from_start = run_from_start
         self.running = self.run_from_start
 
-    def build(self, queues: Optional[Dict["EventsQueues", "Queue"]] = None) -> None:
+    def build(self, event_handler: "EventHandler") -> None:
         """Initialize queues and message handler thread."""
-        self.agent.set_step(self)
-        super().build(queues)
+        super().build(event_handler)
+        self.agent.build(self)
 
     def step(
         self,
