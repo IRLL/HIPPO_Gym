@@ -19,8 +19,6 @@ from crafting.render.render import get_human_action
 
 from hippogym import HippoGym, Agent
 from hippogym.trialsteps import GymStep
-from hippogym.queue_handler import check_queue
-from hippogym.event_handler import EventsQueues
 
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
@@ -60,25 +58,24 @@ class HumanCraftingAgent(Agent):
         return Event(event_type, pos=pos_abs, button=1)
 
     def act(self, observation):
-        for message in check_queue(self.trialstep.queues[EventsQueues.WINDOW]):
+        pass
+        # # Create fake pygame mouse event
+        # fake_event = self.message_to_event(message)
 
-            # Create fake pygame mouse event
-            fake_event = self.message_to_event(message)
+        # if fake_event is None:
+        #     continue
 
-            if fake_event is None:
-                continue
-
-            # Get action from crafting rendering
-            env: CraftingEnv = self.trialstep.env
-            action = get_human_action(
-                env,
-                additional_events=[fake_event],
-                can_be_none=True,
-                **env.render_variables,
-            )
-            if action:
-                action = env.action(*action)
-            return action
+        # # Get action from crafting rendering
+        # env: CraftingEnv = self.trialstep.env
+        # action = get_human_action(
+        #     env,
+        #     additional_events=[fake_event],
+        #     can_be_none=True,
+        #     **env.render_variables,
+        # )
+        # if action:
+        #     action = env.action(*action)
+        # return action
 
 
 class MineCraftingStep(GymStep):
