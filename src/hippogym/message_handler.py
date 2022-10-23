@@ -42,12 +42,12 @@ class MessageHandler:
             key (KeyboardKey): Key concerned by the event.
         """
 
-    def on_mouse_event(self, event_type: "MouseEvent", buttons: List["MouseButton"]):
+    def on_mouse_event(self, event_type: "MouseEvent", event_data):
         """How to react to a mouse event.
 
         Args:
             event_type (MouseEvent): Type of the event triggered.
-            buttons (List["MouseButton"]): Mouse button concerned by the event.
+            event_data: Mouse event data.
         """
 
     def on_slider_event(self, event_type: "SliderEvent", content: Any):
