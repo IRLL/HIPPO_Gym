@@ -20,7 +20,7 @@ class MessageHandler:
             self.event_handler.emitter.on(topic.value, listner)
 
     def on_ui_event(self, event_type: UIEvent, *args, **kwargs):
-        """How the UIElement reacts to a button event.
+        """How to react to a button event.
 
         Args:
             event_type (KeyboardEvent): Type of the event triggered.
@@ -28,7 +28,7 @@ class MessageHandler:
         """
 
     def on_button_event(self, event_type: "ButtonEvent", value: str):
-        """How the UIElement reacts to a button event.
+        """How to react to a button event.
 
         Args:
             event_type (KeyboardEvent): Type of the event triggered.
@@ -36,7 +36,7 @@ class MessageHandler:
         """
 
     def on_keyboard_event(self, event_type: "KeyboardEvent", key: "KeyboardKey"):
-        """How the UIElement reacts to a keyboard event.
+        """How to react to a keyboard event.
 
         Args:
             event_type (KeyboardEvent): Type of the event triggered.
@@ -44,7 +44,7 @@ class MessageHandler:
         """
 
     def on_mouse_event(self, event_type: "MouseEvent", buttons: List["MouseButton"]):
-        """How the UIElement reacts to a mouse event.
+        """How to react to a mouse event.
 
         Args:
             event_type (MouseEvent): Type of the event triggered.
@@ -52,7 +52,7 @@ class MessageHandler:
         """
 
     def on_slider_event(self, event_type: "SliderEvent", content: Any):
-        """How the UIElement reacts to a slider event.
+        """How to react to a slider event.
 
         Args:
             event_type (TextEvent): Type of the event triggered.
@@ -60,7 +60,7 @@ class MessageHandler:
         """
 
     def on_text_event(self, event_type: "TextEvent", content: Any):
-        """How the UIElement reacts to a text event.
+        """How to react to a text event.
 
         Args:
             event_type (TextEvent): Type of the event triggered.
@@ -68,7 +68,7 @@ class MessageHandler:
         """
 
     def on_grid_event(self, event_type: "GridEvent", tile_data: str):
-        """How the UIElement reacts to a grid event.
+        """How to react to a grid event.
 
         Args:
             event_type (GridEvent): Type of the event triggered.
@@ -76,7 +76,7 @@ class MessageHandler:
         """
 
     def on_window_event(self, event_type: "WindowEvent", content: Any):
-        """How the UIElement reacts to a window event.
+        """How to react to a window event.
 
         Args:
             event_type (WindowEvent): Type of the event triggered.
@@ -84,7 +84,7 @@ class MessageHandler:
         """
 
     def on_user_event(self, event_type: "UserEvent", content: Any):
-        """How the UIElement reacts to a user event.
+        """How to react to a user event.
 
         Args:
             event_type (WindowEvent): Type of the event triggered.
