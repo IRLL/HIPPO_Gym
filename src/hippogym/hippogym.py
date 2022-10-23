@@ -113,4 +113,6 @@ class HippoGym:
             user_id (UserID): Unique ID of the user.
         """
         trial_process = self.trials.pop(user_id)
+        trial_process.kill()
         trial_process.join()
+        trial_process.close()
