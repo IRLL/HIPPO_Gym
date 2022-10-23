@@ -7,7 +7,6 @@ from websockets.server import WebSocketServerProtocol
 from hippogym.communicator import SSLCertificate, WebSocketCommunicator
 from hippogym.trial import DeterministicTrialConfig, Trial, TrialConfig
 from hippogym.trialsteps.trialstep import TrialStep
-from hippogym.event_handler import EventHandler
 from hippogym.log import get_logger
 
 LOGGER = get_logger(__name__)
@@ -114,5 +113,4 @@ class HippoGym:
             user_id (UserID): Unique ID of the user.
         """
         trial_process = self.trials.pop(user_id)
-        trial_process.terminate()
-        trial_process.close()
+        trial_process.join()
