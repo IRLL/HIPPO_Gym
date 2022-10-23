@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from enum import Enum
-import time
+
 from typing import TYPE_CHECKING, Any, Dict, Union
 from pymitter import EventEmitter
 
@@ -42,7 +42,7 @@ class EventHandler:
         self.in_q = in_q
         self.out_q = out_q
         self.emitter = EventEmitter()
-        event_thread = Thread(target=self.start, daemon=True)
+        event_thread = Thread(target=self.run)
         event_thread.start()
 
     def send(self, message: Any) -> None:
@@ -55,13 +55,18 @@ class EventHandler:
         self.out_q.put_nowait(message)
 
     def run(self):
-        while True:
-            message = self.recv()
-            self.emit(message)
+        asyncio.run(self.producer_handler())
 
-    def recv(self) -> None:
+    async def producer_handler(self):
+        done = False
+        while not done:
+            message = await self.recv()
+            self.emit(message)
+            await asyncio.sleep(0.01)
+
+    async def recv(self) -> list:
         while self.in_q.empty():
-            time.sleep(0.01)
+            await asyncio.sleep(0.01)
         return self.in_q.get()
 
     def emit(self, message: Dict[str, Any]):
@@ -73,7 +78,7 @@ class EventHandler:
                     for event_type, content in event.items():
                         self.emitter.emit(topic.value, event_type, content)
                 else:
-                    self.emitter.emit(topic.value, event)
+                    raise NotImplementedError
 
 
 UIEvent = Union[
