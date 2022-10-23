@@ -8,10 +8,14 @@ from hippogym.agent import Agent
 
 from hippogym.trialsteps.trialstep import InteractiveStep
 from hippogym.ui_elements import GameWindow
+from hippogym.log import get_logger
+
 
 if TYPE_CHECKING:
     from hippogym.event_handler import EventHandler
     from hippogym.ui_elements import UIElement
+
+LOGGER = get_logger(__name__)
 
 Observation = TypeVar("Observation")
 Action = TypeVar("Action")
@@ -90,6 +94,8 @@ class GymStep(InteractiveStep):
                     action
                 )
                 done = terminated or truncated
+                LOGGER.debug("GymStep action was taken: %s. Reward: %f", action, reward)
+
                 self.step(
                     observation, action, new_observation, reward, terminated, info
                 )
@@ -100,7 +106,7 @@ class GymStep(InteractiveStep):
 
                 observation = new_observation
                 self.send_render()
-                time.sleep(0.03)
+                time.sleep(0.01)
             time.sleep(1)
         self.env.close()
 
