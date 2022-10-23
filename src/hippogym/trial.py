@@ -13,18 +13,19 @@ class Trial:
 
     def __init__(self, steps: List["TrialStep"]) -> None:
         self.steps = steps
-        self.event_handler: Optional["EventHandler"] = None
+        self.in_q: Optional[Queue] = None
+        self.out_q: Optional[Queue] = None
 
     def build(self, in_q: Queue, out_q: Queue):
         """Build trial events architecture."""
-        self.event_handler = EventHandler(in_q, out_q)
-        for step in self.steps:
-            step.build(self.event_handler)
+        self.in_q = in_q
+        self.out_q = out_q
 
     def run(self):
         """Run the Trial step by step."""
         for step in self.steps:
-            step.start()
+            event_handler = EventHandler(self.in_q, self.out_q)
+            step.build(event_handler)
             step.run()
 
     def build_and_run(self, in_q: Queue, out_q: Queue):
