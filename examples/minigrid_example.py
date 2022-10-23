@@ -20,7 +20,7 @@ from hippogym.ui_elements.building_blocks import Button
 from hippogym.trialsteps import GymStep
 
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
 
