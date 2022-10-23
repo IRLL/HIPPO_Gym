@@ -19,10 +19,6 @@ class TrialStep(ABC):
         self.event_handler = event_handler
 
     @abstractmethod
-    def start(self) -> None:
-        """Initialize the TrialStep."""
-
-    @abstractmethod
     def run(self) -> None:
         """Run the trial step"""
 
@@ -33,10 +29,6 @@ class HtmlStep(TrialStep):
     def __init__(self, html_content: Union[str, Path]) -> None:
         self.html_content = html_content
         super().__init__()
-
-    def start(self) -> None:
-        """Initialize the TrialStep."""
-        raise NotImplementedError
 
     def run(self) -> None:
         """Run the html step"""
@@ -55,9 +47,6 @@ class InteractiveStep(TrialStep):
         super().build(event_handler)
         for ui_element in self.ui_elements:
             ui_element.build(self)
-
-    def start(self):
-        """Start UIElements."""
         self.send()
 
     def send(self) -> None:
