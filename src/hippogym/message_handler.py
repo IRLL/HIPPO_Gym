@@ -20,11 +20,10 @@ class MessageHandler:
             self.event_handler.emitter.on(topic.value, listner)
 
     def on_ui_event(self, event_type: UIEvent, *args, **kwargs):
-        """How to react to a button event.
+        """How to react to any user interface event.
 
         Args:
             event_type (KeyboardEvent): Type of the event triggered.
-            value (KeyboardKey): Value give by the button.
         """
 
     def on_button_event(self, event_type: "ButtonEvent", value: str):
