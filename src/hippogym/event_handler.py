@@ -1,14 +1,11 @@
-import asyncio
 import logging
 from enum import Enum
 
-from typing import TYPE_CHECKING, Any, Dict, Union
-from pymitter import EventEmitter
-
-from threading import Thread
+from typing import TYPE_CHECKING, Any, Dict, List, Union
 
 
 if TYPE_CHECKING:
+    from hippogym.message_handler import MessageHandler
     from multiprocessing import Queue
 
 LOGGER = logging.getLogger(__name__)
@@ -41,9 +38,15 @@ class EventHandler:
     def __init__(self, in_q: "Queue", out_q: "Queue") -> None:
         self.in_q = in_q
         self.out_q = out_q
-        self.emitter = EventEmitter()
-        event_thread = Thread(target=self.run)
-        event_thread.start()
+        self.message_handlers: List["MessageHandler"] = []
+
+    def register(self, message_handler: "MessageHandler"):
+        """Register the given MessageHandler to dispatch events into it.
+
+        Args:
+            message_handler (MessageHandler): MessageHandler to register.
+        """
+        self.message_handlers.append(message_handler)
 
     def send(self, message: Any) -> None:
         """Send message into the output Queue.
@@ -54,31 +57,44 @@ class EventHandler:
         """
         self.out_q.put_nowait(message)
 
-    def run(self):
-        asyncio.run(self.producer_handler())
-
-    async def producer_handler(self):
-        done = False
-        while not done:
-            message = await self.recv()
+    def recv(self) -> None:
+        """Recieve and emit all events cached events in the input queue."""
+        while not self.in_q.empty():
+            message = self.in_q.get()
             self.emit(message)
-            await asyncio.sleep(0.01)
 
-    async def recv(self) -> list:
-        while self.in_q.empty():
-            await asyncio.sleep(0.01)
-        return self.in_q.get()
+    def trigger_events(self):
+        """Trigger cached events in the input queue."""
+        self.recv()
+
+    def dispatch(self, topic: EventTopic, event_type: str, content: Any):
+        """Dispatch the given event to the given topic to all registered message handlers.
+
+        Args:
+            topic (EventTopic): The topic on which to send the event.
+            event_type (str): The type of event.
+            content (Any): Additional content data of the event.
+        """
+        for message_handler in self.message_handlers:
+            message_handler.emitter.emit(topic, event_type, content)
 
     def emit(self, message: Dict[str, Any]):
-        """Emit the given message in relevant topic."""
+        """Pass the given to all message handlers with correct topic."""
         for key, event in message.items():
-            if key in _key_to_topic:
-                topic = _key_to_topic[key]
-                if isinstance(event, dict):
-                    for event_type, content in event.items():
-                        self.emitter.emit(topic.value, event_type, content)
-                else:
-                    raise NotImplementedError
+            events = self._find_events(key, event)
+            for topic, event_type, content in events:
+                self.dispatch(topic, event_type, content)
+
+    @staticmethod
+    def _find_events(key: str, event: Any):
+        events = []
+        if key in _key_to_topic:
+            topic = _key_to_topic[key]
+            if isinstance(event, dict):
+                for event_type, content in event.items():
+                    event_message = (topic.value, event_type, content)
+                    events.append(event_message)
+        return events
 
 
 UIEvent = Union[

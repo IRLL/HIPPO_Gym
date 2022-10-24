@@ -96,9 +96,9 @@ class HippoGym:
             raise ValueError(f"{user_id=} already in trial")
 
         new_trial_process = Process(
+            name="Trial",
             target=trial.build_and_run,
             args=(in_q, out_q),
-            daemon=True,
         )
 
         self.trials[user_id] = new_trial_process

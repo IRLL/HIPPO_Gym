@@ -88,6 +88,7 @@ class GymStep(InteractiveStep):
 
                 action = None
                 while action is None:
+                    self.event_handler.trigger_events()
                     action = self.agent.act(observation)
 
                 new_observation, reward, terminated, truncated, info = self.gym_step(

@@ -1,23 +1,38 @@
-from typing import TYPE_CHECKING, Any, List, Optional
+from typing import TYPE_CHECKING, Any, Optional
 from hippogym.event_handler import EventHandler, EventTopic, UIEvent
+
+from pymitter import EventEmitter
 
 if TYPE_CHECKING:
     from hippogym.trialsteps.trialstep import TrialStep
 
 
 class MessageHandler:
+    """Base class for elements that reacts to incomming events."""
+
     def __init__(self) -> None:
         self.event_handler: Optional[EventHandler] = None
+        self.emitter = EventEmitter()
 
     def build(self, trialstep: "TrialStep"):
+        """Build the message handler on the current step.
+
+        Args:
+            trialstep (TrialStep): Current TrialStep.
+        """
         self.event_handler = trialstep.event_handler
+        self.event_handler.register(self)
         self.subscribe_to_events_topics()
 
     def subscribe_to_events_topics(self):
         """Subscribe all on_x_event methods to the EventEmitter."""
         for topic in EventTopic:
-            listner = getattr(self, f"on_{topic.name.lower()}_event")
-            self.event_handler.emitter.on(topic.value, listner)
+            method_name = f"on_{topic.name.lower()}_event"
+            listner = getattr(self, method_name)
+
+            # We ignore non-subclassed methods to reduce pass overhead
+            if self.is_subclassed(method_name):
+                self.emitter.on(topic.value, listner)
 
     def on_ui_event(self, event_type: UIEvent, *args, **kwargs):
         """How to react to any user interface event.
@@ -89,3 +104,17 @@ class MessageHandler:
             event_type (WindowEvent): Type of the event triggered.
             content (Any): Content concerned by the event.
         """
+
+    @classmethod
+    def is_subclassed(cls, method_name: str):
+        """Is the given method name subclassed in this subclass ?
+
+        Args:
+            method_name (str): Name of the method to check.
+
+        Returns:
+            bool: True if the method is subclassed and thus overriten.
+        """
+        method = getattr(cls, method_name)
+        super_method = getattr(MessageHandler, method_name)
+        return method is not super_method

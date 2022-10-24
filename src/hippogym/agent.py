@@ -19,6 +19,7 @@ class Agent(MessageHandler):
         self.observation_space = observation_space
         self.action_space = action_space
         self.trialstep: "TrialStep" = None
+        super().__init__()
 
     @abstractmethod
     def act(self, observation):
