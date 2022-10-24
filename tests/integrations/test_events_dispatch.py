@@ -54,23 +54,17 @@ class TestEventArchitecture:
 
     def test_UIElements_recv(self, mocker: MockerFixture):
         """UIElements should recieve messages of topics they are subscribed to."""
-
-        self.in_q.put_nowait({"ButtonEvent": {"BUTTONPRESSED": "clickme"}})
-        expected_args = ("ui.ButtonEvent", "BUTTONPRESSED", "clickme")
-
-        self.uie1.emitter = mocker.MagicMock()
         self.uie1.emitter.emit = mocker.MagicMock()
-        self.uie2.emitter = mocker.MagicMock()
 
-        self.event_handler.register(self.uie1)
+        expected_args = ("ui.ButtonEvent", "BUTTONPRESSED", "clickme")
+        self.in_q.put({"ButtonEvent": {"BUTTONPRESSED": "clickme"}})
         self.event_handler.trigger_events()
 
-        check.is_true(self.uie1.emitter.emit.called, "UIElement emitter was not called")
+        assert self.uie1.emitter.emit.called, "UIElement emitter was not called"
 
         check.equal(
-            self.uie1.emitter.emit.call_args,
+            self.uie1.emitter.emit.call_args.args,
             expected_args,
             "UIElement was emitter was not called with the right arguments"
             f": {self.uie1.emitter.emit.call_args}",
         )
-        check.is_false(self.uie2.emitter.emit.called)
