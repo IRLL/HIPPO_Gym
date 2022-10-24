@@ -65,5 +65,12 @@ class TestEventArchitecture:
         self.event_handler.register(self.uie1)
         self.event_handler.trigger_events()
 
-        check.equal(self.uie1.emitter.emit.call_args.args, expected_args)
-        check.is_false(self.uie2.emitter.called)
+        check.is_true(self.uie1.emitter.emit.called, "UIElement emitter was not called")
+
+        check.equal(
+            self.uie1.emitter.emit.call_args,
+            expected_args,
+            "UIElement was emitter was not called with the right arguments"
+            f": {self.uie1.emitter.emit.call_args}",
+        )
+        check.is_false(self.uie2.emitter.emit.called)
