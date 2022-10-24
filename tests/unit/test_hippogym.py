@@ -39,7 +39,7 @@ class TestHippoGym:
         mocker.patch("hippogym.hippogym.Process", FakeProcess)
         self.hippo.start_trial("fake_user")
         check.equal(len(self.hippo.trials), 1)
-        check.is_true(self.trial.run.called)
+        check.is_true(self.trial.build_and_run.called)
 
     def test_start_trial_user_conflict(self, mocker: MockerFixture):
         """should raise if given user is already in trial"""
@@ -53,5 +53,5 @@ class TestHippoGym:
         self.hippo.trials["fake_user"] = process_patch
         self.hippo.stop_trial("fake_user")
         check.equal(len(self.hippo.trials), 0)
-        check.is_true(process_patch.terminate.called)
+        check.is_true(process_patch.join.called)
         check.is_true(process_patch.close.called)

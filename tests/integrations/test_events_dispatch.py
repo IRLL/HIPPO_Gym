@@ -7,6 +7,7 @@ from hippogym.ui_elements.ui_element import UIElement
 
 import pytest
 import pytest_check as check
+from pytest_mock import MockerFixture
 
 
 class DummyInteractiveStep(InteractiveStep):
@@ -36,18 +37,33 @@ class TestEventArchitecture:
     def test_UIElements_send(self):
         """Anything sent by a UIElement should go in the output queue."""
 
-        messages_sent = []
+        expected_msgs = {}
         for ui_element in (self.uie1, self.uie2):
             ui_element.send()
-            messages_sent.append({ui_element.name: {"name": ui_element.name}})
+            expected_msgs[ui_element.name] = {
+                ui_element.name: {"name": ui_element.name}
+            }
 
         messages_recv = []
         while not self.out_q.empty():
             message_recv = self.out_q.get_nowait()
             messages_recv.append(message_recv)
 
-        check.equal(messages_sent, messages_recv)
+        for _, message in expected_msgs.items():
+            check.is_in(message, messages_recv)
 
-    def test_UIElements_recv(self):
+    def test_UIElements_recv(self, mocker: MockerFixture):
         """UIElements should recieve messages of topics they are subscribed to."""
-        raise NotImplementedError
+
+        self.in_q.put_nowait({"ButtonEvent": {"BUTTONPRESSED": "clickme"}})
+        expected_args = ("ui.ButtonEvent", "BUTTONPRESSED", "clickme")
+
+        self.uie1.emitter = mocker.MagicMock()
+        self.uie1.emitter.emit = mocker.MagicMock()
+        self.uie2.emitter = mocker.MagicMock()
+
+        self.event_handler.register(self.uie1)
+        self.event_handler.trigger_events()
+
+        check.equal(self.uie1.emitter.emit.call_args.args, expected_args)
+        check.is_false(self.uie2.emitter.called)
