@@ -104,10 +104,11 @@ class GymStep(InteractiveStep):
                 if done:
                     self.stop = True
                     observation, info = self.gym_reset()
+                    self.agent.reset()
 
                 observation = new_observation
                 self.send_render()
-                time.sleep(0.01)
+                time.sleep(0.03)
             time.sleep(1)
         self.env.close()
 

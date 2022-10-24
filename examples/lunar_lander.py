@@ -1,6 +1,8 @@
+from copy import copy
+from enum import Enum
 import logging
 
-from hippogym import HippoGym, Agent
+from hippogym import HippoGym, HumanAgent
 from hippogym.ui_elements import InfoPanel, ControlPanel, standard_controls
 from hippogym.trialsteps import GymStep
 
@@ -8,26 +10,57 @@ logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 
 
-class HumanAgent(Agent):
-    def __init__(self, observation_space=None, action_space=None) -> None:
-        self.last_action = "noop"
-        self.trialstep: "GymStep" = None
-        super().__init__(observation_space, action_space)
+class LunarLanderAction(Enum):
+    NOOP = 0
+    RIGHT = 1
+    DOWN = 2
+    LEFT = 3
+
+
+class HumanAction(Enum):
+    NOOP = "noop"
+    RIGHT = "right"
+    DOWN = "down"
+    LEFT = "left"
+    RESET = "reset"
+
+
+VALUE_TO_ACTION = {
+    HumanAction.NOOP: LunarLanderAction.NOOP.value,
+    HumanAction.RIGHT: LunarLanderAction.RIGHT.value,
+    HumanAction.DOWN: LunarLanderAction.DOWN.value,
+    HumanAction.LEFT: LunarLanderAction.LEFT.value,
+    HumanAction.RESET: -1,
+}
+
+KEY_TO_VALUE = {
+    "ArrowRight": HumanAction.RIGHT,
+    "ArrowDown": HumanAction.DOWN,
+    "ArrowLeft": HumanAction.LEFT,
+}
+
+
+class HumanAgentToggling(HumanAgent):
+    def __init__(self) -> None:
+        self.default_action = VALUE_TO_ACTION[HumanAction.NOOP]
+        self.last_action = self.default_action
+        super().__init__(HumanAction, VALUE_TO_ACTION, KEY_TO_VALUE)
 
     def act(self, observation):
-        actions = ["noop", "right", "down", "left"]
-        action = self.last_action
-        for message in self.trialstep.poll():
-            action = message.get("ACTION")
-            button: str = message.get("BUTTONPRESSED", "")
-            if button.lower() == "reset":
-                return -1
+        if self.action is None:
+            return self.last_action
 
-        if action not in actions:
-            action = self.last_action
-        else:
-            self.last_action = action
-        return actions.index(action)
+        if self.action == self.last_action:
+            self.action = self.default_action
+
+        self.last_action = self.action
+        action = self.action
+        self.action = None
+        return action
+
+    def reset(self):
+        self.last_action = self.default_action
+        super().reset()
 
 
 class LunarLanderV2Step(GymStep):
@@ -36,10 +69,7 @@ class LunarLanderV2Step(GymStep):
             text="Use keyboard to play the game",
             items=["s = down", "a = left", "d = right"],
         )
-        self.control_panel = ControlPanel(
-            buttons=standard_controls,
-            keys=True,
-        )
+        self.control_panel = ControlPanel(buttons=standard_controls)
         self.score = 0
         super().__init__(
             "LunarLander-v2",
@@ -75,7 +105,7 @@ class LunarLanderV2Step(GymStep):
 
 
 def build_experiment() -> HippoGym:
-    agent = HumanAgent()
+    agent = HumanAgentToggling()
     lunarstep = LunarLanderV2Step(agent)
     return HippoGym(lunarstep)
 

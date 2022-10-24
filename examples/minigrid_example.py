@@ -6,15 +6,13 @@ pip install git+https://github.com/Farama-Foundation/Minigrid.git
 
 """
 
-from copy import copy
 from enum import Enum
 import logging
-from typing import Optional
 
 import gymnasium as gym
 from minigrid.minigrid_env import MiniGridEnv
 
-from hippogym import HippoGym, Agent
+from hippogym import HippoGym, HumanAgent
 from hippogym.ui_elements import InfoPanel, ControlPanel
 from hippogym.ui_elements.building_blocks import Button
 from hippogym.trialsteps import GymStep
@@ -32,58 +30,6 @@ class HumanValue(Enum):
     PICKUP = "pickup"
     DROP = "drop"
     END = "end"
-
-
-class HumanAgent(Agent):
-    def __init__(self) -> None:
-        self.trialstep: "GymStep" = None
-        self.action = None
-        super().__init__()
-
-        self.keyboard_to_value = {
-            "ArrowRight": HumanValue.RIGHT,
-            "ArrowLeft": HumanValue.LEFT,
-            "ArrowUp": HumanValue.UP,
-            " ": HumanValue.TOGGLE,
-            "c": HumanValue.PICKUP,
-            "v": HumanValue.DROP,
-            "Enter": HumanValue.END,
-        }
-
-        self.value_to_action = {
-            HumanValue.LEFT: MiniGridEnv.Actions.left.value,
-            HumanValue.RIGHT: MiniGridEnv.Actions.right.value,
-            HumanValue.UP: MiniGridEnv.Actions.forward.value,
-            HumanValue.TOGGLE: MiniGridEnv.Actions.toggle.value,
-            HumanValue.PICKUP: MiniGridEnv.Actions.pickup.value,
-            HumanValue.DROP: MiniGridEnv.Actions.drop.value,
-            HumanValue.END: MiniGridEnv.Actions.done.value,
-        }
-
-    def on_button_event(self, event_type: "ButtonEvent", value: str):
-        if event_type == "BUTTONPRESSED":
-            human_input = value.lower()
-            self.input_to_action(human_input)
-
-    def on_keyboard_event(self, event_type: "KeyboardEvent", key: "KeyboardKey"):
-        keyname = key[0]
-        if event_type == "KEYDOWN":
-            human_input = self.keyboard_to_value.get(keyname, None)
-            self.input_to_action(human_input)
-
-    def input_to_action(self, human_input: Optional[str]):
-        try:
-            human_input = HumanValue(human_input)
-        except ValueError:
-            return
-        self.action = self.value_to_action.get(human_input, None)
-
-    def act(self, observation):
-        if self.action is not None:
-            action = copy(self.action)
-            self.action = None
-            return action
-        return self.action
 
 
 class MiniGridStep(GymStep):
@@ -148,7 +94,28 @@ class MiniGridStep(GymStep):
 
 
 def build_experiment() -> HippoGym:
-    agent = HumanAgent()
+
+    keyboard_to_value = {
+        "ArrowRight": HumanValue.RIGHT,
+        "ArrowLeft": HumanValue.LEFT,
+        "ArrowUp": HumanValue.UP,
+        " ": HumanValue.TOGGLE,
+        "c": HumanValue.PICKUP,
+        "v": HumanValue.DROP,
+        "Enter": HumanValue.END,
+    }
+
+    value_to_action = {
+        HumanValue.LEFT: MiniGridEnv.Actions.left.value,
+        HumanValue.RIGHT: MiniGridEnv.Actions.right.value,
+        HumanValue.UP: MiniGridEnv.Actions.forward.value,
+        HumanValue.TOGGLE: MiniGridEnv.Actions.toggle.value,
+        HumanValue.PICKUP: MiniGridEnv.Actions.pickup.value,
+        HumanValue.DROP: MiniGridEnv.Actions.drop.value,
+        HumanValue.END: MiniGridEnv.Actions.done.value,
+    }
+
+    agent = HumanAgent(HumanValue, value_to_action, keyboard_to_value)
     minigrid = MiniGridStep(agent)
     return HippoGym(minigrid)
 
