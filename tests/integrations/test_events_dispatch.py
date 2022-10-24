@@ -31,11 +31,11 @@ class TestEventArchitecture:
         self.uie1 = DummyUIElement("UIE1")
         self.uie2 = DummyUIElement("UIE2")
 
-        self.intstep = DummyInteractiveStep([self.uie1, self.uie2])
-        self.intstep.build(self.event_handler)
-
     def test_UIElements_send(self):
         """Anything sent by a UIElement should go in the output queue."""
+
+        intstep = DummyInteractiveStep([self.uie1, self.uie2])
+        intstep.build(self.event_handler)
 
         expected_msgs = {}
         for ui_element in (self.uie1, self.uie2):
@@ -54,7 +54,12 @@ class TestEventArchitecture:
 
     def test_UIElements_recv(self, mocker: MockerFixture):
         """UIElements should recieve messages of topics they are subscribed to."""
+
         self.uie1.emitter.emit = mocker.MagicMock()
+        self.uie2.emitter.emit = mocker.MagicMock()
+
+        intstep = DummyInteractiveStep([self.uie1])
+        intstep.build(self.event_handler)
 
         expected_args = ("ui.ButtonEvent", "BUTTONPRESSED", "clickme")
         self.in_q.put({"ButtonEvent": {"BUTTONPRESSED": "clickme"}})
@@ -68,3 +73,5 @@ class TestEventArchitecture:
             "UIElement was emitter was not called with the right arguments"
             f": {self.uie1.emitter.emit.call_args}",
         )
+
+        check.is_false(self.uie2.emitter.emit.called)
