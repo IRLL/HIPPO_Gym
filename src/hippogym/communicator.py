@@ -1,8 +1,8 @@
 import asyncio
 import json
-from multiprocessing import Queue
 import ssl
 from logging import getLogger
+from multiprocessing import Queue
 from typing import TYPE_CHECKING, Callable, Optional, Tuple, Union
 
 from websockets.server import WebSocketServerProtocol, serve

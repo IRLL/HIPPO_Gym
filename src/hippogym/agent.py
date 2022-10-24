@@ -3,7 +3,6 @@ from copy import copy
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
-
 from hippogym.message_handler import MessageHandler
 
 if TYPE_CHECKING:

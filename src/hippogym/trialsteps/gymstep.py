@@ -5,11 +5,9 @@ import gym
 import numpy as np
 
 from hippogym.agent import Agent
-
+from hippogym.log import get_logger
 from hippogym.trialsteps.trialstep import InteractiveStep
 from hippogym.ui_elements import GameWindow
-from hippogym.log import get_logger
-
 
 if TYPE_CHECKING:
     from hippogym.event_handler import EventHandler

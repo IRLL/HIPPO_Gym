@@ -5,9 +5,9 @@ from typing import Dict, Optional, Tuple, Union
 from websockets.server import WebSocketServerProtocol
 
 from hippogym.communicator import SSLCertificate, WebSocketCommunicator
+from hippogym.log import get_logger
 from hippogym.trial import DeterministicTrialConfig, Trial, TrialConfig
 from hippogym.trialsteps.trialstep import TrialStep
-from hippogym.log import get_logger
 
 LOGGER = get_logger(__name__)
 

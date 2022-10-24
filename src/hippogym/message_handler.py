@@ -1,7 +1,8 @@
 from typing import TYPE_CHECKING, Any, Optional
-from hippogym.event_handler import EventHandler, EventTopic, UIEvent
 
 from pymitter import EventEmitter
+
+from hippogym.event_handler import EventHandler, EventTopic, UIEvent
 
 if TYPE_CHECKING:
     from hippogym.trialsteps.trialstep import TrialStep

@@ -1,12 +1,11 @@
 import logging
 from enum import Enum
-
 from typing import TYPE_CHECKING, Any, Dict, List, Union
 
-
 if TYPE_CHECKING:
-    from hippogym.message_handler import MessageHandler
     from multiprocessing import Queue
+
+    from hippogym.message_handler import MessageHandler
 
 LOGGER = logging.getLogger(__name__)
 

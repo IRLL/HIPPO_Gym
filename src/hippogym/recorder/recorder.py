@@ -1,9 +1,8 @@
+import json
+import pickle
 from os import listdir, makedirs
 from shutil import rmtree
 from typing import Optional
-
-import pickle
-import json
 
 from hippogym.recorder.uploader import Uploader
 
