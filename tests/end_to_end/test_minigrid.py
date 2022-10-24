@@ -19,6 +19,7 @@ def test_minigrid(unused_tcp_port: int):
         async with connect(uri) as websocket:
             # Connects
             await websocket.send(json.dumps({"userId": user_id}))
+
             message = await websocket.recv()
 
             ui_elements_messages = [message]
@@ -27,7 +28,8 @@ def test_minigrid(unused_tcp_port: int):
             expected_ui_elements = ("InfoPanel", "GameWindow", "ControlPanel")
 
             for _ in expected_ui_elements[1:]:
-                ui_elements_messages.append(await websocket.recv())
+                message = await asyncio.wait_for(websocket.recv(), 1)
+                ui_elements_messages.append(message)
 
             for expected_ui_element in expected_ui_elements:
                 check.is_true(
@@ -43,5 +45,6 @@ def test_minigrid(unused_tcp_port: int):
         server_client_interaction(
             server_coroutine=hippo.start_server(host, port),
             client_coroutine=fake_user_connect(uri, user_id),
-        )
+        ),
+        debug=True,
     )

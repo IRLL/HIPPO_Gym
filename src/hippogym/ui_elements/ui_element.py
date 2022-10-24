@@ -1,29 +1,27 @@
 from abc import ABC, abstractmethod
-from threading import Thread
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
+
+from hippogym.message_handler import MessageHandler
 
 if TYPE_CHECKING:
-    from hippogym.message_handlers.message_handler import MessageHandler
     from hippogym.trialsteps.trialstep import InteractiveStep
+
 
 DO_NOT_UPDATE = "DO_NOT_UPDATE&@"
 
 
-class UIElement(ABC):
+class UIElement(MessageHandler):
     """Base class for all UI elements that compose a TrialStep."""
 
-    def __init__(self, name: str, message_handler: "MessageHandler") -> None:
+    def __init__(self, name: str) -> None:
         self.name = name
-        self.message_handler = message_handler
+        self.trialstep: Optional["InteractiveStep"] = None
+        MessageHandler.__init__(self)
 
     def build(self, trialstep: "InteractiveStep") -> None:
-        """Build multiprocessing queues for the TrialStep."""
-        self.message_handler.set_step(trialstep)
-
-    def start(self) -> None:
-        """Start the UIElement on the given TrialStep."""
-        message_handler_thread = Thread(target=self.message_handler.run)
-        message_handler_thread.start()
+        """Build the UIElement for the given step."""
+        self.trialstep = trialstep
+        MessageHandler.build(self, self.trialstep)
 
     @abstractmethod
     def params_dict(self) -> dict:
@@ -37,13 +35,13 @@ class UIElement(ABC):
         """Send its serialized representation into the messages queue."""
         attributes = self.params_dict()
         if any(attr is not None for attr in attributes.values()):
-            self.message_handler.send(self.asdict())
+            self.trialstep.event_handler.send(self.asdict())
         else:
             self.hide()
 
     def hide(self) -> None:
         """Hide the UI element."""
-        self.message_handler.send({self.name: None})
+        self.trialstep.event_handler.send({self.name: None})
 
     def update(self, **kwargs: Any) -> None:
         """Update the UIElement with new attr values."""

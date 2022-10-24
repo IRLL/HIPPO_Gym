@@ -1,13 +1,13 @@
 import asyncio
-from multiprocessing import Process
-from typing import Dict, Optional, Union
+from multiprocessing import Process, Queue
+from typing import Dict, Optional, Tuple, Union
 
 from websockets.server import WebSocketServerProtocol
 
 from hippogym.communicator import SSLCertificate, WebSocketCommunicator
-from hippogym.log import get_logger
 from hippogym.trial import DeterministicTrialConfig, Trial, TrialConfig
 from hippogym.trialsteps.trialstep import TrialStep
+from hippogym.log import get_logger
 
 LOGGER = get_logger(__name__)
 
@@ -77,7 +77,7 @@ class HippoGym:
         finally:
             self.stop_trial(user_id)
 
-    def start_trial(self, user_id: UserID) -> Trial:
+    def start_trial(self, user_id: UserID) -> Tuple[Queue, Queue]:
         """Start a trial for the given user.
 
         Args:
@@ -90,14 +90,21 @@ class HippoGym:
             ValueError: If user is already in trial.
         """
         trial = self.trial_config.sample(self._trial_seed)
-        trial.build()
-        new_trial_process = Process(target=trial.run, daemon=True)
+        in_q, out_q = Queue(), Queue()
+
         if user_id in self.trials:
             raise ValueError(f"{user_id=} already in trial")
+
+        new_trial_process = Process(
+            name="Trial",
+            target=trial.build_and_run,
+            args=(in_q, out_q),
+        )
+
         self.trials[user_id] = new_trial_process
         self._trial_seed += 1
         new_trial_process.start()
-        return trial
+        return in_q, out_q
 
     def stop_trial(self, user_id: UserID) -> None:
         """Stop the trial for the given user.
@@ -106,5 +113,6 @@ class HippoGym:
             user_id (UserID): Unique ID of the user.
         """
         trial_process = self.trials.pop(user_id)
-        trial_process.terminate()
+        trial_process.kill()
+        trial_process.join()
         trial_process.close()

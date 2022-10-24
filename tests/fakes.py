@@ -1,7 +1,9 @@
 from typing import Callable
 
+from unittest.mock import MagicMock
 
-class FakeProcess:
+
+class FakeProcess(MagicMock):
     def __init__(
         self,
         target: Callable,
@@ -10,6 +12,7 @@ class FakeProcess:
         *other_args,
         **other_kwargs
     ) -> None:
+        super().__init__()
         self.target = target
         self.target_obj = None
         self.args = args if args is not None else tuple()
@@ -17,6 +20,3 @@ class FakeProcess:
 
     def start(self):
         self.target_obj = self.target(*self.args, **self.kwargs)
-
-    def close(self):
-        pass

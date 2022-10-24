@@ -1,18 +1,21 @@
 import time
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, TypeVar, Union
+from typing import TYPE_CHECKING, Any, List, Optional, Tuple, TypeVar
 
 import gym
 import numpy as np
 
 from hippogym.agent import Agent
+
 from hippogym.trialsteps.trialstep import InteractiveStep
 from hippogym.ui_elements import GameWindow
+from hippogym.log import get_logger
+
 
 if TYPE_CHECKING:
-    from multiprocessing import Queue
-
-    from hippogym.event_handler import EventsQueues
+    from hippogym.event_handler import EventHandler
     from hippogym.ui_elements import UIElement
+
+LOGGER = get_logger(__name__)
 
 Observation = TypeVar("Observation")
 Action = TypeVar("Action")
@@ -48,10 +51,10 @@ class GymStep(InteractiveStep):
         self.run_from_start = run_from_start
         self.running = self.run_from_start
 
-    def build(self, queues: Optional[Dict["EventsQueues", "Queue"]] = None) -> None:
+    def build(self, event_handler: "EventHandler") -> None:
         """Initialize queues and message handler thread."""
-        self.agent.set_step(self)
-        super().build(queues)
+        super().build(event_handler)
+        self.agent.build(self)
 
     def step(
         self,
@@ -85,12 +88,15 @@ class GymStep(InteractiveStep):
 
                 action = None
                 while action is None:
+                    self.event_handler.trigger_events()
                     action = self.agent.act(observation)
 
                 new_observation, reward, terminated, truncated, info = self.gym_step(
                     action
                 )
                 done = terminated or truncated
+                LOGGER.debug("GymStep action was taken: %s. Reward: %f", action, reward)
+
                 self.step(
                     observation, action, new_observation, reward, terminated, info
                 )
@@ -98,6 +104,7 @@ class GymStep(InteractiveStep):
                 if done:
                     self.stop = True
                     observation, info = self.gym_reset()
+                    self.agent.reset()
 
                 observation = new_observation
                 self.send_render()

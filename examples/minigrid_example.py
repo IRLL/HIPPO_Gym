@@ -12,13 +12,13 @@ import logging
 import gymnasium as gym
 from minigrid.minigrid_env import MiniGridEnv
 
-from hippogym import HippoGym, Agent
+from hippogym import HippoGym, HumanAgent
 from hippogym.ui_elements import InfoPanel, ControlPanel
 from hippogym.ui_elements.building_blocks import Button
 from hippogym.trialsteps import GymStep
 
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
 
@@ -30,53 +30,6 @@ class HumanValue(Enum):
     PICKUP = "pickup"
     DROP = "drop"
     END = "end"
-
-
-class HumanAgent(Agent):
-    def __init__(self) -> None:
-        self.trialstep: "GymStep" = None
-        super().__init__()
-
-        self.keyboard_to_value = {
-            "ArrowRight": HumanValue.RIGHT,
-            "ArrowLeft": HumanValue.LEFT,
-            "ArrowUp": HumanValue.UP,
-            " ": HumanValue.TOGGLE,
-            "c": HumanValue.PICKUP,
-            "v": HumanValue.DROP,
-            "Enter": HumanValue.END,
-        }
-
-        self.value_to_action = {
-            HumanValue.LEFT: MiniGridEnv.Actions.left.value,
-            HumanValue.RIGHT: MiniGridEnv.Actions.right.value,
-            HumanValue.UP: MiniGridEnv.Actions.forward.value,
-            HumanValue.TOGGLE: MiniGridEnv.Actions.toggle.value,
-            HumanValue.PICKUP: MiniGridEnv.Actions.pickup.value,
-            HumanValue.DROP: MiniGridEnv.Actions.drop.value,
-            HumanValue.END: MiniGridEnv.Actions.done.value,
-        }
-
-    def act(self, observation):
-
-        for message in self.trialstep.poll():
-
-            human_input = None
-
-            if "BUTTONPRESSED" in message:
-                human_input: str = message["BUTTONPRESSED"]
-                human_input = human_input.lower()
-
-            if "KEYDOWN" in message:
-                key_pressed, _ = message["KEYDOWN"]
-                human_input = self.keyboard_to_value[key_pressed]
-
-            try:
-                human_input = HumanValue(human_input)
-            except ValueError:
-                continue
-
-            return self.value_to_action[human_input]
 
 
 class MiniGridStep(GymStep):
@@ -98,10 +51,7 @@ class MiniGridStep(GymStep):
             for val in HumanValue
         ]
 
-        self.control_panel = ControlPanel(
-            buttons=controls,
-            keys=True,
-        )
+        self.control_panel = ControlPanel(buttons=controls)
 
         self.score = 0
         self.env: MiniGridEnv = gym.make("MiniGrid-KeyCorridorS5R3-v0")
@@ -144,7 +94,28 @@ class MiniGridStep(GymStep):
 
 
 def build_experiment() -> HippoGym:
-    agent = HumanAgent()
+
+    keyboard_to_value = {
+        "ArrowRight": HumanValue.RIGHT,
+        "ArrowLeft": HumanValue.LEFT,
+        "ArrowUp": HumanValue.UP,
+        " ": HumanValue.TOGGLE,
+        "c": HumanValue.PICKUP,
+        "v": HumanValue.DROP,
+        "Enter": HumanValue.END,
+    }
+
+    value_to_action = {
+        HumanValue.LEFT: MiniGridEnv.Actions.left.value,
+        HumanValue.RIGHT: MiniGridEnv.Actions.right.value,
+        HumanValue.UP: MiniGridEnv.Actions.forward.value,
+        HumanValue.TOGGLE: MiniGridEnv.Actions.toggle.value,
+        HumanValue.PICKUP: MiniGridEnv.Actions.pickup.value,
+        HumanValue.DROP: MiniGridEnv.Actions.drop.value,
+        HumanValue.END: MiniGridEnv.Actions.done.value,
+    }
+
+    agent = HumanAgent(HumanValue, value_to_action, keyboard_to_value)
     minigrid = MiniGridStep(agent)
     return HippoGym(minigrid)
 

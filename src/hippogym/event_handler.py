@@ -1,154 +1,109 @@
 import logging
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Dict, Set
+
+from typing import TYPE_CHECKING, Any, Dict, List, Union
+
 
 if TYPE_CHECKING:
+    from hippogym.message_handler import MessageHandler
     from multiprocessing import Queue
 
 LOGGER = logging.getLogger(__name__)
 
 
-class EventsQueues(Enum):
-    """Events shared messages queues."""
-
-    KEYBOARD = "keyboard_q"
-    BUTTON = "button_q"
-    WINDOW = "window_q"
-    STANDARD = "standard_q"
-    CONTROL = "control_q"
-    TEXTBOX = "textbox_q"
-    GRID = "grid_q"
-    USER = "user_q"
-    INFO_PANEL = "info_q"
-    OUTPUT = "out_q"
+class EventTopic(Enum):
+    UI = "ui"
+    KEYBOARD = "ui.KeyboardEvent"
+    MOUSE = "ui.MouseEvent"
+    BUTTON = "ui.ButtonEvent"
+    WINDOW = "ui.WindowEvent"
+    SLIDER = "ui.SliderEvent"
+    TEXT = "ui.TextEvent"
+    GRID = "ui.GridEvent"
+    USER = "user"
 
 
-POLL_QUEUES = (EventsQueues.KEYBOARD, EventsQueues.BUTTON, EventsQueues.STANDARD)
+_key_to_topic = {
+    "KeyboardEvent": EventTopic.KEYBOARD,
+    "MouseEvent": EventTopic.MOUSE,
+    "ButtonEvent": EventTopic.BUTTON,
+    "WindowEvent": EventTopic.WINDOW,
+    "SliderEvent": EventTopic.SLIDER,
+    "TextEvent": EventTopic.TEXT,
+    "GridEvent": EventTopic.GRID,
+}
 
 
 class EventHandler:
-    def __init__(self, queues: Dict[EventsQueues, "Queue"]) -> None:
-        for queue_name in EventsQueues:
-            if queue_name not in queues:
-                LOGGER.debug("No %s in EventHandler", queue_name)
+    def __init__(self, in_q: "Queue", out_q: "Queue") -> None:
+        self.in_q = in_q
+        self.out_q = out_q
+        self.message_handlers: List["MessageHandler"] = []
 
-        self.queues = queues
-        self.out_q = queues[EventsQueues.OUTPUT]
-        self.pressed_keys: Set[str] = set()
-        self.key_map = {
-            "w": "up",
-            "a": "left",
-            "s": "down",
-            "d": "right",
-            " ": "fire",
-            "ArrowUp": "up",
-            "ArrowDown": "down",
-            "ArrowLeft": "left",
-            "ArrowRight": "right",
-        }
+    def register(self, message_handler: "MessageHandler"):
+        """Register the given MessageHandler to dispatch events into it.
 
-        self.handlers = {
-            "KeyboardEvent": self.handle_keyboard_event,
-            "MouseEvent": self.handle_window_event,
-            "ButtonEvent": self.handle_button_event,
-            "WindowEvent": self.handle_window_event,
-            "SliderEvent": self.handle_slider_event,
-            "TextEvent": self.handle_text_event,
-            "GridEvent": self.handle_grid_event,
-        }
+        Args:
+            message_handler (MessageHandler): MessageHandler to register.
+        """
+        self.message_handlers.append(message_handler)
 
-    def parse(self, message: Dict[str, Any]) -> None:
-        for key in message.keys():
-            if key in self.handlers:
-                self.handlers[key](message[key])
+    def send(self, message: Any) -> None:
+        """Send message into the output Queue.
 
-    def handle_text_event(self, message: Dict[str, Any]) -> None:
-        put_in_queue(message, self.queues[EventsQueues.TEXTBOX])
+        Args:
+            message (Any): Message sent into the output Queue.
 
-    def handle_keyboard_event(self, message: Dict[str, Any]) -> None:
-        put_in_queue(message, self.queues[EventsQueues.KEYBOARD])
-        # check for common keys to add to standard_q events
-        keydown = message.get("KEYDOWN", None)
-        if keydown:
-            key = keydown[0]
-            if key in self.key_map.keys() and key not in self.pressed_keys:
-                self.pressed_keys.add(key)
-                self.check_standard_message(key)
-        keyup = message.get("KEYUP", None)
-        if keyup:
-            key = keyup[0]
-            if key in self.key_map.keys() and key in self.pressed_keys:
-                self.pressed_keys.remove(key)
-                self.check_standard_message(key)
+        """
+        self.out_q.put_nowait(message)
 
-    def handle_button_event(self, message: dict) -> None:
-        put_in_queue(message, self.queues[EventsQueues.BUTTON])
-        button = message.get("BUTTONPRESSED", None)
-        if button:
-            self.check_standard_message(button)
-        if button in ("start", "pause", "end"):
-            new_message = {button: True}
-            put_in_queue(new_message, self.queues[EventsQueues.CONTROL])
+    def recv(self) -> None:
+        """Recieve and emit all events cached events in the input queue."""
+        while not self.in_q.empty():
+            message = self.in_q.get()
+            self.emit(message)
 
-    def handle_window_event(self, message: dict) -> None:
-        if EventsQueues.WINDOW not in self.queues:
-            return
-        put_in_queue(message, self.queues[EventsQueues.WINDOW])
+    def trigger_events(self):
+        """Trigger cached events in the input queue."""
+        self.recv()
 
-    def handle_grid_event(self, message: dict) -> None:
-        if EventsQueues.GRID not in self.queues:
-            return
-        put_in_queue(message, self.queues[EventsQueues.GRID])
+    def dispatch(self, topic: EventTopic, event_type: str, content: Any):
+        """Dispatch the given event to the given topic to all registered message handlers.
 
-    def check_standard_message(self, event: str) -> None:
-        action = None
-        if event in self.key_map.keys():
-            if len(self.pressed_keys) == 0:
-                action = "noop"
-            elif "a" in self.pressed_keys and "w" in self.pressed_keys:
-                action = "upleft"
-            elif "a" in self.pressed_keys and "s" in self.pressed_keys:
-                action = "downleft"
-            elif "d" in self.pressed_keys and "w" in self.pressed_keys:
-                action = "upright"
-            elif "d" in self.pressed_keys and "s" in self.pressed_keys:
-                action = "downright"
-            else:
-                key = self.pressed_keys.pop()
-                self.pressed_keys.add(key)
-                action = self.key_map[key]
+        Args:
+            topic (EventTopic): The topic on which to send the event.
+            event_type (str): The type of event.
+            content (Any): Additional content data of the event.
+        """
+        for message_handler in self.message_handlers:
+            message_handler.emitter.emit(topic, event_type, content)
 
-        elif event == "w" or event == "ArrowUp" or event == "up":
-            action = "up"
-        elif event == "s" or event == "ArrowDown" or event == "down":
-            action = "down"
-        elif event == "a" or event == "ArrowLeft" or event == "left":
-            action = "left"
-        elif event == "d" or event == "ArrowRight" or event == "right":
-            action = "right"
-        elif event == " " or event == "fire":
-            action = "fire"
-        if action:
-            put_in_queue({"ACTION": action}, self.queues[EventsQueues.STANDARD])
+    def emit(self, message: Dict[str, Any]):
+        """Pass the given to all message handlers with correct topic."""
+        for key, event in message.items():
+            events = self._find_events(key, event)
+            for topic, event_type, content in events:
+                self.dispatch(topic, event_type, content)
 
-    def handle_slider_event(self, message: dict) -> None:
-        put_in_queue(message, self.queues[EventsQueues.CONTROL])
-
-    def connect(self, user_id: str, project_id: str) -> None:
-        message = {"userId": user_id, "projectId": project_id}
-        put_in_queue(message, self.queues[EventsQueues.USER])
-
-    def disconnect(self, user_id: str, project_id: str) -> None:
-        put_in_queue(
-            {"disconnect": user_id, "projectId": project_id},
-            self.queues[EventsQueues.USER],
-        )
+    @staticmethod
+    def _find_events(key: str, event: Any):
+        events = []
+        if key in _key_to_topic:
+            topic = _key_to_topic[key]
+            if isinstance(event, dict):
+                for event_type, content in event.items():
+                    event_message = (topic.value, event_type, content)
+                    events.append(event_message)
+        return events
 
 
-def put_in_queue(message: Any, queue: "Queue") -> None:
-    try:
-        if queue.full():
-            queue.get_nowait()
-        queue.put_nowait(message)
-    except Exception as e:
-        LOGGER.error(e)
+UIEvent = Union[
+    "ButtonEvent",
+    "KeyboardEvent",
+    "MouseEvent",
+    "TextEvent",
+    "GridEvent",
+    "WindowEvent",
+    "SliderEvent",
+    "UserEvent",
+]

@@ -1,19 +1,13 @@
 import base64
-import logging
 from io import BytesIO
-from multiprocessing import Queue
-from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple
+from typing import Any, Optional, Tuple
 
 from PIL import Image
 
 from hippogym.log import get_logger
-from hippogym.message_handlers.window import WindowMessageHandler
 from hippogym.ui_elements.ui_element import UIElement
 
 LOGGER = get_logger(__name__)
-
-if TYPE_CHECKING:
-    from hippogym.trialsteps.trialstep import InteractiveStep
 
 
 class GameWindow(UIElement):
@@ -25,7 +19,7 @@ class GameWindow(UIElement):
         image: Optional[str] = None,
         text: Optional[str] = None,
     ) -> None:
-        super().__init__("GameWindow", WindowMessageHandler(self))
+        super().__init__("GameWindow")
         self.width = width
         self.height = height
         self.mode = mode
@@ -33,9 +27,15 @@ class GameWindow(UIElement):
         self.text = text
         self.frame_id: int = 0
 
-    def build(self, trialstep: "InteractiveStep") -> None:
-        self.events: Queue = Queue(maxsize=10)
-        super().build(trialstep)
+    def on_window_event(self, event_type: "WindowEvent", content: Any):
+        window_event_handlers = {
+            "WINDOWRESIZED": self.resize,
+        }
+        handler = window_event_handlers[event_type]
+        handler(content)
+
+    def resize(self, size: Tuple[int, int]):
+        self.set_size(*size)
 
     def params_dict(self) -> dict:
         return {
@@ -69,27 +69,6 @@ class GameWindow(UIElement):
     @property
     def size(self) -> Tuple[int, int]:
         return (self.width, self.height)
-
-    def add_event(self, event: Dict[str, Any]) -> None:
-        if self.events is None:
-            raise RuntimeError("Trying to add an event before the GameWindow is built.")
-        if self.events.full():
-            self.get_event()
-        self.events.put(event)
-
-    def get_event(self) -> Optional[str]:
-        if self.events is None:
-            raise RuntimeError("Trying to get an event before the GameWindow is built.")
-        event = None
-        if not self.events.empty():
-            event = self.events.get()
-        return event
-
-    def clear_events(self) -> None:
-        if self.events is None:
-            raise RuntimeError("Trying to clear events before the GameWindow is built.")
-        while not self.events.empty():
-            self.events.get()
 
     # TODO: add functionality for RGBA array not just RGB
     def convert_numpy_array_to_base64(self, array):
