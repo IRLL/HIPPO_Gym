@@ -1,18 +1,20 @@
-FROM python:3.9
+FROM python:3.7
 
 RUN apt-get update && apt-get install -y \
-	xvfb
+	xvfb \
+	python-opengl
 
-COPY src/* ./
-COPY src/hippogym_app/images/* ./images/
-COPY src/hippogym_app/Fingerprints/* ./Fingerprints/
+COPY App/* ./
+COPY App/images/* ./images/
+COPY App/Fingerprints/* ./Fingerprints/
+COPY App/MtiaeScoreAgent/* ./
+COPY App/MtiaeScoreAgent/Impressions/* ./Impressions/
 RUN mkdir ./Trials
-RUN mkdir ./XML
 COPY requirements.txt .
 
 RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
 
-EXPOSE 5000
+EXPOSE 5005
 
 CMD ./xvfb.sh
