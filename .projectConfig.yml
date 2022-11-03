@@ -1,17 +1,22 @@
 project:
   awsSetup:
     bucket: projects.irll
+    containerName: new-cognitive-tutor
     cpu: 2
     memory: 10
     region: ca-central-1
+    repository: new-cognitive-tutor
+    repositoryUri: 237796709103.dkr.ecr.ca-central-1.amazonaws.com/new-cognitive-tutor
     rootDomain: irll.net
+  bucket: projects.irll
+  ecsTask: new-cognitive-tutor
   events:
     startServerStep: 1
     stopServerStep: 3
-  id: fingerprint-demo
+  id: new-cognitive-tutor
   live: true
   maxRuntime: 30
-  name: fingerprint-demo
+  name: new-cognitive-tutor
   researcher: Nadeen
   ssl:
     fullchain: SSL/fullchain.pem
@@ -23,7 +28,7 @@ project:
     3: exampleThank.html
     finalStep: exampleThank.html
   teamMembers: null
-  useAWS: false
+  useAWS: true
 trial:
   actionBufferLifespan: 1
   actionSpace: null
@@ -49,8 +54,8 @@ trial:
   maxScore: 2242
   minFrameRate: 1
   minMinutiae: 1
-  projectId: fingerprint-demo
-  s3upload: false
+  projectId: new-cognitive-tutor
+  s3upload: true
   startingFrameRate: 30
   ui:
   - stop

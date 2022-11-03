@@ -1,5 +1,5 @@
 project:
-  useAWS: false # bool, set to true if using AWS, set false and ignore all AWS entries
+  useAWS: true # bool, set to true if using AWS, set false and ignore all AWS entries
   awsSetup:
     bucket: projects.irll # working bucket in AWS
     region: ca-central-1 # working AWS region
@@ -10,10 +10,10 @@ project:
   events:
     startServerStep: 1 # int
     stopServerStep: 3 # int
-  id: fingerprint-demo # Letters, Numbers and '-' only!
+  id: new-cognitive-tutor # Letters, Numbers and '-' only!
   live: true # bool
   maxRuntime: 30 # int in minutes.
-  name: fingerprint-demo # str
+  name: new-cognitive-tutor # str
   researcher: Nadeen # str
   ssl:
     fullchain: SSL/fullchain.pem # path to fullchain.pem file excluding bucket name
