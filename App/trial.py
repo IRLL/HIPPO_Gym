@@ -42,7 +42,7 @@ class Trial():
         self.filename = None
 
         self.selectedRanGraph = random.randint(23, 32)
-
+        
         self.start()
         self.run()
 
@@ -162,17 +162,17 @@ class Trial():
             self.count+=1
             self.send_ui()
 
-    def handle_action(self, action:str):
-        '''
-        Translates action to int and resets action buffer if action !=0
-        '''
-        action = action.strip().lower()
-        actionSpace = self.config.get('actionSpace')
-        if action in actionSpace:
-            actionCode = actionSpace.index(action)
-        else:
-            actionCode = 0
-        self.humanAction = actionCode
+    # def handle_action(self, action:str):
+    #     '''
+    #     Translates action to int and resets action buffer if action !=0
+    #     '''
+    #     action = action.strip().lower()
+    #     actionSpace = self.config.get('actionSpace')
+    #     if action in actionSpace:
+    #         actionCode = actionSpace.index(action)
+    #     else:
+    #         actionCode = 0
+    #     self.humanAction = actionCode
    
     def update_entry(self, update_dict:dict):
         '''
@@ -204,14 +204,14 @@ class Trial():
     #     self.frameId += 1
     #     return {'frame': frame, 'frameId': self.frameId}
 
-    def send_render(self, render:dict):
-        '''
-        Attempts to send render message to websocket
-        '''
-        try: 
-            self.pipe.send(json.dumps(render))
-        except:
-            raise TypeError("Render Dictionary is not JSON serializable")
+    # def send_render(self, render:dict):
+    #     '''
+    #     Attempts to send render message to websocket
+    #     '''
+    #     try: 
+    #         self.pipe.send(json.dumps(render))
+    #     except:
+    #         raise TypeError("Render Dictionary is not JSON serializable")
 
     def send_ui(self):
         feedback = "feedback"
@@ -242,60 +242,60 @@ class Trial():
             except:
                 raise TypeError("Render Dictionary is not JSON serializable")
 
-    def send_instructions(self, instructions):
-        if not instructions:
-            instructions = self.config.get('instructions', None)
-        if instructions:
-            try: 
-                self.pipe.send(json.dumps({'Instructions': instructions}))
-            except:
-                return
+    # def send_instructions(self, instructions):
+    #     if not instructions:
+    #         instructions = self.config.get('instructions', None)
+    #     if instructions:
+    #         try: 
+    #             self.pipe.send(json.dumps({'Instructions': instructions}))
+    #         except:
+    #             return
 
-    def send_fingerprint_config(self):
-        max_score = self.config.get('maxScore')
-        min_minutiae = self.config.get('minMinutiae')
-        self.pipe.send(json.dumps({'Fingerprint': self.fingerprint, 'MaxScore': max_score, 'MinMinutiae': min_minutiae}))
+    # def send_fingerprint_config(self):
+    #     max_score = self.config.get('maxScore')
+    #     min_minutiae = self.config.get('minMinutiae')
+    #     self.pipe.send(json.dumps({'Fingerprint': self.fingerprint, 'MaxScore': max_score, 'MinMinutiae': min_minutiae}))
     
-    def get_score(self):
-        # Get the score from the windows machine
+    # def get_score(self):
+    #     # Get the score from the windows machine
 
-        # For now, just sleep for 2 seconds and return a random score
-        time.sleep(2)
-        max_score = self.config.get('maxScore')
-        return random.randint(0, max_score)
+    #     # For now, just sleep for 2 seconds and return a random score
+    #     time.sleep(2)
+    #     max_score = self.config.get('maxScore')
+    #     return random.randint(0, max_score)
     
-    def send_score(self, score):
-        try:
-            self.pipe.send(json.dumps({'Score': score}))
-        except:
-            return
+    # def send_score(self, score):
+    #     try:
+    #         self.pipe.send(json.dumps({'Score': score}))
+    #     except:
+    #         return
     
-    def send_expert(self):
-        try:
-            #Try to load in the first xml
-            expert_1 = xmlToArray(f'Fingerprints/{self.imagename}.FingerNet.xml')
-            #Try to load in the second xml
-            expert_2 = xmlToArray(f'Fingerprints/{self.imagename}.MinutiaNet.xml')
-            #Try to send it to front end
-            self.pipe.send(json.dumps({'ExpertMarks1': expert_1, 'ExpertMarks2': expert_2}))
-        except:
-            return
+    # def send_expert(self):
+    #     try:
+    #         #Try to load in the first xml
+    #         expert_1 = xmlToArray(f'Fingerprints/{self.imagename}.FingerNet.xml')
+    #         #Try to load in the second xml
+    #         expert_2 = xmlToArray(f'Fingerprints/{self.imagename}.MinutiaNet.xml')
+    #         #Try to send it to front end
+    #         self.pipe.send(json.dumps({'ExpertMarks1': expert_1, 'ExpertMarks2': expert_2}))
+    #     except:
+    #         return
 
-    def take_step(self):
-        '''
-        Expects a dictionary return with all the values that should be recorded.
-        Records return and saves all memory associated with this setp.
-        Checks for DONE from Agent/Env
-        '''
-        envState = self.agent.step(self.humanAction)
-        self.update_entry(envState)
-        self.save_entry()
-        if envState['done']:
-            self.reset()
-        else:
-            score = self.agent.get_score(self.xmlFilename)
-            self.send_score(score)
-        self.play = True
+    # def take_step(self):
+    #     '''
+    #     Expects a dictionary return with all the values that should be recorded.
+    #     Records return and saves all memory associated with this setp.
+    #     Checks for DONE from Agent/Env
+    #     '''
+    #     envState = self.agent.step(self.humanAction)
+    #     self.update_entry(envState)
+    #     self.save_entry()
+    #     if envState['done']:
+    #         self.reset()
+    #     else:
+    #         score = self.agent.get_score(self.xmlFilename)
+    #         self.send_score(score)
+    #     self.play = True
 
     def save_entry(self):
         '''
@@ -342,71 +342,71 @@ class Trial():
         self.filename = filename
         self.path = path
 
-    def handle_minutiae(self, command:str, minutiaList:list):
-        '''
-        Creates a new XML file in the in the XML folder
-        using the given minutia list
-        '''
-        XMLstring = self.createXML(minutiaList)
+    # def handle_minutiae(self, command:str, minutiaList:list):
+    #     '''
+    #     Creates a new XML file in the in the XML folder
+    #     using the given minutia list
+    #     '''
+    #     XMLstring = self.createXML(minutiaList)
 
-        user = 'Nadeen'
-        filename = f'{self.imagename}'
-        path = f'XML/{filename}.xml'
-        self.xmlFilename = path
+    #     user = 'Nadeen'
+    #     filename = f'{self.imagename}'
+    #     path = f'XML/{filename}.xml'
+    #     self.xmlFilename = path
 
-        try:
-            XMLfile = open(path, 'x')
-            XMLfile.write(XMLstring)
-            XMLfile.close()
-        except OSError as e:
-            # No such directory
-            if e.errno == errno.ENOENT:
-                os.makedirs('XML') # create "XML" directory
-            # File name already exists
-            elif e.errno == errno.EEXIST:
-                files = [file for file in os.listdir('XML') if filename in file]
-                i = 1
-                while filename + str(i) +".xml" in files:
-                    i += 1
-                path = f'XML/{filename}{str(i)}.xml'
+    #     try:
+    #         XMLfile = open(path, 'x')
+    #         XMLfile.write(XMLstring)
+    #         XMLfile.close()
+    #     except OSError as e:
+    #         # No such directory
+    #         if e.errno == errno.ENOENT:
+    #             os.makedirs('XML') # create "XML" directory
+    #         # File name already exists
+    #         elif e.errno == errno.EEXIST:
+    #             files = [file for file in os.listdir('XML') if filename in file]
+    #             i = 1
+    #             while filename + str(i) +".xml" in files:
+    #                 i += 1
+    #             path = f'XML/{filename}{str(i)}.xml'
             
-            XMLfile = open(path, 'x')
-            XMLfile.write(XMLstring)
-            XMLfile.close()
+    #         XMLfile = open(path, 'x')
+    #         XMLfile.write(XMLstring)
+    #         XMLfile.close()
 
-        if command == "getFeedback":
-            score_change = get_score_change(path)
-            self.pipe.send(json.dumps({'ScoreChange': score_change}))
+    #     if command == "getFeedback":
+    #         score_change = get_score_change(path)
+    #         self.pipe.send(json.dumps({'ScoreChange': score_change}))
         
-        self.play = True
+    #     self.play = True
 
-    def createXML(self, minutiae:list):
-        '''
-        Creates and returns an XML string with the following structure:
-            <MinutiaeList>
-                <Minutia X="313" Y="381" Angle="342.0" Type="End" />
-                ...
-            </MinutiaeList>
-        '''
-        minutiaeList = ET.Element('MinutiaeList')
+#     def createXML(self, minutiae:list):
+#         '''
+#         Creates and returns an XML string with the following structure:
+#             <MinutiaeList>
+#                 <Minutia X="313" Y="381" Angle="342.0" Type="End" />
+#                 ...
+#             </MinutiaeList>
+#         '''
+#         minutiaeList = ET.Element('MinutiaeList')
 
-        for minutia in minutiae:
-            ET.SubElement(minutiaeList, 'Minutia',
-                {'X': str(minutia['x']).split('.')[0],
-                'Y': str(minutia['y']).split('.')[0],
-                'Angle': str(minutia['orientation']),
-                'Type': str(minutia['type'])})
+#         for minutia in minutiae:
+#             ET.SubElement(minutiaeList, 'Minutia',
+#                 {'X': str(minutia['x']).split('.')[0],
+#                 'Y': str(minutia['y']).split('.')[0],
+#                 'Angle': str(minutia['orientation']),
+#                 'Type': str(minutia['type'])})
         
-        tab_length = "" # defining tab length to be 4 spaces
-        rough_string = ET.tostring(minutiaeList)
-        reparsed = minidom.parseString(rough_string)
+#         tab_length = "" # defining tab length to be 4 spaces
+#         rough_string = ET.tostring(minutiaeList)
+#         reparsed = minidom.parseString(rough_string)
         
-        return reparsed.toprettyxml(indent=tab_length)
+#         return reparsed.toprettyxml(indent=tab_length)
 
-def xmlToArray(path):
-    tree = ET.parse(path)
-    root = tree.getroot()
-    minutiae = []
-    for child in root:
-        minutiae.append({'x': int(child.attrib['X']), 'y': int(child.attrib['Y']), 'orientation': float(child.attrib['Angle'].replace(',', '.'))})
-    return minutiae
+# def xmlToArray(path):
+#     tree = ET.parse(path)
+#     root = tree.getroot()
+#     minutiae = []
+#     for child in root:
+#         minutiae.append({'x': int(child.attrib['X']), 'y': int(child.attrib['Y']), 'orientation': float(child.attrib['Angle'].replace(',', '.'))})
+#     return minutiae

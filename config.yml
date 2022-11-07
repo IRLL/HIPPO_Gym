@@ -30,7 +30,7 @@ project:
     8: 8_quiz.html
     9: game
     10: exampleThank.html
-    finalStep: exampleThank.html # required, filename can be same as last numbered step
+    # finalStep: exampleThank.html # required, filename can be same as last numbered step
   teamMembers: # str
 trial:
   actionBufferLifespan: 1 # int
