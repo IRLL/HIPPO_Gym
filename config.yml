@@ -9,7 +9,7 @@ project:
 
   events:
     startServerStep: 1 # int
-    stopServerStep: 3 # int
+    stopServerStep: 13 # int
   id: new-cognitive-tutor # Letters, Numbers and '-' only!
   live: true # bool
   maxRuntime: 30 # int in minutes.
@@ -20,14 +20,24 @@ project:
     privkey: SSL/privkey.pem # path to privkey.pem file excluding bucket name
     sslBucket: projects.irll # bucket name for resolving paths above
   steps: # any number of steps needed with corresponding filenames
-    1: exampleConsent.html
-    2: game
-    3: exampleThank.html
+    1: 1_consentForm.html
+    2: 2_intro_instructions.html
+    3: 3_flight_planning_intro.html
+    4: 4_flight_planning_intro2.html
+    5: 5_node_inspector.html
+    6: 6_rewards_costs.html
+    7: 7_graph_structure_info.html
+    8: 8_train_test_instruction.html
+    9: 9_cognitive_tutor_instructions.html
+    10: 10_quiz_instructions.html
+    11: 11_quiz.html
+    12: game
+    13: exampleThank.html
     finalStep: exampleThank.html # required, filename can be same as last numbered step
   teamMembers: # str
 trial:
   actionBufferLifespan: 1 # int
-  maxEpisodes: 20 # int
+  maxEpisodes: 32 # int
   game: fingerprint # full environment name
   dataFile: episode # episode or trial
   s3upload: false

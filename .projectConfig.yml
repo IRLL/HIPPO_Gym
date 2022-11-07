@@ -12,7 +12,7 @@ project:
   ecsTask: new-cognitive-tutor
   events:
     startServerStep: 1
-    stopServerStep: 3
+    stopServerStep: 13
   id: new-cognitive-tutor
   live: true
   maxRuntime: 30
@@ -23,9 +23,19 @@ project:
     privkey: SSL/privkey.pem
     sslBucket: projects.irll
   steps:
-    1: exampleConsent.html
-    2: game
-    3: exampleThank.html
+    1: 1_consentForm.html
+    2: 2_intro_instructions.html
+    3: 3_flight_planning_intro.html
+    4: 4_flight_planning_intro2.html
+    5: 5_node_inspector.html
+    6: 6_rewards_costs.html
+    7: 7_graph_structure_info.html
+    8: 8_train_test_instruction.html
+    9: 9_cognitive_tutor_instructions.html
+    10: 10_quiz_instructions.html
+    11: 11_quiz.html
+    12: game
+    13: exampleThank.html
     finalStep: exampleThank.html
   teamMembers: null
   useAWS: true
@@ -49,13 +59,13 @@ trial:
   - Click on "Get Feedback" to get feedback on your image. Green means that removing
     it will decrease your score, and red means that removing it will increase your
     score.
-  maxEpisodes: 20
+  maxEpisodes: 32
   maxFrameRate: 60
   maxScore: 2242
   minFrameRate: 1
   minMinutiae: 1
   projectId: new-cognitive-tutor
-  s3upload: true
+  s3upload: false
   startingFrameRate: 30
   ui:
   - stop
