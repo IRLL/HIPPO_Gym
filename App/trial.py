@@ -180,29 +180,29 @@ class Trial():
         '''
         self.nextEntry.update(update_dict)
 
-    def get_render(self):
-        '''
-        Calls the Agent/Environment render function which must return a npArray.
-        Translates the npArray into a jpeg image and then base64 encodes the 
-        image for transmission in json message.
-        '''
-        render = self.agent.render()
+    # def get_render(self):
+    #     '''
+    #     Calls the Agent/Environment render function which must return a npArray.
+    #     Translates the npArray into a jpeg image and then base64 encodes the 
+    #     image for transmission in json message.
+    #     '''
+    #     render = self.agent.render()
 
-        # Get the image name from the rendered image path
-        # from "Images/<filename>.bmp" get "<filename>"
-        self.imagename = render[7: -4]
+    #     # Get the image name from the rendered image path
+    #     # from "Images/<filename>.bmp" get "<filename>"
+    #     self.imagename = render[7: -4]
         
-        try:
-            img = Image.open(render)
-            fp = BytesIO()
-            img.save(fp, 'BMP') # Changes filetype to be BMP
-            frame = base64.b64encode(fp.getvalue()).decode('utf-8')
-            fp.close()
-        except:
-            raise TypeError("Render failed. Is env.render('rgb_array') being called\
-                            With the correct arguement?")
-        self.frameId += 1
-        return {'frame': frame, 'frameId': self.frameId}
+    #     try:
+    #         img = Image.open(render)
+    #         fp = BytesIO()
+    #         img.save(fp, 'BMP') # Changes filetype to be BMP
+    #         frame = base64.b64encode(fp.getvalue()).decode('utf-8')
+    #         fp.close()
+    #     except:
+    #         raise TypeError("Render failed. Is env.render('rgb_array') being called\
+    #                         With the correct arguement?")
+    #     self.frameId += 1
+    #     return {'frame': frame, 'frameId': self.frameId}
 
     def send_render(self, render:dict):
         '''

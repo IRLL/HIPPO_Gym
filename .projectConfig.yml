@@ -1,29 +1,41 @@
 project:
   awsSetup:
     bucket: projects.irll
+    containerName: original-cognitive-tutor
     cpu: 2
     memory: 10
     region: ca-central-1
+    repository: original-cognitive-tutor
+    repositoryUri: 237796709103.dkr.ecr.ca-central-1.amazonaws.com/original-cognitive-tutor
     rootDomain: irll.net
+  bucket: projects.irll
+  ecsTask: original-cognitive-tutor
   events:
     startServerStep: 1
-    stopServerStep: 3
-  id: fingerprint-demo
+    stopServerStep: 11
+  id: original-cognitive-tutor
   live: true
   maxRuntime: 30
-  name: fingerprint-demo
+  name: original-cognitive-tutor
   researcher: Nadeen
   ssl:
     fullchain: SSL/fullchain.pem
     privkey: SSL/privkey.pem
     sslBucket: projects.irll
   steps:
-    1: exampleConsent.html
-    2: game
-    3: exampleThank.html
+    1: 1_consentForm.html
+    2: 2_intro_instructions.html
+    3: 3_node_inspector.html
+    4: 4_rewards_costs.html
+    5: 5_additional_info.html
+    6: 6_practice_makes_perfect.html
+    7: 7_quiz_instructions.html
+    8: 8_quiz.html
+    9: game
+    10: exampleThank.html
     finalStep: exampleThank.html
   teamMembers: null
-  useAWS: false
+  useAWS: true
 trial:
   actionBufferLifespan: 1
   actionSpace: null
@@ -44,12 +56,12 @@ trial:
   - Click on "Get Feedback" to get feedback on your image. Green means that removing
     it will decrease your score, and red means that removing it will increase your
     score.
-  maxEpisodes: 20
+  maxEpisodes: 32
   maxFrameRate: 60
   maxScore: 2242
   minFrameRate: 1
   minMinutiae: 1
-  projectId: fingerprint-demo
+  projectId: original-cognitive-tutor
   s3upload: false
   startingFrameRate: 30
   ui:

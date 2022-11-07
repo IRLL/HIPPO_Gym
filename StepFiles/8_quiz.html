@@ -1,0 +1,94 @@
+<style>
+	p {
+		font-size: 20px;
+	}
+
+	label {
+		font-size: 20px;
+	}
+
+	.incorrect[type="radio"]:checked + label {
+		background-color: rgb(255, 205, 205);
+	}
+	.incorrect[type="radio"]:checked + label::after {
+		content: "\2717";
+		color: red;
+		margin-left: 0.5rem;
+	}
+
+	.correct[type="radio"]:checked + label {
+		background-color: rgb(217, 255, 217);
+	}
+	.correct[type="radio"]:checked + label::after {
+		content: "\2713";
+		color: green;
+		margin-left: 0.5rem;
+	}
+</style>
+
+<h2>Question 1:</h2>
+
+<p>
+	What is the range of the node values?
+</p>
+<input type="radio" class="incorrect" id="q1_0_50" name="q1" value="0_50" />
+<label for="0_50">$0 to $50</label>
+<br />
+
+<br /><input type="radio" class="incorrect" id="q1_-10_10" name="q1" value="-10_10" />
+<label for="-10_10">$-10 to $10</label>
+<br />
+
+<br /><input type="radio" class="incorrect" id="q1_-100_100" name="q1" value="-100_100" />
+<label for="-100_100">$-100 to $100</label>
+<br />
+
+<br /><input type="radio" class="correct" id="q1_-48_48" name="q1" value="-48_48" />
+<label for="-48_48">$-48 to $48</label>
+<br />
+
+
+<h2>Question 2:</h2>
+
+<p>
+	What is the cost of clicking on a node to find out its value?
+</p>
+<input type="radio" class="incorrect" id="q2_0" name="q2" value="0" />
+<label for="0">$0</label>
+<br />
+
+<br /><input type="radio" class="correct" id="q2_1" name="q2" value="1" />
+<label for="1">$1</label>
+<br />
+
+<br /><input type="radio" class="incorrect" id="q2_5" name="q2" value="5" />
+<label for="5">$5</label>
+<br />
+
+<br /><input type="radio" class="incorrect" id="q2_10" name="q2" value="10" />
+<label for="10">$10</label>
+<br />
+
+
+<h2>Question 3:</h2>
+
+<p>
+	Will you receive a bonus?
+</p>
+<input type="radio" class="incorrect" id="q3_no" name="q1" value="no" />
+<label for="no">$0 to $50</label>
+<br />
+
+<br /><input type="radio" class="incorrect" id="q3_b" name="q1" value="-10_10" />
+<label for="-10_10">$-10 to $10</label>
+<br />
+
+<br /><input type="radio" class="incorrect" id="q3_c" name="q1" value="-100_100" />
+<label for="-100_100">$-100 to $100</label>
+<br />
+
+<br /><input type="radio" class="correct" id="q3_d" name="q1" value="-48_48" />
+<label for="-48_48">$-48 to $48</label>
+<br />
+
+
