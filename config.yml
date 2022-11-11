@@ -9,7 +9,7 @@ project:
 
   events:
     startServerStep: 1 # int
-    stopServerStep: 11 # int
+    stopServerStep: 15 # int
   id: original-cognitive-tutor # Letters, Numbers and '-' only!
   live: true # bool
   maxRuntime: 30 # int in minutes.
@@ -22,14 +22,18 @@ project:
   steps: # any number of steps needed with corresponding filenames
     1: 1_consentForm.html
     2: 2_intro_instructions.html
-    3: 3_node_inspector.html
-    4: 4_rewards_costs.html
-    5: 5_additional_info.html
-    6: 6_practice_makes_perfect.html
-    7: 7_quiz_instructions.html
-    8: 8_quiz.html
-    9: game
-    10: exampleThank.html
+    3: 3_intro_instructions2.html
+    4: 4_node_inspector.html
+    5: 5_rewards_costs.html
+    6: 6_additional_info.html
+    7: 7_train_test_instruction.html
+    8: 8_quiz_instructions.html
+    9: 9_quiz.html
+    10: game
+    11: 10_bonus_amount.html
+    12: 11_user_attitude_survey.html
+    13: 12_demographic_survey_questions.html
+    14: 13_end_of_survey_thankyou.html
     # finalStep: exampleThank.html # required, filename can be same as last numbered step
   teamMembers: # str
 trial:
