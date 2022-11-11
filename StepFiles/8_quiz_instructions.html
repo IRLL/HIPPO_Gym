@@ -1,0 +1,34 @@
+<style>
+	p {
+		font-size: 30px;
+	}
+
+	label {
+		font-size: 30px;
+	}
+
+	.incorrect[type="radio"]:checked + label {
+		background-color: rgb(255, 205, 205);
+	}
+	.incorrect[type="radio"]:checked + label::after {
+		content: "\2717";
+		color: red;
+		margin-left: 0.5rem;
+	}
+
+	.correct[type="radio"]:checked + label {
+		background-color: rgb(217, 255, 217);
+	}
+	.correct[type="radio"]:checked + label::after {
+		content: "\2713";
+		color: green;
+		margin-left: 0.5rem;
+	}
+</style>
+
+<h1>Quiz Instructions</h1>
+
+<p>
+	Before you can begin playing the Flight Planning game, you must pass a quiz to show that you understand the rules. If you get any of the questions incorrect, you will be brought back to the instructions to review and try the quiz again.
+    If you fail quiz twice (i.e., answer any of the questions incorrectly) then the study will end at this point in time. 
+</p>
