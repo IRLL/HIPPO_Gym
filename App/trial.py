@@ -62,6 +62,7 @@ class Trial():
         This is the main event controlling function for a Trial. 
         It handles the render-step loop
         '''
+        self.create_file()
         while not self.done:
             message = self.check_message()
             if message:
@@ -145,6 +146,10 @@ class Trial():
             self.send_ui()
         if 'command' in message and message['command']:
             self.handle_command(message)
+        elif 'save' in message and message['save']:
+            self.nextEntry = message['save']
+            print(self.nextEntry)
+            self.save_entry()
 
     def handle_command(self, message):
         '''
@@ -156,11 +161,17 @@ class Trial():
             if self.count > 1:
                 try:
                     self.pipe.send(json.dumps({'VALUES': self.data['qs'][message['info']]}))
+                    self.nextEntry = {'VALUES': self.data['qs'][message['info']]}
+                    self.save_entry()
                 except:
                     raise TypeError("Render Dictionary is not JSON serializable")
-        elif command == 'new game':
+        elif command == 'new game' and self.count < 33:
             self.count+=1
             self.send_ui()
+            self.reset()
+        elif self.count >= 33:
+            print("IN HEREEEEE")
+            self.reset()
 
     # def handle_action(self, action:str):
     #     '''
