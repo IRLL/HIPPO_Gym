@@ -65,7 +65,7 @@ trial:
   minFrameRate: 1
   minMinutiae: 1
   projectId: new-cognitive-tutor
-  s3upload: false
+  s3upload: true
   startingFrameRate: 30
   ui:
   - stop

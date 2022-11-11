@@ -40,7 +40,7 @@ trial:
   maxEpisodes: 32 # int
   game: fingerprint # full environment name
   dataFile: episode # episode or trial
-  s3upload: false
+  s3upload: true
   actionSpace: # the appropriate action space for environment. Order matters
   frameRateStepSize: 5 # int Optional if allowFrameRateChange = False
   minFrameRate: 1 # int Optional if allowFrameRateChange = False
