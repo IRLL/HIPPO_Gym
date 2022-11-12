@@ -1,82 +1,88 @@
 <style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 60%;
+    }
+    
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    
+    th{
+      text-align: center;
+    }
+    
+    td:not(:first-child) {
+      text-align: center;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+    
     p {
-        font-size: 20px;
-        padding-top: 10px;
+        font-size: 20px
     }
-    label {
-        font-size: 18px;
-    }
-    textarea {
-        resize: both;
-    }
-    
     </style>
-    
     <h1>Survey Questions</h1>
-    <h3>Please select one answer for each of the following questions.</h3>
-    <h3>When you finish the questionnaire, please click "Submit" at the bottom</h3>
+    <h2>Please select one answer for each of the following questions.</h3>
+    <p>Note:You may leave any answer blank you do not wish to answer<br>
+       Please answer the following questions to the best of your ability</p>
     
-    <p>1. How helpful did you find the system? On a scale from 1 to 7, with a rating of 1 meaning not helpful at all, and a rating of 7 meaning really helpful.</p>
-    <input type="radio" id="user_attitude_Q1_A" name="helpfulnesses" value="A">
-    <label for="A">1 (Not helpful at all)</label>
-    <input type="radio" id="user_attitude_Q1_B" name="helpfulnesses" value="B">
-    <label for="B">2</label>
-    <input type="radio" id="user_attitude_Q1_C" name="helpfulnesses" value="C">
-    <label for="C">3</label>
-    <input type="radio" id="user_attitude_Q1_D" name="helpfulnesses" value="D">
-    <label for="D">4</label>
-    <input type="radio" id="user_attitude_Q1_E" name="helpfulnesses" value="E">
-    <label for="E">5</label>
-    <input type="radio" id="user_attitude_Q1_F" name="helpfulnesses" value="F">
-    <label for="F">6</label>
-    <input type="radio" id="user_attitude_Q1_G" name="helpfulnesses" value="G">
-    <label for="G">7 (Very helpful)</label>
-
-
-    <p>2. Were the feedback messages provided by the system easy to understand? On a scale from 1 to 7, with a rating of 1 meaning very difficult to understand, and a rating of 7 meaning very easy to understand.</p>
-    <input type="radio" id="user_attitude_Q2_A" name="understand" value="A">
-    <label for="A">1 (Very difficult to understand)</label>
-    <input type="radio" id="user_attitude_Q2_B" name="understand" value="B">
-    <label for="B">2</label>
-    <input type="radio" id="user_attitude_Q2_C" name="understand" value="C">
-    <label for="C">3</label>
-    <input type="radio" id="user_attitude_Q2_D" name="understand" value="D">
-    <label for="D">4</label>
-    <input type="radio" id="user_attitude_Q2_E" name="understand" value="E">
-    <label for="E">5</label>
-    <input type="radio" id="user_attitude_Q2_F" name="understand" value="F">
-    <label for="F">6</label>
-    <input type="radio" id="user_attitude_Q2_G" name="understand" value="G">
-    <label for="G">7 (Very easy to understand)</label>
-
-    <p>3. Were the feedback suggestions provided by the system easy to use? On a scale from 1 to 7, with a rating of 1 meaning very difficult to use in my own game strategy, and a rating of 7 meaning very easy to use in my own game strategy.</p>
-    <input type="radio" id="user_attitude_Q3_A" name="easy_to_use" value="A">
-    <label for="A">1 (Very difficult to use)</label>
-    <input type="radio" id="user_attitude_Q3_B" name="easy_to_use" value="B">
-    <label for="B">2</label>
-    <input type="radio" id="user_attitude_Q3_C" name="easy_to_use" value="C">
-    <label for="C">3</label>
-    <input type="radio" id="user_attitude_Q3_D" name="easy_to_use" value="D">
-    <label for="D">4</label>
-    <input type="radio" id="user_attitude_Q3_E" name="easy_to_use" value="E">
-    <label for="E">5</label>
-    <input type="radio" id="user_attitude_Q3_F" name="easy_to_use" value="F">
-    <label for="F">6</label>
-    <input type="radio" id="user_attitude_Q3_G" name="easy_to_use" value="G">
-    <label for="G">7 (Very easy to use)</label>
+    <table>
+      <tbody>
+        <tr>
+          <th>Question</th>
+          <th>Strongly disagree</th>
+          <th>Disagree</th>
+          <th>Neither agree nor disagree</th>
+          <th>Agree</th>
+          <th>Strongly Agree</th>
+        </tr>
+        <tr>
+          <td>I found the system very helpful. </td>
+          <td><input type="radio" id="helpfulnesses1" name="helpfulnesses" value="1">1</td>
+          <td><input type="radio" id="helpfulnesses2" name="helpfulnesses" value="2">2</td>
+          <td><input type="radio" id="helpfulnesses3" name="helpfulnesses" value="3">3</td>
+          <td><input type="radio" id="helpfulnesses4" name="helpfulnesses" value="4">4</td>
+          <td><input type="radio" id="helpfulnesses5" name="helpfulnesses" value="5">5</td>
+        </tr>
+        <tr>
+          <td>I found the feedback messages provided by the system easy to understand.</td>
+          <td><input type="radio" id="understand1" name="understand" value="1">1</td>
+          <td><input type="radio" id="understand2" name="understand" value="2">2</td>
+          <td><input type="radio" id="understand3" name="understand" value="3">3</td>
+          <td><input type="radio" id="understand4" name="understand" value="4">4</td>
+          <td><input type="radio" id="understand" name="understand" value="5">5</td>
+        </tr>
+        <tr>
+          <td>I found the feedback messages provided by the system easy to use.</td>
+          <td><input type="radio" id="use1" name="use" value="1">1</td>
+          <td><input type="radio" id="use2" name="use" value="2">2</td>
+          <td><input type="radio" id="use3" name="use" value="3">3</td>
+          <td><input type="radio" id="use4" name="use" value="4">4</td>
+          <td><input type="radio" id="use5" name="use" value="5">5</td>
+        </tr>
+        <tr>
+          <td>I found the system very difficult to use.</td>
+          <td><input type="radio" id="cumbersome1" name="cumbersome" value="1">1</td>
+          <td><input type="radio" id="cumbersome2" name="cumbersome" value="2">2</td>
+          <td><input type="radio" id="cumbersome3" name="cumbersome" value="3">3</td>
+          <td><input type="radio" id="cumbersome4" name="cumbersome" value="4">4</td>
+          <td><input type="radio" id="cumbersome5" name="cumbersome" value="5">5</td>
+        </tr>
+        <tr>
+          <td> I think the concepts I learned today can be useful to improve my decision-making strategies for other tasks.</td>
+          <td><input type="radio" id="improve1" name="improve" value="1">1</td>
+          <td><input type="radio" id="improve2" name="improve" value="2">2</td>
+          <td><input type="radio" id="improve3" name="improve" value="3">3</td>
+          <td><input type="radio" id="improve4" name="improve" value="4">4</td>
+          <td><input type="radio" id="improve5" name="improve" value="5">5</td>
+        </tr>
     
-    <p>3. Do you think what you learned today can be useful to improve your decision-making strategies for other tasks? On a scale from 1 to 7, with a rating of 1 meaning very not useful at all, and a rating of 7 meaning very useful. </p>
-    <input type="radio" id="user_attitude_Q4_A" name="useful" value="A">
-    <label for="A">1 (Not very useful) </label>
-    <input type="radio" id="user_attitude_Q4_B" name="useful" value="B">
-    <label for="B">2</label>
-    <input type="radio" id="user_attitude_Q4_C" name="useful" value="C">
-    <label for="C">3</label>
-    <input type="radio" id="user_attitude_Q4_D" name="useful" value="D">
-    <label for="D">4</label>
-    <input type="radio" id="user_attitude_Q4_E" name="useful" value="E">
-    <label for="E">5</label>
-    <input type="radio" id="user_attitude_Q4_F" name="useful" value="F">
-    <label for="F">6</label>
-    <input type="radio" id="user_attitude_Q4_G" name="useful" value="G">
-    <label for="G">7 (Very useful) </label>
+    
+    </tbody>
+    </table>
