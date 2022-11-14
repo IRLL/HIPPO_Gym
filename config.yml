@@ -3,17 +3,17 @@ project:
   awsSetup:
     bucket: projects.irll # working bucket in AWS
     region: ca-central-1 # working AWS region
-    rootDomain: irll.net # a fully qualified domain name without 'https://'
+    rootDomain: testing.irll.net # a fully qualified domain name without 'https://'
     cpu: 2 # int 1,2, or 4
     memory: 10 # int 1-30
 
   events:
     startServerStep: 1 # int
     stopServerStep: 15 # int
-  id: original-cognitive-tutor # Letters, Numbers and '-' only!
+  id: original-cognitive-tutor-testing2 # Letters, Numbers and '-' only!
   live: true # bool
   maxRuntime: 30 # int in minutes.
-  name: original-cognitive-tutor # str
+  name: original-cognitive-tutor-testing2 # str
   researcher: Nadeen # str
   ssl:
     fullchain: SSL/fullchain.pem # path to fullchain.pem file excluding bucket name
@@ -41,7 +41,7 @@ trial:
   maxEpisodes: 32 # int
   game: fingerprint # full environment name
   dataFile: episode # episode or trial
-  s3upload: false
+  s3upload: true
   actionSpace: # the appropriate action space for environment. Order matters
   frameRateStepSize: 5 # int Optional if allowFrameRateChange = False
   minFrameRate: 1 # int Optional if allowFrameRateChange = False
