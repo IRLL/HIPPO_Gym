@@ -5,7 +5,7 @@ from s3upload import Uploader
 import logging
 
 ADDRESS = None # set desired IP for development 
-PORT = 5005 # if port is changed here it must also be changed in Dockerfile
+PORT = 5000 # if port is changed here it must also be changed in Dockerfile
 devEnv = False
 
 logging.basicConfig(filename='server.log', level=logging.INFO)
@@ -19,9 +19,16 @@ def main():
     global PORT
     global devEnv
     if len(sys.argv) > 1 and sys.argv[1] == 'dev':
+        print('handler', handler)
+        print('ADDRESS',ADDRESS)
+        print('PORT', PORT)
         start_server = websockets.serve(handler, ADDRESS, PORT)
         devEnv = True
     else:
+        print('handler', handler)
+        print('ADDRESS',ADDRESS)
+        print('PORT', PORT)
+        print('SSL', ssl.PROTOCOL_TLS_SERVER)
         ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         ssl_context.load_cert_chain('fullchain.pem', keyfile='privkey.pem')
         start_server = websockets.serve(handler, None, PORT, ssl=ssl_context)

@@ -54,8 +54,8 @@ class Trial():
         By default this expects the openAI Gym Environment object to be
         returned. 
         '''
-        self.agent = Agent()
-        self.agent.start(self.config.get('game'))
+        #self.agent = Agent()
+        #self.agent.start(self.config.get('game'))
 
     def run(self):
         '''
@@ -85,7 +85,7 @@ class Trial():
         if self.check_trial_done():
             self.end()
         else:
-            self.agent.reset()
+            #self.agent.reset()
             if self.outfile:
                 self.outfile.close()
                 if self.config.get('s3upload'):
@@ -108,7 +108,7 @@ class Trial():
         to write the record to file before closing.
         '''
         self.pipe.send('done')
-        self.agent.close()
+        #self.agent.close()
         if self.config.get('dataFile') == 'trial':
             self.save_record()
         if self.outfile:
