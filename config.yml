@@ -10,11 +10,11 @@ project:
   events:
     startServerStep: 1 # int
     stopServerStep: 17 # int
-  id: new-cognitive-tutor # Letters, Numbers and '-' only!
+  id: new-cognitive-tutor-pilot # Letters, Numbers and '-' only!
   live: true # bool
   maxRuntime: 30 # int in minutes.
-  name: new-cognitive-tutor # str
-  researcher: Nadeen # str
+  name: new-cognitive-tutor-pilot # str
+  researcher: Callie # str
   ssl:
     fullchain: SSL/fullchain.pem # path to fullchain.pem file excluding bucket name
     privkey: SSL/privkey.pem # path to privkey.pem file excluding bucket name

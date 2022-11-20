@@ -1,7 +1,7 @@
 shortuuid==1.0.1
 asyncio==3.4.3
 websockets==9.1
-numpy>=1.22.0
+numpy
 Pillow==9.0.1
 boto3==1.14.20
 python-dotenv==0.14.0
