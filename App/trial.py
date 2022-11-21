@@ -41,7 +41,8 @@ class Trial():
         self.projectId = self.config.get('projectId')
         self.filename = None
 
-        self.selectedRanGraph = random.randint(23, 32)
+        self.selectedRanGraphs = []
+        self.passedHeader = 0
 
         self.start()
         self.run()
@@ -54,6 +55,14 @@ class Trial():
         By default this expects the openAI Gym Environment object to be
         returned. 
         '''
+        # populate random graph selection
+        ranNum = random.randint(23, 32)
+        self.selectedRanGraphs.append(ranNum)
+        ranNum = random.randint(23, 32)
+        while ranNum == self.selectedRanGraphs[0]:
+            ranNum = random.randint(23, 32)
+        self.selectedRanGraphs.append(ranNum)
+
         self.agent = Agent()
         self.agent.start(self.config.get('game'))
 
@@ -168,7 +177,11 @@ class Trial():
         elif command == 'new game' and self.count < 33:
             self.count+=1
             self.send_ui()
-            self.reset()
+            if (self.count != 3 and self.passedHeader != 0) or (self.count != 23 and self.passedHeader!=1):
+                print("resetting env....")
+                self.reset()
+        elif command == 'resume' and self.count < 33:
+            self.send_ui()
         elif self.count >= 33:
             print("IN HEREEEEE")
             self.reset()
@@ -225,33 +238,46 @@ class Trial():
     #         raise TypeError("Render Dictionary is not JSON serializable")
 
     def send_ui(self):
-        feedback = "feedback"
-        if self.count <= 2 or self.count >= 23:
-            feedback = None
-
-        ctest = None
-        if self.count <=2:
-            ctest = "CTEST"
-        if self.count == self.selectedRanGraph:
-            ctest = "CTEST"
-
-        if(self.count == 1 or self.count == 33):
-            self.data = self.trialData[str(self.count)]
+        if (self.count == 3 and self.passedHeader == 0) or (self.count == 23 and self.passedHeader == 1):
+            print("header sending..")
+            if(self.count == 3):
+                message = "This next section is the training section"
+            else:
+                message = "This next section is the testing section"
             try:
-                self.pipe.send(json.dumps({'UI': self.data, "CTEST": "CTEST"}))
+                self.pipe.send(json.dumps({'HEADER': message}))
+                self.passedHeader +=1
             except:
                 raise TypeError("Render Dictionary is not JSON serializable")
         else:
-            self.data = self.trialData[str(self.count)]
-            with open('data/increasing_prs.json') as json_file:
-                data = json.load(json_file)
-                for group in data:
-                    if group['trial_id'] == self.data:
-                        self.data = group
-            try:
-                self.pipe.send(json.dumps({'UI': self.data['stateRewards'], 'OPT_ACT': self.data['opt_act'], 'FEEDBACK': feedback, "CTEST": ctest}))
-            except:
-                raise TypeError("Render Dictionary is not JSON serializable")
+            print("sending ui.." + str(self.count))
+            feedback = "feedback"
+            if self.count <= 2 or self.count >= 23:
+                feedback = None
+
+            ctest = None
+            if self.count <=2:
+                ctest = "CTEST"
+            if self.count == self.selectedRanGraphs[0] or self.count == self.selectedRanGraphs[1]:
+                ctest = "CTEST"
+
+            if(self.count == 1 or self.count == 33):
+                self.data = self.trialData[str(self.count)]
+                try:
+                    self.pipe.send(json.dumps({'UI': self.data, "CTEST": "CTEST"}))
+                except:
+                    raise TypeError("Render Dictionary is not JSON serializable")
+            else:
+                self.data = self.trialData[str(self.count)]
+                with open('data/increasing_prs.json') as json_file:
+                    data = json.load(json_file)
+                    for group in data:
+                        if group['trial_id'] == self.data:
+                            self.data = group
+                try:
+                    self.pipe.send(json.dumps({'UI': self.data['stateRewards'], 'OPT_ACT': self.data['opt_act'], 'FEEDBACK': feedback, "CTEST": ctest}))
+                except:
+                    raise TypeError("Render Dictionary is not JSON serializable")
 
     # def send_instructions(self, instructions):
     #     if not instructions:
