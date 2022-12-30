@@ -102,12 +102,14 @@ class Trial():
                     self.pipe.send({'upload':{'projectId':self.projectId ,'userId':self.userId,'file':self.filename,'path':self.path, 'bucket': self.config.get('bucket')}})
             self.create_file()
             self.episode += 1
+            print('self.episode', self.episode)
 
     def check_trial_done(self):
         '''
         Checks if the trial has been completed and can be quit. Add conditions
         as required.
         '''
+        print('maxEpisodes', self.config.get('maxEpisodes', 20))
         return self.episode >= self.config.get('maxEpisodes', 20)
 
     def end(self):
@@ -151,10 +153,14 @@ class Trial():
         if not self.userId and 'userId' in message:
             self.userId = message['userId'] or f'user_{shortuuid.uuid()}'
             # get a randomly selected trial 
-            with open('data/trials.json') as json_file:
-                selectedTrial = random.randint(0, 4)
+            with open('data/more_trials.json') as json_file:
+                selectedTrial =  0 #random.randint(0, 4)
                 allTrials = json.load(json_file)
+                print('all trials')
+                print(allTrials)
                 self.trialData = allTrials[str(selectedTrial)]
+                print('self.trialData')
+                print(self.trialData)
             # with open('data/trialData.json') as json_file:
             #     self.trialData = json.load(json_file)
             self.send_ui()
@@ -178,17 +184,17 @@ class Trial():
                     self.pipe.send(json.dumps({'VALUES': self.data['qs'][message['info']]}))
                 except:
                     raise TypeError("Render Dictionary is not JSON serializable")
-        elif command == 'new game' and self.count < 33:
+        elif command == 'new game' and self.count < 43:
             self.count+=1
             self.send_ui()
             if (self.count != 3 and self.passedHeader != 0) or (self.count != 23 and self.passedHeader!=1):
                 print("resetting env....")
                 self.reset()
-        elif command == 'resume' and self.count < 33:
+        elif command == 'resume' and self.count < 43:
             self.send_ui()
-        elif self.count >= 33:
+        elif self.count >= 43:
             print("IN HEREEEEE")
-            self.reset()
+            self.end()
 
     # def handle_action(self, action:str):
     #     '''
@@ -265,18 +271,25 @@ class Trial():
             if self.count == self.selectedRanGraphs[0] or self.count == self.selectedRanGraphs[1]:
                 ctest = "CTEST"
 
-            if(self.count == 1 or self.count == 33):
+            if(self.count == 1 or self.count == 43):
+                print('self.count', self.count)
                 self.data = self.trialData[str(self.count)]
+                print('self.data', self.data)
                 try:
                     self.pipe.send(json.dumps({'UI': self.data, "CTEST": "CTEST"}))
                 except:
                     raise TypeError("Render Dictionary is not JSON serializable")
             else:
+                print('self.count', self.count)
                 self.data = self.trialData[str(self.count)]
+                #print('self.data', self.data)
                 with open('data/increasing_prs.json') as json_file:
                     data = json.load(json_file)
+                    #print('type of data', type(data))
                     for group in data:
+                        #print('group', group['trial_id'])
                         if group['trial_id'] == self.data:
+                            print('USING TRIAL', group['trial_id'])
                             self.data = group
                 try:
                     self.pipe.send(json.dumps({'UI': self.data['stateRewards'], 'OPT_ACT': self.data['opt_act'], 'FEEDBACK': feedback, "CTEST": ctest}))
