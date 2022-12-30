@@ -40,7 +40,7 @@ project:
   teamMembers: # str
 trial:
   actionBufferLifespan: 1 # int
-  maxEpisodes: 32 # int
+  maxEpisodes: 42 # int
   game: fingerprint # full environment name
   dataFile: episode # episode or trial
   s3upload: true
