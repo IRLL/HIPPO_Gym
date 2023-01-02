@@ -1,4 +1,4 @@
-
+# can generate any number of trials
 import json
 from random import randint
 def main():
