@@ -153,16 +153,16 @@ class Trial():
         if not self.userId and 'userId' in message:
             self.userId = message['userId'] or f'user_{shortuuid.uuid()}'
             # get a randomly selected trial 
-            with open('data/more_trials.json') as json_file:
-                selectedTrial =  0 #random.randint(0, 4)
-                allTrials = json.load(json_file)
-                print('all trials')
-                print(allTrials)
-                self.trialData = allTrials[str(selectedTrial)]
-                print('self.trialData')
-                print(self.trialData)
-            # with open('data/trialData.json') as json_file:
-            #     self.trialData = json.load(json_file)
+            # with open('data/more_trials.json') as json_file:
+            #     selectedTrial =  0 #random.randint(0, 4)
+            #     allTrials = json.load(json_file)
+            #     print('all trials')
+            #     print(allTrials)
+            #     self.trialData = allTrials[str(selectedTrial)]
+            #     print('self.trialData')
+            #     print(self.trialData)
+            with open('data/trialData.json') as json_file:
+                self.trialData = json.load(json_file)
             self.send_ui()
         if 'command' in message and message['command']:
             self.handle_command(message)
