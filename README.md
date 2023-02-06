@@ -36,13 +36,18 @@ Note: At the time of writing OpenAI Gym supports up to Python3.7
 
 **PIP:** PyYaml, boto3, python-dotenv, gym, atari-py, shortuuid, asyncio, websockets, numpy, Pillow
 
+Note: ensure pip3 is installed.
+
+To install dependencies call:
+    pip install -r requirements.txt
+
 Note: requirements.txt contains pip dependencies for building the Docker Image.
 
 ## Use:
 communicator.py contains the main program. 
 To run in development mode call:
     python3 communicator.py dev
-To run in poduction on a server, the call can be done with nohup:
+To run in production on a server, the call can be done with nohup:
     nohup python3 communicator.py &
 Note: fullchain.pem and privkey.pem files must be located in the running directory or the program will fail to run in production. These files provide the SSL certificate for secure communication and are mandatory for production.
 ADDRESS and PORT constants are set in communicator.py change as required.
