@@ -1,5 +1,5 @@
-from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from abc import abstractmethod
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from hippogym.message_handler import MessageHandler
 

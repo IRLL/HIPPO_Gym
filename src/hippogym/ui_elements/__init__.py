@@ -1,4 +1,4 @@
-from hippogym.ui_elements.building_blocks import *
+from hippogym.ui_elements.building_blocks import Button, Slider
 from hippogym.ui_elements.control_panel import ControlPanel
 from hippogym.ui_elements.game_window import GameWindow
 from hippogym.ui_elements.grid import Grid
@@ -13,4 +13,6 @@ __all__ = [
     "InfoPanel",
     "Grid",
     "TextBox",
+    "Button",
+    "Slider",
 ]

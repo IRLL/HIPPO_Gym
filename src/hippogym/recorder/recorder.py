@@ -1,6 +1,6 @@
 import json
 import pickle
-from os import listdir, makedirs
+import os
 from shutil import rmtree
 from typing import Optional
 
@@ -16,12 +16,9 @@ class Recorder:
         self.current_filename = None
         self.uploader = Uploader() if upload else None
 
-        if clean_path:
-            try:
-                rmtree(self.path)
-            except:
-                pass
-        makedirs(self.path, exist_ok=True)
+        if clean_path and os.path.exists(self.path):
+            rmtree(self.path)
+        os.makedirs(self.path, exist_ok=True)
 
     def record(self, data):
         if not self.current_file:
@@ -45,7 +42,7 @@ class Recorder:
             mode = "wb"
         if not filename:
             filename = f"user_{self.user_id}.{ext}"
-        ls = listdir(self.path)
+        ls = os.listdir(self.path)
         i = 0
         new_filename = f"{i}_{filename}"
         while new_filename in ls:
