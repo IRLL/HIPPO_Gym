@@ -43,4 +43,4 @@ def check_ui_elements(
             client_coroutine=fake_user_connect(uri, user_id),
         )
     )
-    hippo.stop_trial(user_id)
+    hippo.stop()

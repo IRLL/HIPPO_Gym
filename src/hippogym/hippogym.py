@@ -112,7 +112,13 @@ class HippoGym:
         Args:
             user_id (UserID): Unique ID of the user.
         """
-        trial_process = self.trials.pop(user_id)
-        trial_process.kill()
-        trial_process.join()
-        trial_process.close()
+        if user_id in self.trials:
+            trial_process = self.trials.pop(user_id)
+            trial_process.kill()
+            trial_process.join()
+            trial_process.close()
+
+    def stop(self) -> None:
+        """Stop the hippogym experiment."""
+        for user_id in self.trials:
+            self.stop_trial(user_id)
