@@ -1,10 +1,10 @@
-FROM python:3.7
+FROM python:3.9
 
 RUN apt-get update && apt-get install -y \
 	xvfb \
 	python-opengl
 
-COPY App/* ./
+COPY src/* ./
 RUN mkdir ./Trials
 COPY requirements.txt .
 

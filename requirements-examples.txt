@@ -1,0 +1,7 @@
+# Minigrid
+gymnasium
+minigrid
+
+# Crafting
+pygame
+irll-crafting

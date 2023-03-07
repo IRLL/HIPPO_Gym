@@ -1,0 +1,8 @@
+pytest
+pytest-cov
+pytest-check
+pytest-asyncio
+pytest-mock
+ruff
+black
+mypy
