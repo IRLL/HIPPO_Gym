@@ -19,6 +19,7 @@ jobs:
       - name: Install tests dependencies
         run: |
           pip install -r requirements-dev.txt
+          pip install -r requirements-examples.txt
       - name: Build coverage using pytest-cov
         run: |
           pytest --cov=src --cov-report=xml tests
