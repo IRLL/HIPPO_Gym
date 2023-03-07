@@ -14,9 +14,9 @@ import pygame
 from pygame.event import Event
 from pygame.locals import MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION
 
-from crafting import CraftingEnv, MineCraftingEnv
-from crafting.task import TaskObtainItem
-from crafting.render.render import get_human_action
+import gym
+from crafting import CraftingEnv
+from crafting.render.human import get_human_action
 
 from hippogym import HippoGym, Agent
 from hippogym.trialsteps import GymStep
@@ -72,10 +72,9 @@ class HumanCraftingAgent(Agent):
             env,
             additional_events=[fake_event],
             can_be_none=True,
-            **env.render_variables,
         )
         if action:
-            self.action = env.action(*action)
+            self.action = action
 
     def act(self, observation):
         if self.action is not None:
@@ -88,9 +87,7 @@ class HumanCraftingAgent(Agent):
 class MineCraftingStep(GymStep):
     def __init__(self, agent, render_mode: str = "rgb_array"):
         self.score = 0
-        env = MineCraftingEnv(verbose=1, max_step=50, render_mode=render_mode)
-        task = TaskObtainItem(env.world, env.world.item_from_name["enchanting_table"])
-        env.add_task(task)
+        env = gym.make("MineCrafting-v1")
         super().__init__(env, agent)
 
     def run(self) -> None:
