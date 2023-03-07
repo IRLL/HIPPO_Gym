@@ -45,6 +45,7 @@ class TestEventArchitecture:
                 ui_element.name: {"name": ui_element.name}
             }
 
+        time.sleep(0.1) # Let queue update
         messages_recv = []
         while not self.out_q.empty():
             message_recv = self.out_q.get_nowait()
