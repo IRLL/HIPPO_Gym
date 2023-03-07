@@ -8,6 +8,7 @@ from hippogym.ui_elements.ui_element import UIElement
 import pytest
 import pytest_check as check
 from pytest_mock import MockerFixture
+import time
 
 
 class DummyInteractiveStep(InteractiveStep):
@@ -63,6 +64,8 @@ class TestEventArchitecture:
 
         expected_args = ("ui.ButtonEvent", "BUTTONPRESSED", "clickme")
         self.in_q.put({"ButtonEvent": {"BUTTONPRESSED": "clickme"}})
+
+        time.sleep(0.1) # Let queue update
         self.event_handler.trigger_events()
 
         assert self.uie1.emitter.emit.called, "UIElement emitter was not called"
