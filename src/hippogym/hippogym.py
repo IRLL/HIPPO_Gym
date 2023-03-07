@@ -121,5 +121,5 @@ class HippoGym:
     def stop(self) -> None:
         """Stop the hippogym experiment."""
         while self.trials:
-            user_id = self.trials.keys()[0]
+            user_id = list(self.trials.keys())[0]
             self.stop_trial(user_id)
