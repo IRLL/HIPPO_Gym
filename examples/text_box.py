@@ -9,7 +9,6 @@ from hippogym.ui_elements import (
     TextBox,
     ControlPanel,
     GameWindow,
-    image_sliders,
     standard_controls,
 )
 
@@ -53,7 +52,7 @@ class TextBoxStep(InteractiveStep):
                 button = item.get("BUTTONPRESSED", None)
                 if button == "save":
                     self.text_box.request()
-                    text = self.text_box.get_text()
+                    self.text_box.get_text()
                     # self.json_recorder.record({"text": text})
                     # self.pickle_recorder.record({"text": text})
                 action = item.get("ACTION", None)

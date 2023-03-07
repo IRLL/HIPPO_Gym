@@ -13,8 +13,7 @@ import gymnasium as gym
 from minigrid.minigrid_env import MiniGridEnv
 
 from hippogym import HippoGym, HumanAgent
-from hippogym.ui_elements import InfoPanel, ControlPanel
-from hippogym.ui_elements.building_blocks import Button
+from hippogym.ui_elements import InfoPanel, ControlPanel, Button
 from hippogym.trialsteps import GymStep
 
 
