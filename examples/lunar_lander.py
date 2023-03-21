@@ -1,4 +1,3 @@
-from copy import copy
 from enum import Enum
 import logging
 

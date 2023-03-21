@@ -22,7 +22,7 @@ jobs:
           pip install -r requirements-examples.txt
       - name: Build coverage using pytest-cov
         run: |
-          pytest --cov=src --cov-report=xml tests
+          pytest --cov=hippogym --cov-report=xml tests
       - name: Codacy Coverage Reporter
         uses: codacy/codacy-coverage-reporter-action@v1.3.0
         with:
