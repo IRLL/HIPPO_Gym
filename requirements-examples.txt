@@ -7,4 +7,5 @@ gym[box2d]
 pyglet==1.5.27
 
 # HCraft
+pygame==2.0
 hcraft[gui]
