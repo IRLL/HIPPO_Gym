@@ -9,7 +9,8 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
-
+    env:
+      SDL_VIDEODRIVER: "dummy" # for PyGame render https://stackoverflow.com/questions/15933493/pygame-error-no-available-video-device
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
