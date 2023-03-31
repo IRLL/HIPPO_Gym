@@ -4,6 +4,7 @@ import logging
 from hippogym import HippoGym, HumanAgent
 from hippogym.ui_elements import InfoPanel, ControlPanel, standard_controls
 from hippogym.trialsteps import GymStep
+from hippogym.recorder import JsonRecorder
 
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
@@ -63,12 +64,15 @@ class HumanAgentToggling(HumanAgent):
 
 
 class LunarLanderV2Step(GymStep):
-    def __init__(self, agent):
+    def __init__(self, agent, experiment_name: str):
         self.info_panel = InfoPanel(
             text="Use keyboard to play the game",
             items=["s = down", "a = left", "d = right"],
         )
         self.control_panel = ControlPanel(buttons=standard_controls)
+        self.recorder = JsonRecorder(
+            records_path="records", experiment_name=experiment_name
+        )
         self.score = 0
         super().__init__(
             "LunarLander-v2",
@@ -78,6 +82,8 @@ class LunarLanderV2Step(GymStep):
 
     def step(
         self,
+        episode: int,
+        step: int,
         observation,
         action,
         new_observation,
@@ -85,14 +91,22 @@ class LunarLanderV2Step(GymStep):
         done: bool,
         info: dict,
     ) -> None:
+        self.score += reward
+
         if done:
-            self.info_panel.update(key_value={"Score": reward})
+            self.info_panel.update(key_value={"Score": self.score})
+            self.recorder.record(
+                data={
+                    "Episode": episode,
+                    "Score": self.score,
+                },
+                user_id=self.user_id,
+            )
             self.score = 0
             return
 
         observation_msg = ", ".join([f"{x:.2f}" for x in new_observation])
         observation_msg = f"[{observation_msg}]"
-        self.score += reward
         self.info_panel.update(
             key_value={
                 "Score": self.score,
@@ -104,7 +118,7 @@ class LunarLanderV2Step(GymStep):
 
 def build_experiment() -> HippoGym:
     agent = HumanAgentToggling()
-    lunarstep = LunarLanderV2Step(agent)
+    lunarstep = LunarLanderV2Step(agent, experiment_name="lunar_human")
     return HippoGym(lunarstep)
 
 

@@ -98,7 +98,7 @@ class HippoGym:
         new_trial_process = Process(
             name="Trial",
             target=trial.build_and_run,
-            args=(in_q, out_q),
+            args=(user_id, in_q, out_q),
         )
 
         self.trials[user_id] = new_trial_process

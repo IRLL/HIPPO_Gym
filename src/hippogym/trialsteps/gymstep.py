@@ -49,13 +49,15 @@ class GymStep(InteractiveStep):
         self.run_from_start = run_from_start
         self.running = self.run_from_start
 
-    def build(self, event_handler: "EventHandler") -> None:
+    def build(self, user_id: str, event_handler: "EventHandler") -> None:
         """Initialize queues and message handler thread."""
-        super().build(event_handler)
+        super().build(user_id, event_handler)
         self.agent.build(self)
 
     def step(
         self,
+        episode: int,
+        step: int,
         observation: Observation,
         action: Action,
         new_observation: Observation,
@@ -79,6 +81,8 @@ class GymStep(InteractiveStep):
         self.running = self.run_from_start
 
         observation, info = self.gym_reset()
+        step = 0
+        episode = 0
 
         while not self.stop:
             self.send_render()
@@ -87,6 +91,7 @@ class GymStep(InteractiveStep):
                 while action is None:
                     self.event_handler.trigger_events()
                     action = self.agent.act(observation)
+                    step += 1
 
                 new_observation, reward, terminated, truncated, info = self.gym_step(
                     action
@@ -95,13 +100,22 @@ class GymStep(InteractiveStep):
                 LOGGER.debug("GymStep action was taken: %s. Reward: %f", action, reward)
 
                 self.step(
-                    observation, action, new_observation, reward, terminated, info
+                    episode,
+                    step,
+                    observation,
+                    action,
+                    new_observation,
+                    reward,
+                    terminated,
+                    info,
                 )
 
                 if done:
                     self.stop = True
                     observation, info = self.gym_reset()
                     self.agent.reset()
+                    step = 0
+                    episode += 1
 
                 observation = new_observation
                 self.send_render()

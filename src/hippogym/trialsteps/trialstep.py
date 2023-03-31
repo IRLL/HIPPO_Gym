@@ -12,10 +12,12 @@ class TrialStep(ABC):
     """Abstract class for single trial step."""
 
     def __init__(self) -> None:
+        self.user_id = None
         self.event_handler: Optional[EventHandler] = None
 
-    def build(self, event_handler: EventHandler) -> None:
+    def build(self, user_id: str, event_handler: EventHandler) -> None:
         """Build the TrialStep events architecture."""
+        self.user_id = user_id
         self.event_handler = event_handler
 
     @abstractmethod
@@ -42,9 +44,9 @@ class InteractiveStep(TrialStep):
         self.ui_elements: List["UIElement"] = ui_elements
         super().__init__()
 
-    def build(self, event_handler: EventHandler) -> None:
+    def build(self, user_id: str, event_handler: EventHandler) -> None:
         """Initialize multiprocessing queues."""
-        super().build(event_handler)
+        super().build(user_id, event_handler)
         for ui_element in self.ui_elements:
             ui_element.build(self)
         self.send()

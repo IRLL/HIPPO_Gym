@@ -16,8 +16,9 @@ class Trial:
         self.in_q: Optional[Queue] = None
         self.out_q: Optional[Queue] = None
 
-    def build(self, in_q: Queue, out_q: Queue):
+    def build(self, user_id: str, in_q: Queue, out_q: Queue):
         """Build trial events architecture."""
+        self.user_id = user_id
         self.in_q = in_q
         self.out_q = out_q
 
@@ -25,12 +26,12 @@ class Trial:
         """Run the Trial step by step."""
         for step in self.steps:
             event_handler = EventHandler(self.in_q, self.out_q)
-            step.build(event_handler)
+            step.build(self.user_id, event_handler)
             step.run()
 
-    def build_and_run(self, in_q: Queue, out_q: Queue):
+    def build_and_run(self, user_id: str, in_q: Queue, out_q: Queue):
         """Build then run the Trial step by step."""
-        self.build(in_q, out_q)
+        self.build(user_id, in_q, out_q)
         self.run()
 
 

@@ -62,6 +62,8 @@ class MiniGridStep(GymStep):
 
     def step(
         self,
+        episode:int,
+        step:int,
         observation,
         action,
         new_observation,
