@@ -36,7 +36,7 @@ class TestEventArchitecture:
         """Anything sent by a UIElement should go in the output queue."""
 
         intstep = DummyInteractiveStep([self.uie1, self.uie2])
-        intstep.build(self.event_handler)
+        intstep.build("dummy_user", self.event_handler)
 
         expected_msgs = {}
         for ui_element in (self.uie1, self.uie2):
@@ -45,7 +45,7 @@ class TestEventArchitecture:
                 ui_element.name: {"name": ui_element.name}
             }
 
-        time.sleep(0.1) # Let queue update
+        time.sleep(0.1)  # Let queue update
         messages_recv = []
         while not self.out_q.empty():
             message_recv = self.out_q.get_nowait()
@@ -61,12 +61,12 @@ class TestEventArchitecture:
         self.uie2.emitter.emit = mocker.MagicMock()
 
         intstep = DummyInteractiveStep([self.uie1])
-        intstep.build(self.event_handler)
+        intstep.build("dummy_user", self.event_handler)
 
         expected_args = ("ui.ButtonEvent", "BUTTONPRESSED", "clickme")
         self.in_q.put({"ButtonEvent": {"BUTTONPRESSED": "clickme"}})
 
-        time.sleep(0.1) # Let queue update
+        time.sleep(0.1)  # Let queue update
         self.event_handler.trigger_events()
 
         assert self.uie1.emitter.emit.called, "UIElement emitter was not called"
