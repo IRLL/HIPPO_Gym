@@ -1,7 +1,7 @@
 """ To try this example you must install the minigrid environment
 
 ```bash
-pip install git+https://github.com/Farama-Foundation/Minigrid.git
+pip install gymnasium minigrid
 ```
 
 """
@@ -10,7 +10,7 @@ from enum import Enum
 import logging
 
 import gymnasium as gym
-from minigrid.minigrid_env import MiniGridEnv
+from minigrid.minigrid_env import MiniGridEnv, Actions
 
 from hippogym import HippoGym, HumanAgent
 from hippogym.ui_elements import InfoPanel, ControlPanel, Button
@@ -69,7 +69,6 @@ class MiniGridStep(GymStep):
         done: bool,
         info: dict,
     ) -> None:
-
         if done:
             self.info_panel.update(key_value={"Score": reward})
             self.score = 0
@@ -93,7 +92,6 @@ class MiniGridStep(GymStep):
 
 
 def build_experiment() -> HippoGym:
-
     keyboard_to_value = {
         "ArrowRight": HumanValue.RIGHT,
         "ArrowLeft": HumanValue.LEFT,
@@ -105,13 +103,13 @@ def build_experiment() -> HippoGym:
     }
 
     value_to_action = {
-        HumanValue.LEFT: MiniGridEnv.Actions.left.value,
-        HumanValue.RIGHT: MiniGridEnv.Actions.right.value,
-        HumanValue.UP: MiniGridEnv.Actions.forward.value,
-        HumanValue.TOGGLE: MiniGridEnv.Actions.toggle.value,
-        HumanValue.PICKUP: MiniGridEnv.Actions.pickup.value,
-        HumanValue.DROP: MiniGridEnv.Actions.drop.value,
-        HumanValue.END: MiniGridEnv.Actions.done.value,
+        HumanValue.LEFT: Actions.left.value,
+        HumanValue.RIGHT: Actions.right.value,
+        HumanValue.UP: Actions.forward.value,
+        HumanValue.TOGGLE: Actions.toggle.value,
+        HumanValue.PICKUP: Actions.pickup.value,
+        HumanValue.DROP: Actions.drop.value,
+        HumanValue.END: Actions.done.value,
     }
 
     agent = HumanAgent(HumanValue, value_to_action, keyboard_to_value)
