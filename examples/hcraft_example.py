@@ -1,7 +1,7 @@
-""" This examples require to have install the crafting environment.
+""" This examples require to have install the hcraft dependency.
 
 ```bash
-pip install git+https://github.com/IRLL/Crafting.git#egg=crafting
+pip install hcraft[gui]
 ```
 
 """
@@ -14,9 +14,8 @@ import pygame
 from pygame.event import Event
 from pygame.locals import MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION
 
-import gym
-from crafting import CraftingEnv
-from crafting.render.human import get_human_action
+from hcraft import HcraftEnv
+from hcraft.render.human import get_human_action
 
 from hippogym import HippoGym, Agent
 from hippogym.trialsteps import GymStep
@@ -25,7 +24,7 @@ logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 
 
-class HumanCraftingAgent(Agent):
+class HumanHCraftAgent(Agent):
     def __init__(self, observation_space=None, action_space=None) -> None:
         self.trialstep: Optional["GymStep"] = None
         self.action = None
@@ -59,7 +58,7 @@ class HumanCraftingAgent(Agent):
             return Event(pygame_event_type, pos=pos_abs, rel=rel_abs, button=button)
         return Event(pygame_event_type, pos=pos_abs, button=1)
 
-    def on_mouse_event(self, event_type: "MouseEvent", event_data):
+    def on_mouse_event(self, event_type, event_data):
         # Create fake pygame mouse event
         fake_event = self.message_to_event(event_type, event_data)
 
@@ -67,7 +66,7 @@ class HumanCraftingAgent(Agent):
             return
 
         # Get action from crafting rendering
-        env: CraftingEnv = self.trialstep.env
+        env: HcraftEnv = self.trialstep.env
         action = get_human_action(
             env,
             additional_events=[fake_event],
@@ -84,12 +83,7 @@ class HumanCraftingAgent(Agent):
         return self.action
 
 
-class MineCraftingStep(GymStep):
-    def __init__(self, agent, render_mode: str = "rgb_array"):
-        self.score = 0
-        env = gym.make("MineCrafting-v1")
-        super().__init__(env, agent)
-
+class HCraftStep(GymStep):
     def run(self) -> None:
         self.env.reset()
         self.env.render()
@@ -116,9 +110,9 @@ def rel_to_abs_coords(x_rel: float, y_rel: float) -> Tuple[int, int]:
     return int(x_rel * width), int(y_rel * height)
 
 
-def build_experiment(render_mode: str = "rgb_array") -> HippoGym:
-    agent = HumanCraftingAgent()
-    lunarstep = MineCraftingStep(agent, render_mode=render_mode)
+def build_experiment() -> HippoGym:
+    agent = HumanHCraftAgent()
+    lunarstep = HCraftStep("MineHcraft-v1", agent)
     return HippoGym(lunarstep)
 
 

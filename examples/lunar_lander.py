@@ -85,7 +85,6 @@ class LunarLanderV2Step(GymStep):
         done: bool,
         info: dict,
     ) -> None:
-
         if done:
             self.info_panel.update(key_value={"Score": reward})
             self.score = 0

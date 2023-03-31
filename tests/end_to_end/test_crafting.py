@@ -1,4 +1,4 @@
-from examples.crafting_example import build_experiment
+from examples.hcraft_example import build_experiment
 from tests.end_to_end.custom_checks import check_ui_elements
 
 

@@ -40,7 +40,7 @@ class GymStep(InteractiveStep):
             ui_elements.append(self.render_window)
         super().__init__(ui_elements)
         if isinstance(env, str):
-            env = gym.make(env, render_mode="rgb_array", **kwargs)
+            env = gym.make(env, **kwargs)
         self.env = env
         self.agent = agent
         self.agent.set_spaces(self.env.observation_space, self.env.action_space)
@@ -83,7 +83,6 @@ class GymStep(InteractiveStep):
         while not self.stop:
             self.send_render()
             while self.running:
-
                 action = None
                 while action is None:
                     self.event_handler.trigger_events()
@@ -131,8 +130,10 @@ class GymStep(InteractiveStep):
         return observation, info
 
     def send_render(self):
-        rgb_array = self.env.render()
-        if not isinstance(rgb_array, np.ndarray):
+        rgb_array = self.env.render(mode="rgb_array")
+        try:
+            rgb_array = np.array(rgb_array)
+        except:
             raise TypeError("Env render should output a numpy array.")
         render = self.render_window.convert_numpy_array_to_base64(rgb_array)
         self.render_window.update(image=render)
