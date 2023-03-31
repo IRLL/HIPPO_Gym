@@ -25,8 +25,9 @@ The library is designed to be customizable for diverse research applications. Th
 pip install hippogym
 ```
 
-## Use
+## Examples
 
+### Lunar Lander with human agent
 Copy and run the [lunar lander example](https://github.com/IRLL/HIPPO_Gym/blob/master/examples/lunar_lander.py).
 
 You should see:
@@ -34,5 +35,17 @@ You should see:
 
 Then connect a client to the websocket using the host and port, you can use the irll frontend: https://beta.irll.net/?server=ws://localhost:5000
 
+You can now play with either the command pannel or the keyboard:
 ![Frontend display lunar](docs/lunar_human_demo.gif)
+
+### Minigrid with human agent
+Copy and run the [minigrid example](https://github.com/IRLL/HIPPO_Gym/blob/master/examples/minigrid_example.py).
+
+You should see:
+![Backend log success minigrid](docs/backend_success_example.png)
+
+Then connect a client to the websocket using the host and port, you can use the irll frontend: https://beta.irll.net/?server=ws://localhost:5000
+
+You can now play with either the command pannel or the keyboard:
+![Frontend display minigrid](docs/minigrid_human_demo.gif)
 
