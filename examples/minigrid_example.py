@@ -10,7 +10,8 @@ from enum import Enum
 import logging
 
 import gymnasium as gym
-from minigrid.minigrid_env import MiniGridEnv, Actions
+from minigrid.minigrid_env import MiniGridEnv
+from minigrid.core.actions import Actions
 
 from hippogym import HippoGym, HumanAgent
 from hippogym.ui_elements import InfoPanel, ControlPanel, Button
