@@ -3,7 +3,7 @@ gymnasium
 minigrid
 
 # LunarLander
-gym[box2d]
+gym[box2d]<=0.22
 pyglet==1.5.27
 
 # HCraft
