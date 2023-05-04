@@ -90,7 +90,7 @@ class MiniGridStep(GymStep):
 
         if done:
             self.info_panel.update(key_value={"Score": reward})
-            self.recorder.record( 
+            self.recorder.record(
                 data = {
                 "episode": episode,
                 "steps": self.env.step_count,

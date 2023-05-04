@@ -59,7 +59,6 @@ class JsonRecorder(Recorder):
             self.current_file.close()
             self.current_file = None
             self.first_record_written = False
-        
     def create_file(self, filepath: Path) -> FileIO:
         """Create a new json to record into."""
         file = open(filepath.with_suffix(".json"), "w")
