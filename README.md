@@ -52,7 +52,7 @@ python -m venv myenv
 Replace "myenv" with the name you want to give to your virtual environment.
 
 - Activate the virtual environment by running the following command:
-source myenv/bin/activate
+`source myenv/bin/activate`
 
 - Clone or download the Python program from the [GitHub repository](https://github.com/IRLL/HIPPO_Gym/tree/48-examples_documentation) to your local machine.
 
@@ -61,7 +61,10 @@ source myenv/bin/activate
 - Run the command `pip install -r requirements.txt` to install the required dependencies for the program.
 
 - Navigate to the examples directory by running the following command:
-'cd examples'
+`cd examples`
+
+- In the examples directory, you will find a file named `minigrid_examples.py`. Run the following command to start the example:
+`python minigrid_examples.py`
 
 You should see:
 ![Backend log success minigrid](docs/backend_success_example.png)
