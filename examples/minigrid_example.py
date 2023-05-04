@@ -112,7 +112,7 @@ def build_experiment() -> HippoGym:
         "ArrowRight": HumanValue.RIGHT,
         "ArrowLeft": HumanValue.LEFT,
         "ArrowUp": HumanValue.UP,
-        "x": HumanValue.TOGGLE,
+        " ": HumanValue.TOGGLE,
         "c": HumanValue.PICKUP,
         "v": HumanValue.DROP,
         "Enter": HumanValue.END,
