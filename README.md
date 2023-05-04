@@ -58,7 +58,11 @@ Replace "myenv" with the name you want to give to your virtual environment.
 
 - Open a terminal window and navigate to the root directory of the program.
 
-- Run the following commands `pip install -r requirements.txt``pip install -r requirements-dev.txt``pip install -r requirements-examples.txt` to install the required dependencies for the program.
+- Run the following commands to install the required dependencies for the program:
+`pip install -r requirements.txt`
+`pip install -r requirements-dev.txt`
+`pip install -r requirements-examples.txt` 
+
 
 - Navigate to the examples directory by running the following command:
 `cd examples`
