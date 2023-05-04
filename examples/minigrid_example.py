@@ -36,7 +36,7 @@ class MiniGridStep(GymStep):
     def __init__(self, agent):
         self.info_panel = InfoPanel()
         self.recorder = JsonRecorder(
-                    records_path="records", experiment_name="experiment_name"
+                    records_path="records", experiment_name="minigrid_human"
                 )
         buttons_params = {
             HumanValue.LEFT: {"icon": "FaArrowLeft"},
@@ -89,6 +89,7 @@ class MiniGridStep(GymStep):
 
 
         if done:
+            self.info_panel.update(key_value={"Score": reward})
             self.recorder.record( 
                 data = {
                 "episode": episode,
@@ -97,7 +98,6 @@ class MiniGridStep(GymStep):
             },
                 user_id=self.user_id,
             )
-            self.info_panel.update(key_value={"Score": reward})
             self.score = 0
             return
 

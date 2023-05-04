@@ -42,13 +42,31 @@ class Recorder:
 
 
 class JsonRecorder(Recorder):
-    def write(self, data, outfile: FileIO):
-        outfile.write(json.dumps(data))
-        outfile.write("\n")
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.first_record_written = False
 
+    def write(self, data, outfile: FileIO):
+        if self.first_record_written:
+            outfile.write(",\n")
+        else:
+            self.first_record_written = True
+        outfile.write(json.dumps(data))
+
+    def close_file(self) -> None:
+        if self.current_file:
+            self.current_file.write("\n]")
+            self.current_file.close()
+            self.current_file = None
+            self.first_record_written = False
+        
     def create_file(self, filepath: Path) -> FileIO:
         """Create a new json to record into."""
-        return open(filepath.with_suffix(".json"), "w")
+        file = open(filepath.with_suffix(".json"), "w")
+        file.write("[\n")
+        return file
+    def __del__(self):
+        self.close_file()
 
 
 class PickleRecorder(Recorder):
