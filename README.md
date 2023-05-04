@@ -41,6 +41,28 @@ You can now play with either the command pannel or the keyboard:
 ### Minigrid with human agent
 Copy and run the [minigrid example](https://github.com/IRLL/HIPPO_Gym/blob/master/examples/minigrid_example.py).
 
+
+## Installation
+
+To use this program, follow these steps:
+
+- Create a new virtual environment by running the following command in your terminal:
+python -m venv myenv
+
+Replace "myenv" with the name you want to give to your virtual environment.
+
+- Activate the virtual environment by running the following command:
+source myenv/bin/activate
+
+- Clone or download the Python program from the [GitHub repository](https://github.com/IRLL/HIPPO_Gym/tree/48-examples_documentation) to your local machine.
+
+- Open a terminal window and navigate to the root directory of the program.
+
+- Run the command `pip install -r requirements.txt` to install the required dependencies for the program.
+
+- Navigate to the examples directory by running the following command:
+'cd examples'
+
 You should see:
 ![Backend log success minigrid](docs/backend_success_example.png)
 
