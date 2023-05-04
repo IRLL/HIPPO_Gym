@@ -58,13 +58,13 @@ Replace "myenv" with the name you want to give to your virtual environment.
 
 - Open a terminal window and navigate to the root directory of the program.
 
-- Run the command `pip install -r requirements.txt` to install the required dependencies for the program.
+- Run the following commands `pip install -r requirements.txt``pip install -r requirements-dev.txt``pip install -r requirements-examples.txt` to install the required dependencies for the program.
 
 - Navigate to the examples directory by running the following command:
 `cd examples`
 
 - In the examples directory, you will find a file named `minigrid_examples.py`. Run the following command to start the example:
-`python minigrid_examples.py`
+`python minigrid_example.py`
 
 You should see:
 ![Backend log success minigrid](docs/backend_success_example.png)
