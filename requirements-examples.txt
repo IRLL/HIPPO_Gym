@@ -2,6 +2,9 @@
 gymnasium
 minigrid==2.1
 
+# Lunar Lander
+gym[box2d]>=0.22
+pyglet>=1.5.27
 
 # Crafting
 
