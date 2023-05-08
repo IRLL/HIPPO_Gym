@@ -47,7 +47,7 @@ Copy and run the [minigrid example](https://github.com/IRLL/HIPPO_Gym/blob/maste
 To use this program, follow these steps:
 
 - Create a new virtual environment by running the following command in your terminal:
-`python -m venv myenv`
+`python3 -m venv myenv`
 
 Replace "myenv" with the name you want to give to your virtual environment.
 
