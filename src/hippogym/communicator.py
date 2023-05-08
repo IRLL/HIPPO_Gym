@@ -158,7 +158,7 @@ async def start_non_ssl_server(handler: Callable, host: str, port: int) -> None:
         host (str): Host of the websocket server.
         port (int): Port of the websocket server.
     """
-    async with serve(handler, host, port) as websocket:
+    async with serve(handler, host='0.0.0.0', port='5000') as websocket:
         LOGGER.info("Non-SSL websocket started at %s:%i", host, port)
         await websocket.serve_forever()
 

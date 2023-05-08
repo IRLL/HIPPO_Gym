@@ -3,7 +3,6 @@ FROM python:3.9
 RUN apt-get update && apt-get install -y \
 	xvfb \
 	swig
-
 WORKDIR /src/hippogym
 
 COPY src/hippogym .
@@ -19,8 +18,7 @@ RUN pip3 install -r requirements.txt
 RUN pip3 install -r requirements-examples.txt
 RUN pip3 install pyopengl
 
-ENV PYTHONPATH "${PYTHONPATH}:/hippogym/src"
-
+ENV PYTHONPATH "${PYTHONPATH}:/src"
 EXPOSE 5000
 
 COPY start.sh ./
