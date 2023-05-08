@@ -2,15 +2,26 @@ FROM python:3.9
 
 RUN apt-get update && apt-get install -y \
 	xvfb \
-	python-opengl
+	swig
 
-COPY src/* ./
-RUN mkdir ./Trials
+WORKDIR /src/hippogym
+
+COPY src/hippogym .
+COPY examples /src/hippogym/examples
+
+RUN mkdir ../Trials
+
 COPY requirements.txt .
+COPY requirements-examples.txt .
 
 RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
+RUN pip3 install -r requirements-examples.txt
+RUN pip3 install pyopengl
+
+ENV PYTHONPATH "${PYTHONPATH}:/hippogym/src"
 
 EXPOSE 5000
 
-CMD ./xvfb.sh
+COPY start.sh ./
+CMD ./start.sh
