@@ -1,0 +1,7 @@
+[
+{"episode": 0, "steps": 68, "reward": 0.9184},
+{"episode": 1, "steps": 66, "reward": 0.9208000000000001},
+{"episode": 2, "steps": 48, "reward": 0.9424},
+{"episode": 3, "steps": 52, "reward": 0.9376},
+{"episode": 4, "steps": 72, "reward": 0.9136}
+]

@@ -16,9 +16,11 @@ COPY requirements-examples.txt .
 RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
 RUN pip3 install -r requirements-examples.txt
-RUN pip3 install pyopengl
+RUN pip3 install pyopengl==3.1.6
 
 ENV PYTHONPATH "${PYTHONPATH}:/src"
+
+ENV HIPPOGYM_HOST 0.0.0.0
 EXPOSE 5000
 
 COPY start.sh ./
