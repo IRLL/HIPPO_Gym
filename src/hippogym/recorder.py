@@ -42,13 +42,44 @@ class Recorder:
 
 
 class JsonRecorder(Recorder):
-    def write(self, data, outfile: FileIO):
-        outfile.write(json.dumps(data))
-        outfile.write("\n")
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.first_record_written = False
+        self.current_file = None
 
+    def write(self, data, filepath: Path):
+        print("Writing data to file:", data)
+        with open(filepath, "r") as file:
+            content = file.read()
+            if content[-2:] == "\n]":
+                content = content[:-2] + ",\n"
+            else:
+                content = content[:-1]  # Remove the last "]" character
+                content += "\n"  # Add newline character
+            content += json.dumps(data) + "\n]"
+        with open(filepath, "w") as file:
+            file.write(content)
+
+
+    def close_file(self) -> None:
+        print("Closing file")
+        if self.current_file:
+            self.current_file.write("\n]")
+            self.current_file.flush()
+            self.current_file.close()
+            self.current_file = None
+            self.first_record_written = False
     def create_file(self, filepath: Path) -> FileIO:
         """Create a new json to record into."""
-        return open(filepath.with_suffix(".json"), "w")
+        print(f"Creating file at: {filepath.with_suffix('.json')}")
+        if not os.path.exists(filepath.with_suffix(".json")):
+            file = open(filepath.with_suffix(".json"), "w")
+            file.write("[\n")
+            file.close()
+        return filepath.with_suffix(".json")
+
+    def __del__(self):
+        self.close_file()
 
 
 class PickleRecorder(Recorder):
