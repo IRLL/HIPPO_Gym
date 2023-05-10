@@ -34,7 +34,14 @@ class HumanValue(Enum):
 
 class MiniGridStep(GymStep):
     def __init__(self, agent):
-        self.info_panel = InfoPanel()
+        self.info_panel = InfoPanel(text="Use keyboard to play the game",
+                                    items = ["ArrowRight = Right,"+
+                                            "ArrowLeft = Left",
+                                            "ArrowUp = Up, "+
+                                            "Space = Toggle",
+                                            "c = Pickup, "+
+                                            "v = Drop",
+                                            "Enter = End"])
         self.recorder = JsonRecorder(
                     records_path="records", experiment_name="minigrid_human"
                 )
