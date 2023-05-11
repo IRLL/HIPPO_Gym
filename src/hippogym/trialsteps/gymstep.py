@@ -40,7 +40,10 @@ class GymStep(InteractiveStep):
             ui_elements.append(self.render_window)
         super().__init__(ui_elements)
         if isinstance(env, str):
-            env = gym.make(env, **kwargs)
+            if "LunarLander" in str(self):
+                env = gym.make(env, render_mode="rgb_array", **kwargs)
+            else:
+                env = gym.make(env, **kwargs)
         self.env = env
         self.agent = agent
         self.agent.set_spaces(self.env.observation_space, self.env.action_space)
@@ -144,7 +147,10 @@ class GymStep(InteractiveStep):
         return observation, info
 
     def send_render(self):
-        rgb_array = self.env.render(mode="rgb_array")
+        if "LunarLander" in str(self):
+            rgb_array = self.env.render()
+        else:
+            rgb_array = self.env.render(mode="rgb_array")
         try:
             rgb_array = np.array(rgb_array)
         except:
