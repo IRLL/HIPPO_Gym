@@ -40,12 +40,9 @@ class GymStep(InteractiveStep):
             ui_elements.append(self.render_window)
         super().__init__(ui_elements)
         if isinstance(env, str):
-            print(self.user_id, self)
             if "LunarLander" in str(self):
-                print("test1")
                 env = gym.make(env, render_mode="rgb_array", **kwargs)
             else:
-                print("test2")
                 env = gym.make(env, **kwargs)
         self.env = env
         self.agent = agent
@@ -151,10 +148,8 @@ class GymStep(InteractiveStep):
 
     def send_render(self):
         if "LunarLander" in str(self):
-            print("check1")
             rgb_array = self.env.render()
         else:
-            print("check1")
             rgb_array = self.env.render(mode="rgb_array")
         try:
             rgb_array = np.array(rgb_array)
