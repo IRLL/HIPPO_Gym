@@ -4,7 +4,7 @@ import ssl
 from logging import getLogger
 from multiprocessing import Queue
 from typing import TYPE_CHECKING, Callable, Optional, Tuple, Union
-
+import os
 from websockets.server import WebSocketServerProtocol, serve
 
 if TYPE_CHECKING:
@@ -150,15 +150,11 @@ class WebSocketCommunicator:
         return out_q.get()
 
 
-async def start_non_ssl_server(handler: Callable, host: str, port: int) -> None:
-    """Start a non-ssl WebSocket server.
 
-    Args:
-        handler (Callable): Function to serve on the websocket.
-        host (str): Host of the websocket server.
-        port (int): Port of the websocket server.
-    """
-    async with serve(handler, host, port) as websocket:
+
+async def start_non_ssl_server(handler: Callable, host: str, port: int) -> None:
+    host = os.environ.get('HIPPOGYM_HOST', host)
+    async with serve(handler, host=host, port='5000') as websocket:
         LOGGER.info("Non-SSL websocket started at %s:%i", host, port)
         await websocket.serve_forever()
 

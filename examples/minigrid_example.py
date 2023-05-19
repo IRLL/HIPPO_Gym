@@ -16,7 +16,7 @@ from minigrid.core.actions import Actions
 from hippogym import HippoGym, HumanAgent
 from hippogym.ui_elements import InfoPanel, ControlPanel, Button
 from hippogym.trialsteps import GymStep
-
+from hippogym.recorder import JsonRecorder
 
 logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
@@ -34,8 +34,17 @@ class HumanValue(Enum):
 
 class MiniGridStep(GymStep):
     def __init__(self, agent):
-        self.info_panel = InfoPanel()
-
+        self.info_panel = InfoPanel(text="Use keyboard to play the game",
+                                    items = ["ArrowRight = Right,"+
+                                            "ArrowLeft = Left",
+                                            "ArrowUp = Up, "+
+                                            "Space = Toggle",
+                                            "c = Pickup, "+
+                                            "v = Drop",
+                                            "Enter = End"])
+        self.recorder = JsonRecorder(
+                    records_path="records", experiment_name="minigrid_human"
+                )
         buttons_params = {
             HumanValue.LEFT: {"icon": "FaArrowLeft"},
             HumanValue.RIGHT: {"icon": "FaArrowRight"},
@@ -72,10 +81,7 @@ class MiniGridStep(GymStep):
         done: bool,
         info: dict,
     ) -> None:
-        if done:
-            self.info_panel.update(key_value={"Score": reward})
-            self.score = 0
-            return
+
 
         observation_msg = f"Step={self.env.step_count}, Reward={reward}"
         observation_msg = f"[{observation_msg}]"
@@ -87,6 +93,20 @@ class MiniGridStep(GymStep):
                 "Observation": observation_msg,
             },
         )
+
+
+        if done:
+            self.info_panel.update(key_value={"Score": reward})
+            self.recorder.record(
+                data = {
+                "episode": episode,
+                "steps": self.env.step_count,
+                "reward" : reward,
+            },
+                user_id=self.user_id,
+            )
+            self.score = 0
+            return
 
     def send_render(self):
         rgb_frame = self.env.get_frame(tile_size=64, agent_pov=True)
