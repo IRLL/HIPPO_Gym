@@ -2,7 +2,8 @@ FROM python:3.9
 
 RUN apt-get update && apt-get install -y \
 	xvfb \
-	swig
+	swig \
+	libsdl2-mixer-2.0-0
 WORKDIR /src/hippogym
 
 COPY src/hippogym .
@@ -20,6 +21,8 @@ RUN pip3 install pyopengl==3.1.6
 
 ENV PYTHONPATH "${PYTHONPATH}:/src"
 ENV SDL_VIDEODRIVER dummy
+ENV SDL_AUDIODRIVER dummy
+
 ENV DISPLAY :99
 
 ENV HIPPOGYM_HOST 0.0.0.0
