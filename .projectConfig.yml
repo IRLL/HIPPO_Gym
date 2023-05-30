@@ -12,11 +12,11 @@ project:
   ecsTask: new-cognitive-tutor
   events:
     startServerStep: 1
-    stopServerStep: 13
+    stopServerStep: 17
   id: new-cognitive-tutor
   live: true
   maxRuntime: 30
-  name: new-cognitive-tutor
+  name: new-cognitive-tutor-pilot
   researcher: Nadeen
   ssl:
     fullchain: SSL/fullchain.pem
@@ -33,9 +33,7 @@ project:
     8: 8_train_test_instruction.html
     9: 9_cognitive_tutor_instructions.html
     10: 10_quiz_instructions.html
-    11: 11_quiz.html
-    12: game
-    13: exampleThank.html
+    11: game
     finalStep: exampleThank.html
   teamMembers: null
   useAWS: true
@@ -59,7 +57,7 @@ trial:
   - Click on "Get Feedback" to get feedback on your image. Green means that removing
     it will decrease your score, and red means that removing it will increase your
     score.
-  maxEpisodes: 32
+  maxEpisodes: 42
   maxFrameRate: 60
   maxScore: 2242
   minFrameRate: 1

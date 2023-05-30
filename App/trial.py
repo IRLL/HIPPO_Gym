@@ -187,9 +187,16 @@ class Trial():
         elif command == 'new game' and self.count < 43:
             self.count+=1
             self.send_ui()
-            if (self.count != 3 and self.passedHeader != 0) or (self.count != 23 and self.passedHeader!=1):
-                print("resetting env....")
-                self.reset()
+            #if (self.count != 3 and self.passedHeader != 0) or (self.count != 23 and self.passedHeader!=1):
+            print('self.passedHeader', self.passedHeader)
+            print('self.count', self.count)
+            print('self.passedHeader != 0', self.passedHeader != 0)
+            print('self.count != 3', self.count != 3)
+            print('self.count != 23 ', self.count != 23 )
+            print('self.passedHeader!=1', self.passedHeader!=1)
+            #if (self.count != 3 and self.passedHeader != 0) or (self.count != 23 and self.passedHeader!=1):
+                #print("resetting env....")
+            self.reset()
         elif command == 'resume' and self.count < 43:
             self.send_ui()
         elif self.count >= 43:
@@ -383,16 +390,20 @@ class Trial():
         Creates a file to record records to. comment/uncomment as desired 
         for episode or full-trial logging.
         '''
+        
         if self.config.get('dataFile') == 'trial':
             filename = f'trial_{self.userId}'
         else:
             filename = f'episode_{self.episode}_user_{self.userId}'
+
+        path = 'Trials/'+filename
         try:
-            path = 'Trials/'+filename
+            
             self.outfile = open(path, 'ab')
         except:
             os.makedirs('Trials')
             self.outfile = open(path, 'ab')
+            print('saved')
         self.filename = filename
         self.path = path
 

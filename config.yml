@@ -13,7 +13,7 @@ project:
   id: new-cognitive-tutor # Letters, Numbers and '-' only!
   live: true # bool
   maxRuntime: 30 # int in minutes.
-  name: new-cognitive-tutor # str
+  name: new-cognitive-tutor-pilot # include pilot for control condition
   researcher: Nadeen # str
   ssl:
     fullchain: SSL/fullchain.pem # path to fullchain.pem file excluding bucket name
@@ -28,14 +28,15 @@ project:
     6: 6_rewards_costs.html
     7: 7_graph_structure_info.html
     8: 8_train_test_instruction.html
+    #8: 8_train_test_instruction_control.html
     9: 9_cognitive_tutor_instructions.html
     10: 10_quiz_instructions.html
-    11: 11_cheat_sheet_instructions_reminder.html
-    12: game
-    13: 15_bonus_amount.html
-    14: 16_user_attitude_survey.html
-    15: 17_demographic_survey_questions.html
-    16: 18_end_of_survey_thankyou.html
+    # 11: 11_cheat_sheet_instructions_reminder.html
+    11: game
+    # 13: 15_bonus_amount.html
+    # 14: 16_user_attitude_survey.html
+    # 15: 17_demographic_survey_questions.html
+    # 16: 18_end_of_survey_thankyou.html
     finalStep: exampleThank.html # required, filename can be same as last numbered step
   teamMembers: # str
 trial:
