@@ -9,3 +9,4 @@ boto3>=1.14.20
 python-dotenv>=0.14.0
 pyYaml>=5.4
 pymitter
+cmake>=3.18.4

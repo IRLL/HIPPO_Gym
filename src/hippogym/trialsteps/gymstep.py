@@ -47,8 +47,12 @@ class GymStep(InteractiveStep):
         self.env = env
         self.agent = agent
         self.agent.set_spaces(self.env.observation_space, self.env.action_space)
-
+        self.RESET_ACTION = -1
+        self.START_ACTION = -2
+        self.waiting_for_start = False
+        self.reset_pressed = False
         self.stop = False
+        self.reseet_triggered = False
         self.run_from_start = run_from_start
         self.running = self.run_from_start
 
@@ -80,51 +84,77 @@ class GymStep(InteractiveStep):
         """
 
     def run(self) -> None:
-        self.stop = False
-        self.running = self.run_from_start
+      self.stop = False
+      self.running = self.run_from_start
+      self.reset_triggered = False
+      self.reset_pressed = True
+      observation, info = self.gym_reset()
+      step = 0
+      episode = 0
 
-        observation, info = self.gym_reset()
-        step = 0
-        episode = 0
+      while not self.stop:
+          self.send_render()
+          while self.running:
+              action = None
+              while action is None:
+                  self.event_handler.trigger_events()
+                  action = self.agent.act(observation)
+                  if action == self.RESET_ACTION:
+                      self.reset_triggered = True
+                      observation, info = self.gym_reset()
+                      self.agent.reset()
+                      self.running = False
+                      self.reset_pressed = True
+                      step = 0
+                      episode = 0
+                      continue
+                  elif action == self.START_ACTION:
+                      self.running = True
+                      self.reset_pressed = False
+                      action = None
+                      continue
+                  step += 1
+              if action not in [self.RESET_ACTION, self.START_ACTION]:
+                  new_observation, reward, terminated, truncated, info = self.gym_step(
+                      action
+                  )
+                  done = terminated or truncated
+                  LOGGER.debug("GymStep action was taken: %s. Reward: %f", action, reward)
 
-        while not self.stop:
-            self.send_render()
-            while self.running:
-                action = None
-                while action is None:
-                    self.event_handler.trigger_events()
-                    action = self.agent.act(observation)
-                    step += 1
+                  self.step(
+                      episode,
+                      step,
+                      observation,
+                      action,
+                      new_observation,
+                      reward,
+                      terminated,
+                      info,
+                  )
 
-                new_observation, reward, terminated, truncated, info = self.gym_step(
-                    action
-                )
-                done = terminated or truncated
-                LOGGER.debug("GymStep action was taken: %s. Reward: %f", action, reward)
+                  if done:
+                      observation, info = self.gym_reset()
+                      self.agent.reset()
+                      step = 0
+                      episode += 1
 
-                self.step(
-                    episode,
-                    step,
-                    observation,
-                    action,
-                    new_observation,
-                    reward,
-                    terminated,
-                    info,
-                )
+                  observation = new_observation
+              self.send_render()
+              time.sleep(0.03)
+          if self.reset_pressed:
+              while action != self.START_ACTION or not self.agent.start_triggered:
+                  self.event_handler.trigger_events()
+                  action = self.agent.act(observation)
+              self.running = True
+              self.reset_pressed = False
+              action = None
+              self.agent.start_triggered = False
+          else:
+              action = None
+              time.sleep(1)
+      self.env.close()
 
-                if done:
-                    self.stop = True
-                    observation, info = self.gym_reset()
-                    self.agent.reset()
-                    step = 0
-                    episode += 1
 
-                observation = new_observation
-                self.send_render()
-                time.sleep(0.03)
-            time.sleep(1)
-        self.env.close()
 
     def gym_step(self, action: Any) -> Tuple[Any, float, bool, bool, dict]:
         step_data = self.env.step(action)
