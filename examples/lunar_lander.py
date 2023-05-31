@@ -49,6 +49,7 @@ class HumanAgentToggling(HumanAgent):
         self.start_triggered = False
         self.reset_triggered = False
         self.reset_acknowledged = False
+        self.action = None
         super().__init__(HumanAction, VALUE_TO_ACTION, KEY_TO_VALUE)
 
     def act(self, observation):
