@@ -19,6 +19,8 @@ RUN pip3 install -r requirements-examples.txt
 RUN pip3 install pyopengl==3.1.6
 
 ENV PYTHONPATH "${PYTHONPATH}:/src"
+ENV SDL_VIDEODRIVER dummy
+ENV DISPLAY :99
 
 ENV HIPPOGYM_HOST 0.0.0.0
 EXPOSE 5000

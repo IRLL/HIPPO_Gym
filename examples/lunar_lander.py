@@ -86,7 +86,7 @@ class LunarLanderV2Step(GymStep):
         self.agent = agent
         self.info_panel = InfoPanel(
             text="Use keyboard to play the game",
-            items=["s = down", "a = left", "d = right"],
+            items=[u"\u2193"" = down", u"\u2190"" = left", u"\u2192" " = right"],
         )
         self.control_panel = ControlPanel(buttons=standard_controls)
         self.recorder = JsonRecorder(
