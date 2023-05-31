@@ -25,32 +25,27 @@ To install the HippoGym library and start using HippoGym:
 pip install hippogym
 ```
 
-
 ## Examples
 
 To run our pre-existing HippoGym examples, you can either create a Python virtual environment or download all dependencies locally:
 
 ### For a virtual environment:
--  Clone or download the Python program from the [GitHub repository](https://github.com/IRLL/HIPPO_Gym/tree/master) to your local machine. 
--  Create a new virtual environment by running the following command in your terminal:
-`python3 -m venv myenv` (Replace "myenv" with the name you want to give to your virtual environment.)
--  Activate the virtual environment by running the following command:
-`source myenv/bin/activate`
+- Clone or download the Python program from the [GitHub repository](https://github.com/IRLL/HIPPO_Gym/tree/master) to your local machine.
+
+- Create a new virtual environment by running the following command in your terminal: `python3 -m venv myenv` (Replace "myenv" with the name you want to give to your virtual environment.)
+
+-  Activate the virtual environment by running the following command: `source myenv/bin/activate`
+
 -  Open a terminal window and navigate to the root directory of the program.
 ### To run on your local machine:
--  Clone or download the Python program from the [GitHub repository](https://github.com/IRLL/HIPPO_Gym/tree/master) to your local machine.  
+-  Clone or download the Python program from the [GitHub repository](https://github.com/IRLL/HIPPO_Gym/tree/master) to your local machine.
 -  Open a terminal window and navigate to the root directory of the program.
--  Run the following commands to install the required dependencies for the program:
- `pip install -r requirements.txt`
- `pip install -r requirements-dev.txt`
- `pip install -r requirements-examples.txt` 
+-  Run the following commands to install the required dependencies for the program: `pip install -r requirements.txt` `pip install -r requirements-dev.txt` `pip install -r requirements-examples.txt`
 Once you have installed all requirments, or opened a virtual envirnment with all necessary dependencies:
--  Navigate to the examples directory by running the following command:
-`cd examples`
+-  Navigate to the examples directory by running the following command: `cd examples`
 
 ### Lunar Lander with human agent
-In the examples directory, you will find a file named `lunar_lander.py`. Run the following command to start the example:
-`python lunar_lander.py`
+In the examples directory, you will find a file named `lunar_lander.py`. Run the following command to start the example: `python lunar_lander.py`
 
 You should see:
 ![Backend log success lunar](docs/backend_success_example.png)
@@ -62,8 +57,7 @@ You can now play with either the command pannel or the keyboard:
 
 ### Minigrid with human agent
 
-In the examples directory, you will find a file named `minigrid_examples.py`. Run the following command to start the example:
-`python minigrid_example.py`
+In the examples directory, you will find a file named `minigrid_examples.py`. Run the following command to start the example: `python minigrid_example.py`
 
 You should see:
 ![Backend log success minigrid](docs/backend_success_example.png)
