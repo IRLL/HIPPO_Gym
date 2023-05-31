@@ -131,7 +131,7 @@ class GymStep(InteractiveStep):
                       terminated,
                       info,
                   )
-  
+
                   if done:
                       observation, info = self.gym_reset()
                       self.agent.reset()
