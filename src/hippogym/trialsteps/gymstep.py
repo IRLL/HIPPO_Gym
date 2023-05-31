@@ -137,7 +137,7 @@ class GymStep(InteractiveStep):
                       self.agent.reset()
                       step = 0
                       episode += 1
-  
+
                   observation = new_observation
               self.send_render()
               time.sleep(0.03)
