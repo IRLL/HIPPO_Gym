@@ -120,7 +120,7 @@ class GymStep(InteractiveStep):
                   )
                   done = terminated or truncated
                   LOGGER.debug("GymStep action was taken: %s. Reward: %f", action, reward)
-  
+
                   self.step(
                       episode,
                       step,
@@ -147,7 +147,7 @@ class GymStep(InteractiveStep):
                   action = self.agent.act(observation)
               self.running = True
               self.reset_pressed = False
-              action = None 
+              action = None
               self.agent.start_triggered = False
           else:
               action = None
