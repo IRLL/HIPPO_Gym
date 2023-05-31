@@ -91,7 +91,7 @@ class GymStep(InteractiveStep):
       observation, info = self.gym_reset()
       step = 0
       episode = 0
-  
+
       while not self.stop:
           self.send_render()
           while self.running:
@@ -111,7 +111,7 @@ class GymStep(InteractiveStep):
                   elif action == self.START_ACTION:
                       self.running = True
                       self.reset_pressed = False
-                      action = None  
+                      action = None
                       continue
                   step += 1
               if action not in [self.RESET_ACTION, self.START_ACTION]:
