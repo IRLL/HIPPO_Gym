@@ -3,7 +3,7 @@ project:
   awsSetup:
     bucket: projects.irll # working bucket in AWS
     region: ca-central-1 # working AWS region
-    rootDomain: irll.net # a fully qualified domain name without 'https://'
+    rootDomain: testing.irll.net # a fully qualified domain name without 'https://'
     cpu: 2 # int 1,2, or 4
     memory: 10 # int 1-30
 
@@ -21,7 +21,7 @@ project:
     sslBucket: projects.irll # bucket name for resolving paths above
   steps: # any number of steps needed with corresponding filenames
     1: 1_consentForm.html
-    2: 2_intro_instructions.html
+    2: game
     3: 3_flight_planning_intro.html
     4: 4_flight_planning_intro2.html
     5: 5_node_inspector.html
