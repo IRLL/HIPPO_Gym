@@ -56,11 +56,11 @@ class Trial():
         returned. 
         '''
         # populate random graph selection
-        ranNum = random.randint(23, 32)
+        ranNum = random.randint(23, 42)
         self.selectedRanGraphs.append(ranNum)
-        ranNum = random.randint(23, 32)
+        ranNum = random.randint(23, 42)
         while ranNum == self.selectedRanGraphs[0]:
-            ranNum = random.randint(23, 32)
+            ranNum = random.randint(23, 42)
         self.selectedRanGraphs.append(ranNum)
 
         self.agent = Agent()
