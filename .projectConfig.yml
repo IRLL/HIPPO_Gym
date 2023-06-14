@@ -33,7 +33,12 @@ project:
     8: 8_train_test_instruction.html
     9: 9_cognitive_tutor_instructions.html
     10: 10_quiz_instructions.html
-    11: game
+    11: 11_cheat_sheet_instructions_reminder.html
+    12: game
+    13: 15_bonus_amount.html
+    14: 16_user_attitude_survey.html
+    15: 17_demographic_survey_questions.html
+    16: 18_end_of_survey_thankyou.html
     finalStep: exampleThank.html
   teamMembers: null
   useAWS: true

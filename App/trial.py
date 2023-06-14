@@ -161,7 +161,7 @@ class Trial():
             #     self.trialData = allTrials[str(selectedTrial)]
             #     print('self.trialData')
             #     print(self.trialData)
-            with open('data/trialData.json') as json_file:
+            with open('trialData.json') as json_file:
                 self.trialData = json.load(json_file)
             self.send_ui()
         if 'command' in message and message['command']:
