@@ -4,8 +4,8 @@ from multiprocessing import Process, Pipe
 from s3upload import Uploader
 import logging
 
-ADDRESS = None # set desired IP for development 
-PORT = 5000 # if port is changed here it must also be changed in Dockerfile
+ADDRESS = "localhost" # set desired IP for development 
+PORT = 5005 # if port is changed here it must also be changed in Dockerfile
 devEnv = False
 
 logging.basicConfig(filename='server.log', level=logging.INFO)

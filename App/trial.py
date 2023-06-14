@@ -4,7 +4,7 @@ import _pickle as cPickle
 from xml.dom import minidom
 from PIL import Image
 from io import BytesIO
-from agent import Agent # this is the Agent/Environment compo provided by the researcher
+#from agent import Agent # this is the Agent/Environment compo provided by the researcher
 
 # Get the score change from score_change
 from predict import get_score_change
@@ -63,8 +63,8 @@ class Trial():
             ranNum = random.randint(23, 42)
         self.selectedRanGraphs.append(ranNum)
 
-        self.agent = Agent()
-        self.agent.start(self.config.get('game'))
+        #self.agent = Agent()
+        #self.agent.start(self.config.get('game'))
 
     def run(self):
         '''
@@ -95,7 +95,7 @@ class Trial():
             print("IN HERE TO END")
             self.end()
         else:
-            self.agent.reset()
+            #self.agent.reset()
             if self.outfile:
                 self.outfile.close()
                 if self.config.get('s3upload'):
@@ -120,7 +120,7 @@ class Trial():
         to write the record to file before closing.
         '''
         self.pipe.send('done')
-        self.agent.close()
+        #self.agent.close()
         if self.config.get('dataFile') == 'trial':
             self.save_record()
         if self.outfile:
