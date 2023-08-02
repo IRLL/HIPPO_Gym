@@ -175,26 +175,26 @@ def check_dependencies():
         assert output, f'{depend} not found. Please install {depend} before continuing.' 
     return
 
-def get_ssl_cert(projectConfig):
-    logging.info('Checking for SSL Cert...')
-    sslBucket = projectConfig.get('ssl').get('sslBucket')
-    fullchain = projectConfig.get('ssl').get('fullchain')
-    privkey = projectConfig.get('ssl').get('privkey')
-    if sslBucket and fullchain and privkey:
-        try:
-            s3 = boto3.resource('s3')
-            object = s3.Object(sslBucket, fullchain)
-            object.download_file('App/cert.pem')
-            object = s3.Object(sslBucket, privkey)
-            object.download_file('App/private_key.pem')
-            logging.info('SSL Cert files downloaded.')
-            return
-        except Exception as error:
-            logging.info(error)
-    os.system('chmod 600 App/private_key.pem')
-    logging.info(f'Config entry for SSL Cert files not found')
-    logging.info('SSL Cert files NOT downloaded.')
-    return
+# def get_ssl_cert(projectConfig):
+#     logging.info('Checking for SSL Cert...')
+#     sslBucket = projectConfig.get('ssl').get('sslBucket')
+#     fullchain = projectConfig.get('ssl').get('fullchain')
+#     privkey = projectConfig.get('ssl').get('privkey')
+#     if sslBucket and fullchain and privkey:
+#         try:
+#             s3 = boto3.resource('s3')
+#             object = s3.Object(sslBucket, fullchain)
+#             object.download_file('App/cert.pem')
+#             object = s3.Object(sslBucket, privkey)
+#             object.download_file('App/private_key.pem')
+#             logging.info('SSL Cert files downloaded.')
+#             return
+#         except Exception as error:
+#             logging.info(error)
+#     os.system('chmod 600 App/private_key.pem')
+#     logging.info(f'Config entry for SSL Cert files not found')
+#     logging.info('SSL Cert files NOT downloaded.')
+#     return
 
 def set_trial_config(trialConfig, projectConfig):
     logging.info('Setting Trial Config...')
@@ -231,7 +231,7 @@ def main():
         if not repoExists:
             projectConfig = create_repository(projectConfig)
         imageExists = check_image(projectConfig)
-        get_ssl_cert(projectConfig)
+        # get_ssl_cert(projectConfig)
         set_dotenv()
         push_image(projectConfig, imageExists)
         if not check_task_definition(projectConfig):
