@@ -184,14 +184,14 @@ def get_ssl_cert(projectConfig):
         try:
             s3 = boto3.resource('s3')
             object = s3.Object(sslBucket, fullchain)
-            object.download_file('App/fullchain.pem')
+            object.download_file('App/cert.pem')
             object = s3.Object(sslBucket, privkey)
-            object.download_file('App/privkey.pem')
+            object.download_file('App/private_key.pem')
             logging.info('SSL Cert files downloaded.')
             return
         except Exception as error:
             logging.info(error)
-    os.system('chmod 600 App/privkey.pem')
+    os.system('chmod 600 App/private_key.pem')
     logging.info(f'Config entry for SSL Cert files not found')
     logging.info('SSL Cert files NOT downloaded.')
     return

@@ -6,7 +6,7 @@ App/XML/*
 *.swp
 Logs/*
 App/server.log
-.DS_Stoe
+.DS_Store
 .idea/*
 .projectConfig.yml
 App/.trialConfig.yml
@@ -15,5 +15,6 @@ App/MtiaeScoreAgent/*
 App/Math*
 App/FR*
 App/Impressions/*
+App/.DS_Store
 App/score*
 

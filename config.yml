@@ -9,16 +9,17 @@ project:
 
   events:
     startServerStep: 1 # int
-    stopServerStep: 17 # int
+    stopServerStep: 12 # int
   id: new-cognitive-tutor # Letters, Numbers and '-' only!
   live: true # bool
   maxRuntime: 30 # int in minutes.
   name: new-cognitive-tutor-pilot # include pilot for control condition
   researcher: Nadeen # str
-  ssl:
-    fullchain: SSL/fullchain.pem # path to fullchain.pem file excluding bucket name
-    privkey: SSL/privkey.pem # path to privkey.pem file excluding bucket name
-    sslBucket: projects.irll # bucket name for resolving paths above
+  # SSL NOT USED ANYMORE, API GATEWAY FOR WEBSOCKETS
+  # ssl:
+  #   fullchain: SSL/cert.pem # path to fullchain.pem file excluding bucket name
+  #   privkey: SSL/private_key.pem # path to privkey.pem file excluding bucket name
+  #   sslBucket: beta.irll.net # bucket name for resolving paths above
   steps: # any number of steps needed with corresponding filenames
     1: 1_consentForm.html
     2: 2_intro_instructions.html
@@ -36,7 +37,7 @@ project:
     # 13: 15_bonus_amount.html
     # 14: 16_user_attitude_survey.html
     # 15: 17_demographic_survey_questions.html
-    # 16: 18_end_of_survey_thankyou.html
+    12: 18_end_of_survey_thankyou.html
     finalStep: exampleThank.html # required, filename can be same as last numbered step
   teamMembers: # str
 trial:

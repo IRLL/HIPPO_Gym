@@ -5,34 +5,33 @@ from xml.dom import minidom
 
 from io import BytesIO
 #from agent import Agent # this is the Agent/Environment compo provided by the researcher
-
+from websocket import Websocket
 # Get the score change from score_change
 from predict import get_score_change
 import asyncio
 import websockets
 import json
-
+import os
 
 # for dummy score
 import random
 
 def load_config():
-    logging.info('Loading Config in trial.py')
+    print('[INFO] Loading config from .trialConfig.yml...')
     with open('.trialConfig.yml', 'r') as infile:
         config = yaml.load(infile, Loader=yaml.FullLoader)
-    logging.info('Config loaded in trial.py')
+    print('[INFO] Config loaded')
     return config.get('trial')
 
 class Trial():
-
     def __init__(self, connection_url):
+        print('[INFO] Initializing Trial...')
         self.config = load_config()
         self.trialData = None
         self.data = None
         self.count = 1
         self.connection_url = connection_url
-        self.websocket = None
-        # self.humanAction = 0
+        self.websocket = Websocket(connection_url)
         self.episode = 0
         self.done = False
         self.play = False
@@ -40,37 +39,24 @@ class Trial():
         self.nextEntry = {}
         self.trialId = shortuuid.uuid()
         self.outfile = None
-        # self.framerate = self.config.get('startingFrameRate', 30)
         self.userId = None
         self.projectId = self.config.get('projectId')
         self.filename = None
-
         self.selectedRanGraphs = []
         self.passedHeader = 0
 
-        self.start()
-        self.run()
-
     async def connect(self):
-        retries = 0
-        while retries < 5:
-            try:
-                async with websockets.connect(self.connection_url) as ws:
-                    self.websocket = ws
-                    print("Connected to WebSocket address")
-                    await self.run()
-
-            except Exception as e:
-                print(f"Failed to connect: {e}")
-                retries += 1
-                await asyncio.sleep(1)  # wait a bit before retrying
+        await self.websocket.connectClient()
+        if self.websocket.websocket is not None:
+            print("[INFO] Connected to WebSocket address")
+            await self.start()
 
 
+    async def start(self):
+        self.start_trial()
+        await self.run()
 
-
-
-
-    def start(self):
+    def start_trial(self):
         '''
         Call the function in the Agent/Environment combo required to start 
         a trial. By default passes the environment name that will be passed
@@ -78,6 +64,7 @@ class Trial():
         By default this expects the openAI Gym Environment object to be
         returned. 
         '''
+        print('[INFO] Starting trial...')
         # populate random graph selection
         ranNum = random.randint(23, 42)
         self.selectedRanGraphs.append(ranNum)
@@ -86,20 +73,23 @@ class Trial():
             ranNum = random.randint(23, 42)
         self.selectedRanGraphs.append(ranNum)
 
-        #self.agent = Agent()
-        #self.agent.start(self.config.get('game'))
-
     async def run(self):
         '''
         This is the main event controlling function for a Trial.
         It handles the render-step loop
         '''
-        self.create_file()
+        print('[INFO] Running trial...')
         while not self.done:
-            message = await self.check_message()
-            if message:
-                await self.handle_message(message)
+            message = await self.websocket.receive_data()
+            await self.handle_message(message)
 
+    async def check_done(self):
+        '''
+        Check if self.done is set to True. If so, save the data and disconnect from the websocket.
+        '''
+        if self.done:
+            print("[INFO] Disconnecting from WebSocket...")
+            await self.websocket.close()
 
     async def reset(self):
         '''
@@ -111,24 +101,16 @@ class Trial():
         '''
         if self.check_trial_done():
             print("check_trial_done successful")
-            self.end()
+            await self.end()
         else:
-            #self.agent.reset()
-            if self.outfile:
-                print("self.outfile successful")
-                self.outfile.close()
-                # if self.config.get('s3upload'):
-                #     self.pipe.send({'upload':{'projectId':self.projectId ,'userId':self.userId,'file':self.filename,'path':self.path, 'bucket': self.config.get('bucket')}})
-            self.create_file()
             self.episode += 1
-            print('self.episode', self.episode)
+            print('[INFO] self.episode has been incremented...', self.episode)
 
     def check_trial_done(self):
         '''
         Checks if the trial has been completed and can be quit. Add conditions
         as required.
         '''
-        print('maxEpisodes', self.config.get('maxEpisodes', 20))
         return self.episode >= self.config.get('maxEpisodes', 20)
 
     async def end(self):
@@ -138,16 +120,9 @@ class Trial():
         whole trial memory in self.record, uncomment the call to self.save_record()
         to write the record to file before closing.
         '''
-        
-        await self.websocket.send(json.dumps('done'))
-        #self.agent.close()
-        if self.config.get('dataFile') == 'trial':
-            self.save_record()
-        if self.outfile:
-            self.outfile.close()
-            await self.websocket.send({'upload':{'projectId':self.projectId,'userId':self.userId,'file':self.filename,'path':self.path}})
+        print("[INFO] Sending to websocket... :" , {'action': 'DONE', 'message': 'done'})
+        await self.websocket.sendData("done","done")
         self.play = False
-        self.done = True
 
     async def check_message(self):
         '''
@@ -155,13 +130,8 @@ class Trial():
         json. Returns message or error message if unable to parse json.
         Expects some poorly formatted or incomplete messages.
         '''
-        if self.websocket:
-            message = await self.websocket.recv()
-            try:
-                message = json.loads(message)
-                print("check_message function recieved: ", message)
-            except:
-                message = {'error': 'unable to parse message', 'frameId': self.frameId}
+        if self.websocket.websocket:
+            message = await self.websocket.recieve_data()
             return message
         return None
 
@@ -171,10 +141,12 @@ class Trial():
         Reads messages sent from websocket, handles commands as priority then 
         actions. Logs entire message in self.nextEntry
         '''
-        print("handle_message function: ", message)
+        print("[INFO] handle_message function has recieved: ", message)
         if not self.userId and 'userId' in message:
             self.userId = message['userId'] or f'user_{shortuuid.uuid()}'
-            print("self.userID is now = ", self.userId)
+            self.projectId = message['projectId']
+            print("[INFO] self.userID is now = ", self.userId)
+            print("[INFO] self.projectID is now = ", self.projectId)
             with open('./data/trialData.json') as json_file:
                 self.trialData = json.load(json_file)
             await self.send_ui()
@@ -182,8 +154,28 @@ class Trial():
             await self.handle_command(message)
         elif 'save' in message and message['save']:
             self.nextEntry = message['save']
-            print("self.nextEntry: ",self.nextEntry)
-            self.save_entry()
+            print("[INFO] saving data in self.nextEntry: ...",self.nextEntry)
+            self.save_data()
+            self.done = True # if we recieve the save message, then trial is done for now, change later to conditional
+        await self.check_done()
+
+    '''
+    def check_data(self, data):
+        time = congif.get(time between saves)
+        time -> when data is requested
+        get.messsage(data at time)
+        save to json
+    '''
+
+
+    def save_data(self):
+        # S3 Uploading needs to be added
+        if not os.path.exists('Trials'):
+            os.makedirs('Trials')
+        filename = f'{self.projectId}_{self.userId}.json'
+        file_path = os.path.join('Trials', filename)
+        with open(file_path, "w") as outfile:
+            json.dump(self.nextEntry, outfile, indent = 2)
 
 
     async def handle_command(self, message):
@@ -192,52 +184,41 @@ class Trial():
         add commands.
         '''
         command = message['command'].strip().lower()
-        print("handle_command function: ", command)
+        print("[INFO] handle_command function: ", command)
         if command == 'get next':
             if self.count > 1:
                 try:
-                    print("sending.. :" , {'action': 'command','VALUES': self.data['qs'][message['info']]})
-                    await self.websocket.send(json.dumps({'action': 'command','VALUES': self.data['qs'][message['info']]}))
+                    await self.websocket.sendData('command',{'VALUES': self.data['qs'][message['info']]})
                 except:
-                    raise TypeError("Render Dictionary is not JSON serializable")
+                    raise TypeError("Render Dictionary is not JSON serializable") # Change later
         elif command == 'new game' and self.count < 43:
             self.count+=1
-            print("self.count has been incremented: ", self.count)
+            print("[INFO] self.count has been incremented... ", self.count)
             await self.send_ui()
             await self.reset()
-            #if (self.count != 3 and self.passedHeader != 0) or (self.count != 23 and self.passedHeader!=1):
-            # print('self.passedHeader', self.passedHeader)
-            # print('self.count', self.count)
-            # print('self.passedHeader != 0', self.passedHeader != 0)
-            # print('self.count != 3', self.count != 3)
-            # print('self.count != 23 ', self.count != 23 )
-            # print('self.passedHeader!=1', self.passedHeader!=1)
-            #if (self.count != 3 and self.passedHeader != 0) or (self.count != 23 and self.passedHeader!=1):
-                #print("resetting env....")
-            
         elif command == 'resume' and self.count < 43:
             await self.send_ui()
         elif self.count >= 43:
-            print("IN HEREEEEE")
-            self.end()
+            print("[INFO] self.count is now greater then 43, ending...")
+            await self.end()
 
     async def send_ui(self):
         if (self.count == 3 and self.passedHeader == 0) or (self.count == 23 and self.passedHeader == 1):
-            print("header sending..")
+            print("[INFO] send_ui header sending....")
             if(self.count == 3):
                 message = "This next section is the training section"
-                print("message: ", message)
+                print("[INFO] self.count == 3 so message: ", message)
             else:
                 message = "This next section is the testing section"
-                print("message: ", message)
+                print("[INFO] self.count =! 3 so message: ", message)
             try:
-                print("sending.. :" , {'action': 'UI','HEADER': message})
-                await self.websocket.send(json.dumps({'action': 'UI','HEADER': message}))
+                print("[INFO] Sending to websocket... :" , {'action': 'UI','HEADER': message})
+                await self.websocket.sendData('UI',{'HEADER': message})
                 self.passedHeader +=1
             except:
                 raise TypeError("Render Dictionary is not JSON serializable")
         else:
-            print("sending ui.." + str(self.count))
+            print("[INFO] sending ui with our count as ..." + str(self.count))
             feedback = "feedback"
             if self.count <= 2 or self.count >= 23:
                 feedback = None
@@ -249,87 +230,32 @@ class Trial():
                 ctest = "CTEST"
 
             if(self.count == 1 or self.count == 43):
-                print("self.count is 1 or 43")
-                print('self.count', self.count)
+                print('[INFO] self.count', self.count)
                 self.data = self.trialData[str(self.count)]
-                print('self.data', self.data)
                 try:          
-                    print("sending... ",{"action": 'UI', 'UI': self.data, "CTEST": "CTEST"} )
-                    await self.websocket.send(json.dumps({"action": 'UI', 'UI': self.data, "CTEST": "CTEST"}))
+                    print("[INFO] Sending to websocket... :",{"action": 'UI', 'UI': self.data, "CTEST": "CTEST"} )
+                    await self.websocket.sendData('UI', {'UI': self.data, "CTEST": "CTEST"})
                 except:
                     raise TypeError("Render Dictionary is not JSON serializable")
             else:
-                print('self.count', self.count)
+                print('[INFO] self.count is now ....', self.count)
                 self.data = self.trialData[str(self.count)]
-                #print('self.data', self.data)
                 with open('data/increasing_prs.json') as json_file:
                     data = json.load(json_file)
-                    
                     for group in data:
-                        print('group', group['trial_id'])
                         if group['trial_id'] == self.data:
-                            print('USING TRIAL', group['trial_id'])
+                            print('[INFO] USING TRIAL...', group['trial_id'])
                             self.data = group
                 try:
-                    print("sending.. :" , {'action': 'UI','UI': self.data['stateRewards'], 'OPT_ACT': self.data['opt_act'], 'FEEDBACK': feedback, "CTEST": ctest})
-                    await self.websocket.send(json.dumps({'action': 'UI','UI': self.data['stateRewards'], 'OPT_ACT': self.data['opt_act'], 'FEEDBACK': feedback, "CTEST": ctest}))
+                    print("[INFO] Sending to websocket... :" , {'action': 'UI','UI': self.data['stateRewards'], 'OPT_ACT': self.data['opt_act'], 'FEEDBACK': feedback, "CTEST": ctest})
+                    await self.websocket.sendData('UI', {'UI': self.data['stateRewards'], 'OPT_ACT': self.data['opt_act'], 'FEEDBACK': feedback, "CTEST": ctest})
                 except:
                     raise TypeError("Render Dictionary is not JSON serializable")
-
-
-    def save_entry(self):
-        '''
-        Either saves step memory to self.record list or pickles the memory and
-        writes it to file, or both.
-        Note that observation and render objects can get large, an episode can
-        have several thousand steps, holding all the steps for an episode in 
-        memory can cause performance issues if the os needs to grow the heap.
-        The program can also crash if the Server runs out of memory. 
-        It is recommended to write each step to file and not maintain it in
-        memory if the full observation is being saved.
-        comment/uncomment the below lines as desired.
-        '''
-        if self.config.get('dataFile') == 'trial':
-            self.record.append(self.nextEntry)
-        else:
-            cPickle.dump(self.nextEntry, self.outfile)
-            self.nextEntry = {}
-
-    def save_record(self):
-        '''
-        Saves the self.record object to file. Is only called if uncommented in
-        self.end(). To record full trial records a line must also be uncommented
-        in self.save_entry() and self.create_file()
-        '''
-        cPickle.dump(self.record, self.outfile)
-        self.record = []
-
-    def create_file(self):
-        '''
-        Creates a file to record records to. comment/uncomment as desired 
-        for episode or full-trial logging.
-        '''
-        
-        if self.config.get('dataFile') == 'trial':
-            filename = f'trial_{self.userId}'
-        else:
-            filename = f'episode_{self.episode}_user_{self.userId}'
-
-        path = 'Trials/'+filename
-        try:
-            
-            self.outfile = open(path, 'ab')
-        except:
-            os.makedirs('Trials')
-            self.outfile = open(path, 'ab')
-            print('saved')
-        self.filename = filename
-        self.path = path
-        print(f"created a file at: {filename}")
 
 async def main():
     trial = Trial('wss://x4v1m0bphh.execute-api.ca-central-1.amazonaws.com/production?connection_type=backend')
     await trial.connect()
-    await trial.run()
 
-asyncio.run(main())
+
+if __name__ == '__main__':
+    asyncio.run(main())
