@@ -184,7 +184,6 @@ class Trial():
     '''
 
     def save_data(self):
-         # S3 Uploading needs to be added
         s3upload = self.config.get('s3upload')
         fileName = f'{self.projectId}_{self.userId}.json'
         if s3upload:
