@@ -12,6 +12,7 @@ import asyncio
 import websockets
 import json
 import os
+import boto3
 
 # for dummy score
 import random
@@ -182,13 +183,27 @@ class Trial():
         save to json
     '''
 
-
     def save_data(self):
-        # S3 Uploading needs to be added
+         # S3 Uploading needs to be added
+        s3upload = self.config.get('s3upload')
+        fileName = f'{self.projectId}_{self.userId}.json'
+        if s3upload:
+            print("[INFO] S3 UPLOAD DETECTED... UPLOADING NOW....")
+            s3 = boto3.client('s3')
+            data_json = json.dumps(self.nextEntry)
+            # Convert the JSON string to bytes
+            data_bytes = data_json.encode('utf-8')
+            bucket = self.config.get('bucket')
+            # Upload the file to S3
+            try:
+                s3.put_object(Body=data_bytes, Bucket=bucket, Key=fileName)
+            except:
+                print("[INFO] S3 UPLOAD FAILED....")
+                
         if not os.path.exists('Trials'):
-            os.makedirs('Trials')
-        filename = f'{self.projectId}_{self.userId}.json'
-        file_path = os.path.join('Trials', filename)
+             os.makedirs('Trials')
+        
+        file_path = os.path.join('Trials', fileName)
         with open(file_path, "w") as outfile:
             json.dump(self.nextEntry, outfile, indent = 2)
 
