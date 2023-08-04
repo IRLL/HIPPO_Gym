@@ -35,8 +35,14 @@ class Websocket:
             print(TAG, "Message from websocket reads: ", message)
         except:
             message = {'error': 'unable to parse message from websocket'}
-
         return message
+    
+    async def disconnectClient(self):
+        if self.websocket is not None:
+            print(f"{TAG} Disconnecting from WebSocket...")
+            await self.websocket.close()
+    
+
 
 async def main():
     trial = Websocket('wss://x4v1m0bphh.execute-api.ca-central-1.amazonaws.com/production?connection_type=backend')
