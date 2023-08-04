@@ -2,6 +2,7 @@ import json
 import websockets
 import asyncio
 
+TAG = "\033[1;35m[HIPPOGYM]\033[0m" 
 class Websocket:
     def __init__(self, connection_url): 
         self.connection_url = connection_url
@@ -12,7 +13,7 @@ class Websocket:
         while retries < 5:
             try:
                 self.websocket = await websockets.connect(self.connection_url)
-                print("[INFO] Connected to WebSocket address")
+                print(TAG, "Connected to WebSocket address")
                 break
             except Exception as e:
                 print(f"Failed to connect: {e}")
@@ -26,12 +27,12 @@ class Websocket:
             action_data.update(data)
             await self.websocket.send(json.dumps(action_data))
             
-    async def receive_data(self):
+    async def recieveData(self):
         if self.websocket is not None:
             message = await self.websocket.recv()
         try:
             message = json.loads(message)
-            print("[INFO] Message from websocket reads: ", message)
+            print(TAG, "Message from websocket reads: ", message)
         except:
             message = {'error': 'unable to parse message from websocket'}
 

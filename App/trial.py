@@ -121,8 +121,9 @@ class Trial():
         to write the record to file before closing.
         '''
         print("[INFO] Sending to websocket... :" , {'action': 'DONE', 'message': 'done'})
-        await self.websocket.sendData("done","done")
+        await self.websocket.sendData("done",{"done":"done"})
         self.play = False
+        self.done = True
 
     async def check_message(self):
         '''
@@ -131,7 +132,7 @@ class Trial():
         Expects some poorly formatted or incomplete messages.
         '''
         if self.websocket.websocket:
-            message = await self.websocket.recieve_data()
+            message = await self.websocket.recieveData()
             return message
         return None
 
@@ -156,7 +157,7 @@ class Trial():
             self.nextEntry = message['save']
             print("[INFO] saving data in self.nextEntry: ...",self.nextEntry)
             self.save_data()
-            self.done = True # if we recieve the save message, then trial is done for now, change later to conditional
+            # self.done = True # if we recieve the save message, then trial is done for now, change later to conditional
         await self.check_done()
 
     '''
