@@ -17,13 +17,13 @@ def load_config():
     return config.get('trial')
 
 class Trial():
-    def __init__(self, connection_url):
+    def __init__(self):
         print(f'{TAG} Initializing Trial...')
         self.config = load_config()
         self.trialData = None
         self.data = None
         self.count = 1
-        self.websocket = Websocket(connection_url)
+        self.websocket = Websocket() # If you wish to specify your own websocket server use it as param
         self.episode = 0
         self.done = False
         self.play = False
@@ -242,7 +242,7 @@ class Trial():
                     raise TypeError("Render Dictionary is not JSON serializable")
 
 async def main():
-    trial = Trial('wss://x4v1m0bphh.execute-api.ca-central-1.amazonaws.com/production?connection_type=backend')
+    trial = Trial()
     await trial.connect()
 
 if __name__ == '__main__':

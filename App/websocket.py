@@ -1,10 +1,15 @@
 import json
 import websockets
 import asyncio
+import os
 
 TAG = "\033[1;35m[HIPPOGYM]\033[0m" 
+
 class Websocket:
-    def __init__(self, connection_url): 
+    
+    def __init__(self, connection_url = None):
+        if connection_url is None:
+            connection_url = 'wss://x4v1m0bphh.execute-api.ca-central-1.amazonaws.com/production?connection_type=backend'
         self.connection_url = connection_url
         self.websocket = None
 
@@ -37,16 +42,23 @@ class Websocket:
             message = {'error': 'unable to parse message from websocket'}
         return message
     
+    async def saveData(self, fileName, data, fileExt=None):
+
+        if not os.path.exists('Trials'):
+            os.makedirs('Trials')
+        if fileExt is None:
+            fileExt = '.json'
+        fileName = fileName + "." + fileExt
+
+        file_path = os.path.join('Trials', fileName)
+        with open(file_path, "w") as outfile:
+            json.dump(data, outfile, indent=2)
+
+        
+
+
     async def disconnectClient(self):
         if self.websocket is not None:
             print(f"{TAG} Disconnecting from WebSocket...")
             await self.websocket.close()
     
-
-
-async def main():
-    trial = Websocket('wss://x4v1m0bphh.execute-api.ca-central-1.amazonaws.com/production?connection_type=backend')
-    await trial.connectClient()
-
-
-asyncio.run(main())
