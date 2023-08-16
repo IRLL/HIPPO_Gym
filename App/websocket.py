@@ -12,6 +12,10 @@ class Websocket:
             connection_url = 'wss://x4v1m0bphh.execute-api.ca-central-1.amazonaws.com/production?connection_type=backend'
         self.connection_url = connection_url
         self.websocket = None
+        self.userID = None
+
+    def setID(self, userID):
+        self.userID = userID
 
     async def connectClient(self):
         retries = 0
@@ -28,8 +32,9 @@ class Websocket:
 
     async def sendData(self, routeKey, data):
         if self.websocket is not None:
-            action_data = {"action": routeKey}
+            action_data = {"action": routeKey, "userId": self.userID}
             action_data.update(data)
+            print(TAG, "Sending to websocket...", action_data)
             await self.websocket.send(json.dumps(action_data))
             
     async def recieveData(self):

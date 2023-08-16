@@ -10,6 +10,9 @@ TAG = "\033[1;35m[HIPPOGYM]\033[0m"
 class MockTrial():
     def __init__(self):
         self.websocket = Websocket()
+        self.budgetExceed = True
+        self.budgetInfo = {}
+
 
     async def connect(self):
         await self.websocket.connectClient()
@@ -25,6 +28,8 @@ class MockTrial():
 
         print(f'{TAG} Running Mock Trial...')
         print(f'{TAG} Lunar Lander experiment running...')
+
+
         '''
         Data from systemMessages comes in as:
         {
@@ -38,55 +43,81 @@ class MockTrial():
         } 
         
         '''
+
+
+
         systemMessage = await self.websocket.recieveData() 
-        modality = systemMessage['modality'] # access the modality
-        feedback = systemMessage['feedback'] # access the data sent from the front-end
-        if modality and feedback:
-            print(f'{TAG} Modality selected:  {modality}')
-            print(f'{TAG} Feedback from {modality} is: \n{feedback}')
+        userId = systemMessage['userId']
+        projectID = systemMessage['projectID']
 
-        # Example usage of iterating through feedback from demonstrationModality
-        if modality == 'demonstrationModality':
-            for time_step in feedback:
-                '''
-                In this example, if the learning algorithm expects paramaters of the x_pos and y_pos
-                of the lunar lander aircraft, then we can access it as follows and feed it in
-                '''
-                x_pos = time_step['x_pos']
-                y_pos = time_step['y_pos']
+        print(f"userID={userId}, projectID = {projectID}")
+
+        if userId and projectID:
+            self.websocket.setID(userId)
+            self.websocket.sendData("DONE", {"done":"done"})
+
+
+        # modality = systemMessage['modality'] # access the modality
+        # feedback = systemMessage['feedback'] # access the data sent from the front-end
+        # if modality and feedback:
+        #     print(f'{TAG} Modality selected:  {modality}')
+        #     print(f'{TAG} Feedback from {modality} is: \n{feedback}')
+
+        # # Example usage of iterating through feedback from demonstrationModality
+        # if modality == 'demonstrationModality':
+        #     for time_step in feedback:
+        #         '''
+        #         In this example, if the learning algorithm expects paramaters of the x_pos and y_pos
+        #         of the lunar lander aircraft, then we can access it as follows and feed it in
+        #         '''
+        #         x_pos = time_step['x_pos']
+        #         y_pos = time_step['y_pos']
                 
-                '''
-                Now that we have a reference to the given x_pos and y_pos, we can
-                feed into algorithm as follows:
-                e.g
-                class LearningAlgorithm():
-                    def __init__(self):
-                        omitted code....
+        #         '''
+        #         Now that we have a reference to the given x_pos and y_pos, we can
+        #         feed into algorithm as follows:
+        #         e.g
+        #         class LearningAlgorithm():
+        #             def __init__(self):
+        #                 omitted code....
 
-                    def feedToAlgorithm(self, x_pos, y_pos):
-                        # do something with x_pos, y_pos
+        #             def feedToAlgorithm(self, x_pos, y_pos):
+        #                 # do something with x_pos, y_pos
 
-                So in this code we can feed in as follows
-                LearningALgorithm.feedToAlgorithm(x_pos, y_pos)
+        #         So in this code we can feed in as follows
+        #         LearningALgorithm.feedToAlgorithm(x_pos, y_pos)
                 
-                '''
+        #         '''
 
-                print(f"{TAG} Modality Data:\n x_pos: {x_pos}, y_pos: {y_pos}")
+        #         print(f"{TAG} Modality Data:\n x_pos: {x_pos}, y_pos: {y_pos}")
 
 
 
-            '''
-                Example usage of saving data provided from websocket -> json
-                await self.websocket.saveData(FileName, data, fileExt)
-            '''
-            print(TAG, "Saving data to /trials/MockFile")
-            await self.websocket.saveData("MockFile",feedback)
-            print(TAG, "Saving data to /trials/MockFileCSV")
-            await self.websocket.saveData("MockFileCSV", feedback ,"csv")
+        #     '''
+        #         Example usage of saving data provided from websocket -> json
+        #         await self.websocket.saveData(FileName, data, fileExt)
+        #     '''
+        #     print(TAG, "Saving data to /trials/MockFile")
+        #     await self.websocket.saveData("MockFile",feedback)
+        #     print(TAG, "Saving data to /trials/MockFileCSV")
+        #     await self.websocket.saveData("MockFileCSV", feedback ,"csv")
 
-        
-        if modality == 'feedback':
-            pass
+
+
+
+        #     '''
+        #         Example usage of sending data to front-end
+        #         await self.websocket.sendData(routeKey, data) 
+        #     '''
+        #     # Budget for the given experiment has exceeded, so we alert the Frontend
+        #     # With the budget exceeded notification
+
+        #     if self.budgetExceed:
+        #         await self.websocket.sendData("Modality", {"budgetAlert":self.budgetInfo})
+        #     else:
+        #         await self.webocket.sendData("Modality", {"feedback": feedback})
+
+
 
 
 

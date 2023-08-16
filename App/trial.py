@@ -128,6 +128,7 @@ class Trial():
         print(f"{TAG} handle_message function has recieved: ", message)
         if not self.userId and 'userId' in message:
             self.userId = message['userId'] or f'user_{shortuuid.uuid()}'
+            self.websocket.setID(self.userId)
             self.projectId = message['projectId']
             print(f"{TAG} self.userID is now = ", self.userId)
             print(f"{TAG} self.projectID is now = ", self.projectId)
