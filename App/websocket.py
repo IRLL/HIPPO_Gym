@@ -32,7 +32,7 @@ class Websocket:
 
     async def sendData(self, routeKey, data):
         if self.websocket is not None:
-            action_data = {"action": routeKey, "userId": self.userID}
+            action_data = {"action": routeKey, "userId": self.userID, "sendTo" : "frontend" } 
             action_data.update(data)
             print(TAG, "Sending to websocket...", action_data)
             await self.websocket.send(json.dumps(action_data))

@@ -28,7 +28,7 @@ class Trial():
         self.done = False
         self.play = False
         self.record = []
-        self.nextEntry = {}
+        self.nextEntry = []
         self.trialId = shortuuid.uuid()
         self.outfile = None
         self.userId = None
@@ -94,7 +94,7 @@ class Trial():
         self.create_file.
         '''
         if self.check_trial_done():
-            print("check_trial_done successful")
+            print(f"{TAG} check_trial_done successful")
             await self.end()
         else:
             self.episode += 1
@@ -116,7 +116,9 @@ class Trial():
         '''
         print(f"{TAG} Sending to websocket... :" , "DONE",{"done":"done"})
         await self.websocket.sendData("DONE",{"message":"done"})
+        self.save_data()
         self.play = False
+        self.done = True
 
 
 
@@ -138,10 +140,8 @@ class Trial():
         if 'command' in message and message['command']:
             await self.handle_command(message)
         elif 'save' in message and message['save']:
-            self.nextEntry = message['save']
-            print(f"{TAG} saving data in self.nextEntry: ...",self.nextEntry)
-            self.save_data()
-            self.done = True # if we recieve the save message, then trial is done for now, change later to conditional
+            print(f'{TAG} Saving successful')
+            self.nextEntry.append(message['save'])
         await self.check_done()
 
     def save_data(self):
