@@ -156,7 +156,7 @@ class Trial():
             bucket = self.config.get('bucket')
             # Upload the file to S3
             try:
-                s3.put_object(Body=data_bytes, Bucket=bucket, Key=fileName)
+                s3.put_object(Body=data_bytes, Bucket=bucket, Key='Trials/' + fileName)
             except:
                 print(f"{TAG} S3 UPLOAD FAILED....")
                 
