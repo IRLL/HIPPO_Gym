@@ -40,9 +40,7 @@ class Trial():
         self.modality = self.config.get('modality')
         self.framerate = self.config.get('startingFrameRate', 30)
         self.frameId = 0
-        self.start()
-        self.run()
-
+        
     async def connect(self):
         await self.websocket.connectClient()
         if self.websocket.websocket is not None:
@@ -50,11 +48,9 @@ class Trial():
             await self.start()
 
     async def start(self):
-        self.agent = Agent()
-        self.agent.start(self.config.get('game'))
-        actionSpace = self.config.get('actionSpace')
-        #self.start_trial()
+        self.start_trial()
         await self.run()
+
 
 
     def start_trial(self):
@@ -66,13 +62,10 @@ class Trial():
         returned. 
         '''
         print(f'{TAG} Starting trial...')
-        # populate random graph selection
-        ranNum = random.randint(23, 42)
-        self.selectedRanGraphs.append(ranNum)
-        ranNum = random.randint(23, 42)
-        while ranNum == self.selectedRanGraphs[0]:
-            ranNum = random.randint(23, 42)
-        self.selectedRanGraphs.append(ranNum)
+        self.agent = Agent()
+        self.agent.start(self.config.get('game'))
+        actionSpace = self.config.get('actionSpace')
+        #self.start_trial()
 
     async def run(self):
         '''
@@ -135,8 +128,9 @@ class Trial():
         actions. Logs entire message in self.nextEntry
         '''
         print(f"{TAG} handle_message function has recieved: ", message)
+
         if not self.userId and 'userId' in message:
-            self.userId = message['userId'] or f'user_{shortuuid.uuid()}'
+            self.userId = message['userId']
             self.websocket.setID(self.userId)
             self.projectId = message['projectId']
             print(f"{TAG} self.userID is now = ", self.userId)
@@ -145,6 +139,7 @@ class Trial():
                 self.trialData = json.load(json_file)
             await self.send_ui()
         if 'command' in message and message['command']:
+            print(f'{TAG} commmand in message recieved.')
             await self.handle_command(message)
         elif 'save' in message and message['save']:
             self.nextEntry = message['save']
@@ -185,10 +180,10 @@ class Trial():
         command = message['command'].strip().lower()
         print(f"{TAG} handle_command function: ", command)
         if command == 'start':
-                self.send_instructions()
                 self.play = True
                 if self.modality == 'pref':
                     self.show_demo = True
+                await self.render_all_frames()
         elif command == 'stop':
             self.end()
         elif command == 'reset':
@@ -203,6 +198,16 @@ class Trial():
 
         elif command == "KeyboardEvent":
             self.handle_action(command)
+
+
+    async def render_all_frames(self):
+        while self.play:
+            render = await self.get_render()
+            await self.send_render(render)
+            await asyncio.sleep(10)  # Sleep for 10 seconds
+            # await asyncio.sleep(1 / self.framerate)  # Sleep to control framerate
+
+            
     def handle_action(self, action:str):
         '''
         Translates action to int and resets action buffer if action !=0
@@ -272,7 +277,8 @@ class Trial():
                             With the correct arguement?")
         self.frameId += 1
         #print('got the render', frame, self.frameId)
-        return {'frame': frame, 'frameId': self.frameId}        
+        return {'frame': frame, 'frameId': self.frameId}
+      
     async def send_ui(self):
         defaultUI = ['left','right','up','down','start','pause']
         try:
