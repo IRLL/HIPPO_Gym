@@ -19,18 +19,25 @@ HippoGym is a python library for simplifying human-ai interaction research over 
 
 ## System Overview
 ### Websockets
-[Websocket API](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-websocket-api.html) is a powerful tool from [Amazon Web Services](https://aws.amazon.com/) API Gateway that facilitates the bi-directional communication between a server and its corresponding client. In the case of HIPPO Gym, Websocket API is used to send communications between the frontend server hosting our react code for deploying experiments/projects and the backend server trial.py, which serves as the control logic for running and managing trials, sending/receiving WebSocket communications, and optionally storing trial data. The Websocket class, located in the backend websocket.py, uses methods to allow for seamless integration of websocket communications to ensure students/researchers will not need to go into the hidden layer of the websocket/trial logic used in HippoGym. 
+[Websocket API](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-websocket-api.html) is a powerful tool from [Amazon Web Services](https://aws.amazon.com/) API Gateway that facilitates the bi-directional communication between a server and its corresponding client. In the case of HIPPO Gym, Websocket API is used to send communications between the frontend server hosting our react code for deploying experiments/projects and the backend server trial.py, which serves as the control logic for running and managing trials, sending/receiving WebSocket communications, and optionally receiving/storing trial data for a computer agent. The Websocket class, located in the backend websocket.py, uses methods to allow for seamless integration of websocket communications to ensure students/researchers will not need to go into the hidden layer of the websocket/trial logic used in HippoGym. 
 
 ### System Architecture
-Here is our current system architecture, we first deploy the given trial/project in the front-end using React, and define the setup/configuration of our experiment and what is the data we wish to actually send and receive. We then connect to our websocket server, and send the lambda handler your uniquely generated userID. This userID get’s passed to the backend server and the backend connects to the websocket with this userID, the userID gets stored in a DynamoDB to uniquely map each user individually based on their own backend connectionID and frontend connectionID.  See below to get a brief overview of the current system design.   
+Our current system architechture for connecting a client is as follows:
+We first deploy the given project in our front-end using React where we define the setup for the experiment and define the data we wish to send and receive. Note that AWS credentials are required to make any changes to the front-end component of HIPPO Gym. To run the project, users must first connect their back-end component (more information on how in [backend setup](#backend-setup)), where their connectionID will be held in the [AWS Lambda server](#aws-lambda-middleware) awaiting for the frontend connection. At the launch of the frontend (after the final step page), the frontend connects to our websocket server, and sends the Lambda handler our uniquely generated userID. This userID get’s passed to the backend server to store and use for future connections to the experiment. Lambda stores the userID in a DynamoDB table to uniquely map each user individually based on their own backend connectionID and frontend connectionID to avoid clashes between systems in our experiment. Sometimes, clashes arise - please see [The Concurrent Connection Clash Problem](#aws-lambda-middleware) in the Lambda section to learn how to avoid this problem. See below to get a brief overview of the current system design for connecting a client. 
 
 ![System Architecture](./images/system-design.png)
 
 ## RouteKeys
-(Explain what a RouteKey is and how to use it. You can show a screenshot here as well.)
+In AWS Websocket API, Route Keys are a mechanisim for routing our websocket messages to the appropriate Lambda function to handle a message. If an unknown Route Key is passed, Websocket API will not handle the websocket message recieved. Here is a list of the current Route Keys we have in our Websocket API:
+
+![Route Keys](./images/route-keys.png)
+
+When sending a message from either front-end or back-end, we must specify a Route Key from this list, along with any type of data we wish to send over. For more on sending and reciving messages, see [Setting Up](#setting-up).
+
 
 ## AWS Lambda Middleware
 (Your Lambda explanation goes here)
+We use AWS Lambda as middleware for routing our websocket messages to the relevant component. Lambda detects which user is sending a message, and where its intended destination is, that be frontend or backend. The displayed Route Keys above route to our lambda websocket handler in which the lambda reads the route key and the "sendTo" message to determine where to send the message. For our example of starting the trial, the frontend sends a start message to the lambda handler that is then routed to the backend for further handling the start of the trial.
 
 
 ## Setting Up
@@ -66,7 +73,10 @@ this.sendMessage("start",{
 
 
 ## Contributors
-(Contributors and supervisors from existing README)
+Written by Mohamed Al-Nassirat and Vera Maoued
+Supervised by [Matt Taylor](https://drmatttaylor.net)
+For the Intelligent Robot Learning Laboratory [(IRLL)](https://irll.ca) at the University of Alberta [(UofA)](https://ualberta.ca)
+Supported by the Alberta Machine Intelligence Institure [(AMII)](https://amii.ca)
 
 ## Additional Resources
 (Link to repositories and any other material)
