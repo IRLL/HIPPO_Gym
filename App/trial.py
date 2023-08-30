@@ -65,6 +65,7 @@ class Trial():
         self.agent = Agent()
         self.agent.start(self.config.get('game'))
         actionSpace = self.config.get('actionSpace')
+        self.agent.reset()
         #self.start_trial()
 
     async def run(self):
@@ -183,7 +184,8 @@ class Trial():
                 self.play = True
                 if self.modality == 'pref':
                     self.show_demo = True
-                await self.render_all_frames()
+                #await self.render_all_frames()
+                await self.render_policy()
         elif command == 'stop':
             self.end()
         elif command == 'reset':
@@ -206,6 +208,7 @@ class Trial():
             await self.send_render(render)
             await asyncio.sleep(10)  # Sleep for 10 seconds
             # await asyncio.sleep(1 / self.framerate)  # Sleep to control framerate
+            
 
             
     def handle_action(self, action:str):
@@ -262,7 +265,7 @@ class Trial():
         '''
         #print('inside get render')
        
-        self.agent.reset()
+        # self.agent.reset()
         render = self.agent.render()
         #print('render', render)
         try:
@@ -317,20 +320,16 @@ class Trial():
             self.total_reward = 0
 
     async def render_policy(self):
-        #starting with uniformly sampling demostrations from the agent's demo buffer
-        #random_demo_number = np.random.choice(list(self.agent.short_replay_buffer_of_demos.keys()))
-        #print('random demo number', random_demo_number)
-        
-     
-        #index = list(self.agent.short_replay_buffer_of_demos)[self.demo_idx]
+
         
         demo = self.agent.short_replay_buffer_of_demos[self.demo_idx]
         print(demo)
-        print(self.agent.short_replay_buffer_of_demos[1])
+        # print('len of demo',)
+        #print(self.agent.short_replay_buffer_of_demos[1])
         #print('type of demo', type(demo))
         print('demo number', self.demo_idx)
         print('just reset the agent env')
-        self.agent.reset()
+        #self.agent.reset()
         
         print('len of demo', len(demo))
         for idx, action in enumerate(demo):
@@ -339,13 +338,13 @@ class Trial():
             print(action)
             envState, _ = self.agent.step(action)
             #print(envState, type(envState))
-            self.update_entry(envState)
-            self.save_entry()
-            render = self.get_render()
-            self.send_render(render)
-            if envState['done']:
-                print('done')
-                break
+            # self.update_entry(envState)
+            # self.save_entry()
+            render = await self.get_render()
+            await self.send_render(render)
+            # if envState['done']:
+            #     print('done')
+            #     break
         self.play = False
         print('self.play is now False')
 async def main():

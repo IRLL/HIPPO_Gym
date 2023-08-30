@@ -26,7 +26,7 @@ class Agent():
 
         self.short_replay_buffer_of_demos = {}
         self.short_replay_buffer_of_demos.update({0:self.replay_buffer_of_demos2[1]})
-        self.short_replay_buffer_of_demos.update({1:self.replay_buffer_of_demos2[5]})
+        #self.short_replay_buffer_of_demos.update({1:self.replay_buffer_of_demos2[5]})
         #self.short_replay_buffer_of_demos.update({5:self.replay_buffer_of_demos[3]})
         #self.short_replay_buffer_of_demos.update({5:self.replay_buffer_of_demos[4]})
         self.transition = {'obs': np.array(0, dtype = np.float32), 'acts': 0, 'rewards': {}, 'infos': {}, 'next_obs': np.array(0, dtype = np.float32), 'dones': False}
