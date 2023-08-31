@@ -1,0 +1,88 @@
+<style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 60%;
+    }
+    
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    
+    th{
+      text-align: center;
+    }
+    
+    td:not(:first-child) {
+      text-align: center;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+    
+    p {
+        font-size: 20px
+    }
+    </style>
+    <h1>Survey Questions</h1>
+    <h2>Please select one answer for each of the following questions.</h3>
+    <p>Note: You may leave any answer blank you do not wish to answer<br>
+       Please answer the following questions to the best of your ability</p>
+    
+    <table>
+      <tbody>
+        <tr>
+          <th>Question</th>
+          <th>Strongly disagree</th>
+          <th>Disagree</th>
+          <th>Neither agree nor disagree</th>
+          <th>Agree</th>
+          <th>Strongly Agree</th>
+        </tr>
+        <tr>
+          <td>I found the system very helpful. </td>
+          <td><input type="radio" id="helpfulnesses1" name="helpfulnesses" value="1">1</td>
+          <td><input type="radio" id="helpfulnesses2" name="helpfulnesses" value="2">2</td>
+          <td><input type="radio" id="helpfulnesses3" name="helpfulnesses" value="3">3</td>
+          <td><input type="radio" id="helpfulnesses4" name="helpfulnesses" value="4">4</td>
+          <td><input type="radio" id="helpfulnesses5" name="helpfulnesses" value="5">5</td>
+        </tr>
+        <tr>
+          <td>I found the feedback messages provided by the system easy to understand.</td>
+          <td><input type="radio" id="understand1" name="understand" value="1">1</td>
+          <td><input type="radio" id="understand2" name="understand" value="2">2</td>
+          <td><input type="radio" id="understand3" name="understand" value="3">3</td>
+          <td><input type="radio" id="understand4" name="understand" value="4">4</td>
+          <td><input type="radio" id="understand" name="understand" value="5">5</td>
+        </tr>
+        <tr>
+          <td>I found the feedback messages provided by the system easy to use.</td>
+          <td><input type="radio" id="use1" name="use" value="1">1</td>
+          <td><input type="radio" id="use2" name="use" value="2">2</td>
+          <td><input type="radio" id="use3" name="use" value="3">3</td>
+          <td><input type="radio" id="use4" name="use" value="4">4</td>
+          <td><input type="radio" id="use5" name="use" value="5">5</td>
+        </tr>
+        <tr>
+          <td>I found the system very difficult to use.</td>
+          <td><input type="radio" id="cumbersome1" name="cumbersome" value="1">1</td>
+          <td><input type="radio" id="cumbersome2" name="cumbersome" value="2">2</td>
+          <td><input type="radio" id="cumbersome3" name="cumbersome" value="3">3</td>
+          <td><input type="radio" id="cumbersome4" name="cumbersome" value="4">4</td>
+          <td><input type="radio" id="cumbersome5" name="cumbersome" value="5">5</td>
+        </tr>
+        <tr>
+          <td> I think the concepts I learned today can be useful to improve my decision-making strategies for other tasks.</td>
+          <td><input type="radio" id="improve1" name="improve" value="1">1</td>
+          <td><input type="radio" id="improve2" name="improve" value="2">2</td>
+          <td><input type="radio" id="improve3" name="improve" value="3">3</td>
+          <td><input type="radio" id="improve4" name="improve" value="4">4</td>
+          <td><input type="radio" id="improve5" name="improve" value="5">5</td>
+        </tr>
+    
+    
+    </tbody>
+    </table>
