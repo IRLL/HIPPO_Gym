@@ -16,7 +16,6 @@
 
 ## Purpose
 HippoGym is a Python library designed for researchers and students focusing on human-AI interaction over the web. It simplifies the setup, execution, data collection, and management of experiments by providing an easy-to-use interface for [OpenAI Gym](https://gym.openai.com/) and supports custom built environments.
-HippoGym is a Python library designed for researchers and students focusing on human-AI interaction over the web. It simplifies the setup, execution, and management of experiments by providing an easy-to-use interface for [OpenAI Gym](https://gym.openai.com/) and supports custom built environments.
 
 
 
@@ -94,7 +93,8 @@ To prevent the CCC Problem, it's advised that users connect their backend and fr
 
 Let’s dive into our React code to get a brief overview of we setup the frontend. In this use case, we will be providing code snippets used for the [Mountain Car](https://www.gymlibrary.dev/environments/classic_control/mountain_car/) environment from OpenAI Gym. 
 
-If you wish to make adjustments to the frontend, you may enter the [HIPPO_Gym_FrontEnd_React repo](https://github.com/IRLL/HIPPO_Gym_FrontEnd_React) and clone it as usual. You cd into the repository and run `npm install` to install the dependencies required for the frontend to work. Once you are in there, navigate to the `game.js` file found in HIPPO_Gym_FrontEnd_React/src/components/Game/game.js. For those curious you can always do a stack trace from main.js to explore all components of the frontend. Once you visit the game.js, most if not all of the code is under the main class of Game, here we define our initial states, components, props and more of what React has to offer. You may notice how one of the methods inside this Game class defines how we send messages to our websocket. The exact code can be viewed here. 
+If you wish to make adjustments to the frontend, you may enter the [HIPPO_Gym_FrontEnd_React repo](https://github.com/IRLL/HIPPO_Gym_FrontEnd_React) and clone it as usual. You cd into the repository and run `npm install` to install the dependencies required for the frontend to work. Once you are in there, navigate to the `game.js` file found in HIPPO_Gym_FrontEnd_React/src/components/Game/game.js. For those curious you can always do a stack trace from main.js to explore all components of the frontend. Once you visit the game.js, most if not all of the code is under the main class of Game, here we define our initial states, components, props and more of what React has to offer. You may notice how one of the methods inside this Game class defines how we send messages to our Websocket. The exact code can be viewed here. 
+
 ```javascript
    // Send data to websocket server in JSON format
    sendMessage = (routeKey, data) => {
@@ -110,7 +110,8 @@ If you wish to make adjustments to the frontend, you may enter the [HIPPO_Gym_Fr
    };
 
 ```
-If you aren’t familiar with hashmaps, don’t worry about how this works; but rather understand that every time we reference this function inside our game.js, we reference it as `this.sendMessage(“routeKey”, {data: wishToSend}` and example usage for this can be shown here, where we send a message under the “start” routeKey to trigger the userID dynamoDB update process. We first define our routekey = “start”, and then use a hashmap to send whatever form of data we want (we chose userID and projectID here). This part is standard in all experiments and will be done for you in the boilerplate code. We typically run this code after we establish a valid connection to our websocket server.
+If you aren’t familiar with hashmaps, don’t worry about how this works; but rather understand that every time we reference this function inside our game.js, we reference it as `this.sendMessage(“routeKey”, {data: wishToSend}`. An example usage for this is shown bellow, where we send a message under the “start” routeKey to trigger the userID dynamoDB update process. We first define our routeKey = “start”, and then use a hashmap to send whatever form of data we want (we chose userID and projectID here). This part is standard start in all experiments and will be done for you in the boilerplate code. We typically run this code after we establish a valid connection to our Websocket server.
+
 ```javascript
 this.sendMessage("start",{
              userId: USER_ID,
@@ -119,10 +120,10 @@ this.sendMessage("start",{
 
 ```
 
-After we run the code above, the expected output we receive is as follows: ```{'userId': <userID>, 'projectId': <projectID>}``` and that raw json gets parsed through our lambda handler and notifies the backend what our userID and projectID is for the given experiment.
+After we run the code above, the expected output we receive is as follows: ```{'userId': <userID>, 'projectId': <projectID>}``` and the raw json gets parsed through our Lambda handler and notifies the backend of our userID and projectID for the given experiment.
 
 
-Now you have gotten an example of how to send messages to our websocket, let's look at how we can receive expected messages from our websocket. With every experiment, we want to render our UI for the frontend to able to visual a dynamic page. Usually our backend handles rendering the frames/displaying some sort of UI. Whether that is passing in components for button data, or full scale environment npArray render frames provided from OpenAI Gym. See the example code below:
+Now that you have gotten an example of how to send messages to our Websocket, let's look at how we can receive expected messages as well. With every experiment, we want to render our UI for the frontend to be able to visualize a dynamic page. Usually our backend handles rendering the frames/displaying some sort of UI; whether that is passing in components for button data, or full scale environment npArray render frames provided from OpenAI Gym. See the example code below:
 
 ```javascript
 this.websocket.onmessage = (message) => {
@@ -135,19 +136,18 @@ this.websocket.onmessage = (message) => {
           } else {
             //parse the data from the websocket server
             let parsedData = JSON.parse(message.data);
-            //Check if frame related information in response
+            //Check if frame related information in ws message
             if (parsedData.env.frame && parsedData.env.frameId) {
-              console.log("New frame detected.")
-              let frame = parsedData.env.frame;
-              let frameId = parsedData.env.frameId;
-              // set new border color
-              if ("borderColor" in parsedData) {
-                this.setState({
-                  borderColor: parsedData.borderColor,
-                });
-              }
+                let frame = parsedData.env.frame;
+                let frameId = parsedData.env.frameId;
+                // **Optionally set a new border color
+                if ("borderColor" in parsedData) {
+                    this.setState({
+                    borderColor: parsedData.borderColor,
+                    });
+                }
                 this.setState((prevState) => ({
-                  // Set new frame ID
+                  // set new frame ID
                   frameSrc: "data:image/jpeg;base64, " + frame,
                   frameCount: prevState.frameCount + 1,
                   frameId: frameId,
@@ -155,7 +155,8 @@ this.websocket.onmessage = (message) => {
 
 ```
 
-In the code above, we listen to any incoming websocket messages and parse the data from the message. If the websocket message sent from our backend contains the data:
+In the code above, we listen to any incoming Websocket messages and parse the data from the message. If the Websocket message sent from our backend contains the data:
+
 ```python
 {'routeKey' = 'UI',
     {'env':
@@ -165,15 +166,14 @@ In the code above, we listen to any incoming websocket messages and parse the da
     }
 }
 ```
-then this code will be executed, notice how we use the routeKey here as UI, and then the data we send can be anything, or in this case; a nested dictionary. You may have also noticed how we check the websocket to see if the websocket message has the keyword done, that is the logic to end the game. 
+then the code above will be executed. Notice how we use the routeKey here as UI, and the data we send can be anything, or in this case; a nested dictionary. You may have also noticed that we check the Websocket to see if the Websocket message has the keyword done - that is the logic to end the game. 
 
 We will explore more on how the backend sends this env frame data to the frontend. We have now fully gone over how the frontend sends and receives data from a backend client now.
 
 
 ### Backend Setup
-Now it's time to look into the backend, the heart of the experiment lies in the `trial.py` file. 
-The file defines a Trial class to run an experimental trial that interacts with a WebSocket 
-server through `websocket.py` and an environment provided by an `agent.py` Agent class. 
+Now it's time to look into the backend; the heart of the experiment lies in the `trial.py` file. 
+The file defines a Trial class to run an experimental trial that interacts with a WebSocket server through `websocket.py` and an environment provided by an `agent.py` Agent class. 
 It also has functionalities like configuring the trial tailored to your needs, handling incoming messages, and extracting data.
 
 ### Step-by-step Instructions
@@ -195,9 +195,9 @@ It also has functionalities like configuring the trial tailored to your needs, h
     python3 trial.py
     ```
 
-The trial.py is the most important aspect of HippoGym, as it allows you to custom tailor your experiment to how it to be.
+trial.py is the most important aspect of HippoGym, as it allows you to custom tailor your experiment to exactly how you desire.
 
-Usually in the `__init__` method is where researchers tend to specify how they want their experiment to be:
+Usually in the `__init__` method is where researchers tend to specify their preferred experiment configuration:
 
 ```python
 class Trial():
@@ -220,14 +220,17 @@ class Trial():
         self.framerate = self.config.get('startingFrameRate', 30)
         self.frameId = 0
 ```
-If you are using HippoGym for Mountain Car Enviorment specifically, the trial.py will be mostly configured for you.
+If we are using HippoGym for Mountain Car Environment specifically, the trial.py will be mostly configured for us.
 
-Let's take a look at how we send messages using our abstracted websocket class. Remember the frontend setup where we expected to recieve some enviorment renders? Well, this is how we are sending it in the backend.
+Let's take a look at how we send messages using our abstracted Websocket class. Remember the frontend setup where we expected to receive some environment renders? Well, this is how we are sending it in the backend:
+
 ```python
     async def send_render(self, render:dict):
         await self.websocket.sendData('UI', {'env':render})
 ```
-We utilize this websocket.sendData() Method that is defined as follows from our `websocket.py` code:
+
+We utilize this websocket.sendData() method that is defined as follows from our `websocket.py` code, although we don't have to worry about this:
+
 ```python
     async def sendData(self, routeKey, data):
         if self.websocket is not None:
@@ -235,7 +238,9 @@ We utilize this websocket.sendData() Method that is defined as follows from our 
             ws_data.update(data)
             await self.websocket.send(json.dumps(action_data))
 ```
+
 so the data format is sent to the frontend as follows:
+
 ```python
 {'routeKey' = 'UI',
     {'env':
@@ -245,10 +250,10 @@ so the data format is sent to the frontend as follows:
     }
 }
 ```
-Exactly how we wish to sent it to the frontend.
+Exactly how we wish it to be sent.
 
 
-Now, to recieve messages from Websocket, we continously listen for messages while the trial is not marked as done, 
+Now, to receive messages from Websocket, we continuously listen for messages while the trial is not marked as done, 
 and send messages to a function to parse the data accordingly.
 
 ```python
@@ -258,13 +263,13 @@ and send messages to a function to parse the data accordingly.
         It handles the render-step loop
         '''
         while not self.done:
-            message = await self.websocket.recieveData()
-            # Message is recieved from Websocket in JSON Format
+            message = await self.websocket.receiveData()
+            # Message is received from Websocket in JSON Format
             await self.handle_message(message)
 ```
-and here we can choose how we want to handle the actual message. If you are curious further about the backend configuration, more specifiacally how `agent.py` and `websocket.py` is configured, you can read through the documented source code.
+In the handle_message function, we have the flexibility to define the approach for processing the received messages. 
 
-
+If you are curious further about the backend configuration, more specifically how `agent.py` and `websocket.py` is configured, you can read through the documented source code.
 
 
 ## Contributors
