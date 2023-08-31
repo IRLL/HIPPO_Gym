@@ -315,8 +315,8 @@ If we navigate to the `trial.py` file, we will see its already configured to run
 
 
 Example demo:
-https://github.com/IRLL/HIPPO_Gym/assets/96555957/1ca0cb22-a761-4fdf-827a-de90f2ec07b5
 
+https://github.com/IRLL/HIPPO_Gym/assets/96555957/86f5c130-5d82-4e60-94b3-ea4958ebbea9
 
 
 
