@@ -1,5 +1,5 @@
 project:
-  useAWS: true # bool, set to true if using AWS, set false and ignore all AWS entries
+  useAWS: True # bool, set to true if using AWS, set false and ignore all AWS entries
   awsSetup:
     bucket: projects.irll # working bucket in AWS
     region: ca-central-1 # working AWS region
@@ -10,11 +10,11 @@ project:
   events:
     startServerStep: 1 # int
     stopServerStep: 12 # int
-  id: new-cognitive-tutor # Letters, Numbers and '-' only!
+  id: callie_pref_learning2 # Letters, Numbers and '-' only!
   live: true # bool
   maxRuntime: 30 # int in minutes.
-  name: new-cognitive-tutor-pilot # include pilot for control condition
-  researcher: Nadeen # str
+  name: callie_pref_learning # include pilot for control condition
+  researcher: Callie # str
   # SSL NOT USED ANYMORE, API GATEWAY FOR WEBSOCKETS
   # ssl:
   #   fullchain: SSL/cert.pem # path to fullchain.pem file excluding bucket name
@@ -22,65 +22,49 @@ project:
   #   sslBucket: beta.irll.net # bucket name for resolving paths above
   steps: # any number of steps needed with corresponding filenames
     1: 1_consentForm.html
-    2: 2_intro_instructions.html
-    3: 3_flight_planning_intro.html
-    4: 4_flight_planning_intro2.html
-    5: 5_node_inspector.html
-    6: 6_rewards_costs.html
-    7: 7_graph_structure_info.html
-    8: 8_train_test_instruction.html
-    #8: 8_train_test_instruction_control.html
-    9: 9_cognitive_tutor_instructions.html
-    10: 10_quiz_instructions.html
-    # 11: 11_cheat_sheet_instructions_reminder.html
-    11: game
-    # 13: 15_bonus_amount.html
-    # 14: 16_user_attitude_survey.html
-    # 15: 17_demographic_survey_questions.html
-    12: 18_end_of_survey_thankyou.html
+    2: game
+    3: exampleThank.html
     finalStep: exampleThank.html # required, filename can be same as last numbered step
   teamMembers: # str
 trial:
+  modality: demo
   actionBufferLifespan: 1 # int
-  maxEpisodes: 42 # int
-  game: fingerprint # full environment name
+  maxEpisodes: 20 # int
+  game: MountainCar-v0 # full environment name
   dataFile: episode # episode or trial
-  s3upload: true
+  s3upload: false
   actionSpace: # the appropriate action space for environment. Order matters
   frameRateStepSize: 5 # int Optional if allowFrameRateChange = False
   minFrameRate: 1 # int Optional if allowFrameRateChange = False
   maxFrameRate: 60 # int Optional if allowFrameRateChange = False
   allowFrameRateChange: False # bool
   startingFrameRate: 30 # int Required
-  fingerprint: true # if this is a fingerprint marking trial
-  minMinutiae: 1 # minimum number of minutiae required to add per trial
-  maxScore: 2242 # maximum score a participant can get (with reference to number of impressions)
   ui: # to include ui button set to True, False buttons will not be shown
-    left: False
-    right: False
-    up: False
-    down: False
-    start: False
+    left: True
+    right: True
+    up: True
+    down: True
+    start: True
     stop: True
     pause: False
     reset: False
     trainOffline: False
     trainOnline: False
-    good: False
-    bad: False
+    good: True
+    bad: True
     fpsSet: False
     fpsUp: False
     fpsDown: False
-    brightness: True
-    contrast: True
-    saturation: True
-    hue: True
-    undo: True
-    redo: True
-    addMinutia: True
-    resetImage: True
-    submitImage: True
-    getFeedback: True
+    brightness: False
+    contrast: False
+    saturation: False
+    hue: False
+    undo: False
+    redo: False
+    addMinutia: False
+    resetImage: False
+    submitImage: False
+    getFeedback: False
   instructions:
     - Scroll (mouse), pinch (touchpad/mousepad), double-click or use control keys to zoom
     - Click and drag the canvas to pan around the canvas

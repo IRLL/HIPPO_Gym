@@ -12,7 +12,8 @@
 3. [Setting Up](#Setting-Up)
     - [Frontend Setup](#Frontend-Setup)
     - [Backend Setup](#Backend-Setup)
-4. [Contributors](#Contributors)
+4. [Mountain Car Example](#mountaincar-example)
+5. [Contributors](#Contributors)
 
 ## Purpose
 HippoGym is a Python library designed for researchers and students focusing on human-AI interaction over the web. It simplifies the setup, execution, data collection, and management of experiments by providing an easy-to-use interface for [OpenAI Gym](https://gym.openai.com/) and supports custom built enviorments.
@@ -263,6 +264,44 @@ and send messages to a function to parse the data accordingly.
             await self.handle_message(message)
 ```
 and here we can choose how we want to handle the actual message. If you are curious further about the backend configuration, more specifiacally how `agent.py` and `websocket.py` is configured, you can read through the documented source code.
+
+## Mountain Car Example
+
+Let's get started on an example of using OpenAI's Mountain Car Enviorment with HippoGym. 
+
+If you navigate the `trial.py` file, we will see its already configured to run mountain car. Here is how you can run it.
+
+### Step-by-step Instructions
+
+1. **Clone the Repository**
+    ```bash
+    git clone https://github.com/IRLL/HIPPO_Gym.git
+    ```
+2. **Install Dependencies**
+    ```bash
+    pip install -r requirements.txt
+    ``` 
+3. **Navigate to Directory**
+    ```bash
+    cd App
+    ```
+4. **Connect to site hosting trial**
+    Connect to the [testing.irll.net](https://testing.irll.net/?projectId=callie_pref_learning2) site and get through the consent form.
+
+    Press the 'submit' button.
+
+4. **Run the Program**
+    While you are waiting for the game to load, run the trial.py to avoid the CCC problem.
+    ```bash
+    python3 trial.py
+    ```
+    The game will now be running the Mountain Car enviorment.
+    
+![Video Demo](./images/mountaincar-demo.mov)
+
+Example console output:
+![Console output](./images/mountaincar-sample-console.png)
+
 
 
 

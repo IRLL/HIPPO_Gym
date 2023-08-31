@@ -13,3 +13,7 @@ scipy==1.7.0
 sklearn==0.0
 threadpoolctl==2.1.0
 pexpect
+setuptools==65.5.0
+wheel<0.40.0
+gym==0.21.0
+pyglet==1.5.27
