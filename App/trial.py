@@ -9,6 +9,12 @@ from agent import Agent # this is the Agent/Environment compo provided by the re
 from PIL import Image
 from io import BytesIO
 
+"""Press Start
+Shows first demo.
+Right arrow or right UI button, gives next demo. But have to press start to show it.
+Right arrow or right UI button, gives previous demo. But have to press start to show it.
+"""
+
 TAG = "\033[1;35m[HIPPOGYM]\033[0m" 
 
 def load_config():
@@ -36,7 +42,8 @@ class Trial():
         self.projectId = self.config.get('projectId')
         self.show_demo = None
         self.total_reward = 0
-        self.demo_idx = 0
+        self.demo_idx = 1
+        self.action = 'noop'
         self.modality = self.config.get('modality')
         self.framerate = self.config.get('startingFrameRate', 30)
         self.frameId = 0
@@ -62,7 +69,21 @@ class Trial():
         returned. 
         '''
         print(f'{TAG} Starting trial...')
-        self.agent = Agent()
+
+
+        if self.modality == 'feedback':
+            from tamerAgent import TamerAgent
+            self.agent = TamerAgent()
+
+        elif self.modality == 'pref':
+            from agent import Agent
+            self.agent = Agent()
+
+        elif self.modality == 'demo':
+            from agent import Agent
+            self.agent = Agent()
+
+
         self.agent.start(self.config.get('game'))
         actionSpace = self.config.get('actionSpace')
         self.agent.reset()
@@ -78,6 +99,18 @@ class Trial():
             message = await self.websocket.recieveData()
             await self.handle_message(message)
             print('waiting for messages')
+
+            if self.play:
+                #print('self.play', self.play)
+
+                if self.modality == 'pref':
+                    await self.render_policy()
+                
+                else:
+                    render = await self.get_render()
+                    await self.send_render(render)
+                    self.take_step()
+                    time.sleep(1/self.framerate)
 
 
 
@@ -121,7 +154,8 @@ class Trial():
         await self.websocket.sendData("DONE",{"message":"done"})
         self.play = False
 
-
+# """trial.py:260: RuntimeWarning: coroutine 'Trial.end' was never awaited
+# """
 
     async def handle_message(self, message:dict):
         '''
@@ -129,6 +163,14 @@ class Trial():
         actions. Logs entire message in self.nextEntry
         '''
         print(f"{TAG} handle_message function has recieved: ", message)
+        print('inside handle message', message)
+        print('if KeyBoardEvent in message','KeyBoardEvent' in message )
+        print(message.keys())
+        print(list(message.keys()))
+        # if 'action' in list(message.keys()):
+        #     print(message['KeyboardEvent'])
+        # if 'KeyBoardEvent' in list(message.keys()):
+        #     print('message[KeyboardEvent]', message['KeyboardEvent'])
 
         if not self.userId and 'userId' in message:
             self.userId = message['userId']
@@ -139,9 +181,23 @@ class Trial():
             with open('./data/trialData.json') as json_file:
                 self.trialData = json.load(json_file)
             await self.send_ui()
-        if 'command' in message and message['command']:
+
+        if 'action' in message and message['action'] == 'command':
             print(f'{TAG} commmand in message recieved.')
-            await self.handle_command(message)
+            try:
+            #if message['KeyboardEvent']:
+                print('got key board input')
+                await self.handle_key_board_events(message['KeyboardEvent'])
+            except:
+                print('got a different command')
+                await self.handle_command(message)
+        # if 'KeyBoardEvent' in message and message['KeyboardEvent']:
+        #     print(f'{TAG} commmand in message recieved.')
+        #     await self.handle_key_board_events(message)
+
+        # if 'command' in message and message['command']:
+        #     print(f'{TAG} commmand in message recieved.')
+        #     await self.handle_command(message)
         elif 'save' in message and message['save']:
             self.nextEntry = message['save']
             print(f"{TAG} saving data in self.nextEntry: ...",self.nextEntry)
@@ -172,20 +228,39 @@ class Trial():
         with open(file_path, "w") as outfile:
             json.dump(self.nextEntry, outfile, indent = 2)
 
+    async def handle_key_board_events(self, message):
+        print('handle_key_board_event message', message)
+        #command = message['KeyboardEvent'].strip().lower()
+        print(f"{TAG} handle_key_board_event function: ", message)
+        key = list(message.keys())[0]
+        #print('key',key)
+        value = message[key][0]
+        self.handle_action(value)
+        print('value', value)
+    
 
     async def handle_command(self, message):
         '''
         Deals with allowable commands from user. To add other functionality
         add commands.
         '''
+        print('message', message)
         command = message['command'].strip().lower()
         print(f"{TAG} handle_command function: ", command)
+        print('Pass this?')
         if command == 'start':
                 self.play = True
-                if self.modality == 'pref':
-                    self.show_demo = True
-                #await self.render_all_frames()
-                await self.render_policy()
+                if self.action == 'increase':
+                    self.demo_idx+=1
+                elif self.action == 'decrease':
+                    self.demo_idx-=1
+
+                print('using demo', self.demo_idx)
+                    
+                # if self.modality == 'pref':
+                #     self.show_demo = True
+                # #await self.render_all_frames()
+                # #await self.render_policy()
         elif command == 'stop':
             self.end()
         elif command == 'reset':
@@ -198,8 +273,6 @@ class Trial():
             self.handle_feedback(command)
             self.handle_pref(command)
 
-        elif command == "KeyboardEvent":
-            self.handle_action(command)
 
 
     async def render_all_frames(self):
@@ -211,14 +284,35 @@ class Trial():
             
 
             
+    
     def handle_action(self, action:str):
         '''
         Translates action to int and resets action buffer if action !=0
         '''
-        action = action.strip().lower()
-        if action == 'KEYDOWN':
-            #print('USER: GOOD')
-            self.action = '0'
+        #action = action.strip().lower()
+        print(action)
+        if self.modality == 'pref':
+            if action == 'ArrowRight':
+                self.action = 'increase'
+                #self.demo_idx+=1
+                #self.play=True
+            elif action == 'ArrowLeft':
+                self.action = 'decrease'
+                #self.demo_idx-=1
+                #self.play=True
+
+        elif self.modality == 'demo':
+            self.action = 0
+            if action == 'KEYDOWN':
+                #print('USER: GOOD')
+                self.action = '0'
+
+            elif action == 'ArrowRight':
+                #print('USER: GOOD')
+                self.action = 2
+            elif action == 'ArrowLeft':
+                self.action = 1
+
         #add to array 
     def handle_feedback(self, feedback:str):
         '''
@@ -255,6 +349,7 @@ class Trial():
             self.human_pref = 'bad'
 
         self.nextEntry = {'preference':[self.demo_idx, self.human_pref]}
+        print(self.nextEntry)
         self.save_data()
 
     async def get_render(self):
@@ -303,45 +398,44 @@ class Trial():
         '''
         if self.modality == 'feedback':
             print('self.humanfeedback', self.humanfeedback)
-            envState = self.agent.step(self.humanfeedback)
-            #print(type(envState))
-            #self.update_entry(envState)
-        elif self.modality == 'demonstration':
+            done = self.agent.step(self.humanfeedback)
+
+        elif self.modality == 'demo':
             print('self.humanAction', self.humanAction)
-            envState, transition = self.agent.step(self.humanAction)
-            #self.update_entry(transition)
-            self.total_reward+=envState['reward']
+            done = self.agent.step(self.humanAction)
 
         
-        #self.save_entry()
-        if envState['done']:
-            print('total reward', self.total_reward)
+
+        if done:
             self.reset()
-            self.total_reward = 0
+ 
 
     async def render_policy(self):
 
         
-        demo = self.agent.short_replay_buffer_of_demos[self.demo_idx]
+        demo = self.agent.replay_buffer_of_demos[self.demo_idx]
         print(demo)
-        # print('len of demo',)
+        print('len of demo', len(demo))
         #print(self.agent.short_replay_buffer_of_demos[1])
         #print('type of demo', type(demo))
         print('demo number', self.demo_idx)
         print('just reset the agent env')
-        #self.agent.reset()
+        self.agent.reset()
         
         print('len of demo', len(demo))
         for idx, action in enumerate(demo):
             print(demo)
             print(f'idx {idx} out of {len(demo)}')
             print(action)
-            envState, _ = self.agent.step(action)
+            done = self.agent.step(action)
             #print(envState, type(envState))
             # self.update_entry(envState)
             # self.save_entry()
             render = await self.get_render()
             await self.send_render(render)
+            time.sleep(1/self.framerate)
+            if done:
+                break
             # if envState['done']:
             #     print('done')
             #     break

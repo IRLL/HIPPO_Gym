@@ -302,3 +302,10 @@ Valid keys are:
 - fpsUp
 - fpsDown
 
+##### To use learning from preferences:
+0. Update config file and make sure UI buttons "good" and "bad" are turned to True
+1. Make sure there is a buffer of demostrations available in agent.py. See replay_buffer_of_demos in agent.py
+2. When a user is interacting via https://testing.irll.net/?projectId=project_ID, by pressing start the first demostration will play
+3. Then the user can press good or bad and this will be associated with the current demostration. 
+4. Right arrow or right UI button, gives next demo. But have to press start to show it.
+   Left arrow or left UI button, gives previous demo. But have to press start to show it.
