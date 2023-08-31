@@ -8,6 +8,7 @@
     - [System Architecture](#System-Architecture)
     - [RouteKeys](#RouteKeys)
     - [AWS Lambda Middleware](#AWS-Lambda-Middleware)
+    - [CCC](#the-concurrent-connection-collision-problem-ccc)
 3. [Setting Up](#Setting-Up)
     - [Frontend Setup](#Frontend-Setup)
     - [Backend Setup](#Backend-Setup)
@@ -48,7 +49,7 @@ An example of how users appear on DynamoDB is shown
 
 ![DynamoDB](./images/dynamodb-output.png)
 
-Sometimes, clashes arise - please see [The Concurrent Connection Clash Problem](#aws-lambda-middleware) in the Lambda section to learn how to avoid this problem.
+Sometimes, clashes arise - please see [The Concurrent Connection Clash Problem](#the-concurrent-connection-collision-problem-ccc) in the Lambda section to learn how to avoid this problem.
 
 ## RouteKeys
 Route Keys serve as a routing mechanism in AWS Websocket API. A message must specify a Route Key to route it to the correct Lambda function. 
@@ -80,7 +81,7 @@ When sending a message from either front-end or back-end, we must specify a Rout
 We use AWS Lambda as middleware for routing our websocket messages to the relevant service. Lambda detects which user is sending a message, and where its intended destination is, that be frontend or backend. The displayed Route Keys above route to our lambda websocket handler in which the lambda reads the route key and the "sendTo" message as part of our function definition for sending messages.
 We use AWS Lambda as middleware for routing our websocket messages to the relevant component. Lambda detects which user is sending a message, and where its intended destination is, that be frontend or backend. The displayed Route Keys above route to our lambda websocket handler in which the lambda reads the route key and the "sendTo" message to determine where to send the message. For our example of starting the trial, the frontend sends a start message to the lambda handler that is then routed to the backend for further handling the start of the trial.
 
-### The Concurrent Connection Collision Problem (CCC)
+## The Concurrent Connection Collision Problem (CCC)
 The Concurrent Connection Clash (CCC) Problem can can arise from the manner in which AWS Lambda handles connections. The CCC Problem emerges when users initiate backend and frontend connections in rapid succession. If a subsequent user's frontend connection occurs before the previous user's frontend connection, unintended session merging can happen.
 
 For example, in a scenario where two users consecutively connect their backend and frontend components, the system might inadvertently merge their sessions. This leads to undesired outcomes such as loading issues and communication disruptions.
