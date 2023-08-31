@@ -301,7 +301,13 @@ If you navigate the `trial.py` file, we will see its already configured to run m
     ```
     The game will now be running the Mountain Car enviorment.
     
-![Video Demo](./images/mountaincar-demo.mov)
+
+
+
+https://github.com/IRLL/HIPPO_Gym/assets/96555957/1ca0cb22-a761-4fdf-827a-de90f2ec07b5
+
+
+
 
 Example console output:
 ![Console output](./images/mountaincar-sample-console.png)
