@@ -16,7 +16,7 @@
 5. [Additional Resources](#Additional-Resources)
 
 ## Purpose
-HippoGym is a Python library designed for researchers and students focusing on human-AI interaction over the web. It simplifies the setup, execution, and management of experiments by providing an easy-to-use interface for [OpenAI Gym](https://gym.openai.com/) and supports custom built enviorments.
+HippoGym is a Python library designed for researchers and students focusing on human-AI interaction over the web. It simplifies the setup, execution, data collection, and management of experiments by providing an easy-to-use interface for [OpenAI Gym](https://gym.openai.com/) and supports custom built enviorments.
 
 
 
@@ -107,7 +107,7 @@ If you wish to make adjustments to the frontend, you may enter the [HIPPO_Gym_Fr
                sendTo: "backend",
                ...data
                }));
-       }
+       }    
    };
 
 ```
@@ -136,7 +136,7 @@ this.websocket.onmessage = (message) => {
           } else {
             //parse the data from the websocket server
             let parsedData = JSON.parse(message.data);
-                        //Check if frame related information in response
+            //Check if frame related information in response
             if (parsedData.env.frame && parsedData.env.frameId) {
               console.log("New frame detected.")
               let frame = parsedData.env.frame;
@@ -172,7 +172,98 @@ We will explore more on how the backend sends this env frame data to the fronten
 
 
 ### Backend Setup
-(Explain trial.py, WebSocket class, etc...)
+Now it's time to look into the backend, the heart of the experiment lies in the `trial.py` file. 
+The file defines a Trial class to run an experimental trial that interacts with a WebSocket 
+server through `websocket.py` and an environment provided by an `agent.py` Agent class. 
+It also has functionalities like configuring the trial tailored to your needs, handling incoming messages, and extracting data.
+
+### Step-by-step Instructions
+
+1. **Clone the Repository**
+    ```bash
+    git clone https://github.com/IRLL/HIPPO_Gym.git
+    ```
+2. **Install Dependencies**
+    ```bash
+    pip install -r requirements.txt
+    ``` 
+3. **Navigate to Directory**
+    ```bash
+    cd App
+    ```
+4. **Run the Program**
+    ```bash
+    python3 trial.py
+    ```
+
+The trial.py is the most important aspect of HippoGym, as it allows you to custom tailor your experiment to how it to be.
+
+Usually in the `__init__` method is where researchers tend to specify how they want their experiment to be:
+
+```python
+class Trial():
+    def __init__(self):
+        print(f'{TAG} Initializing Trial...')
+        self.config = load_config() # ability to load logic data from config file
+        self.data = None
+        self.count = 1
+        self.websocket = Websocket() # If you wish to specify your own websocket server use it as param
+        self.episode = 0
+        self.done = False
+        self.play = False
+        self.nextEntry = {}
+        self.outfile = None
+        self.userId = None
+        self.show_demo = None
+        self.total_reward = 0
+        self.demo_idx = 0
+        self.modality = self.config.get('modality')
+        self.framerate = self.config.get('startingFrameRate', 30)
+        self.frameId = 0
+```
+If you are using HippoGym for Mountain Car Enviorment specifically, the trial.py will be mostly configured for you.
+
+Let's take a look at how we send messages using our abstracted websocket class. Remember the frontend setup where we expected to recieve some enviorment renders? Well, this is how we are sending it in the backend.
+```python
+    async def send_render(self, render:dict):
+        await self.websocket.sendData('UI', {'env':render})
+```
+We utilize this websocket.sendData() Method that is defined as follows from our `websocket.py` code:
+```python
+    async def sendData(self, routeKey, data):
+        if self.websocket is not None:
+            ws_data = {"action": routeKey, "userId": self.userID, "sendTo": "frontend"}
+            ws_data.update(data)
+            await self.websocket.send(json.dumps(action_data))
+```
+so the data format is sent to the frontend as follows:
+```python
+{'routeKey' = 'UI',
+    {'env':
+        {'frame': <frameData>,
+         'frameId': <frameId>
+        }
+    }
+}
+```
+Exactly how we wish to sent it to the frontend.
+
+
+Now, to recieve messages from Websocket, we continously listen for messages while the trial is not marked as done, 
+and send messages to a function to parse the data accordingly.
+
+```python
+    async def run(self):
+        '''
+        This is the main event controlling function for a Trial.
+        It handles the render-step loop
+        '''
+        while not self.done:
+            message = await self.websocket.recieveData()
+            # Message is recieved from Websocket in JSON Format
+            await self.handle_message(message)
+```
+and here we can choose how we want to handle the actual message. 
 
 
 ## Contributors
