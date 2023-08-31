@@ -269,9 +269,9 @@ and send messages to a function to parse the data accordingly.
 ```
 and here we can choose how we want to handle the actual message. If you are curious further about the backend configuration, more specifiacally how `agent.py` and `websocket.py` is configured, you can read through the documented source code.
 
-## Mountain Car Example
+## mountaincar-example
 
-Let's get started on an example of using OpenAI's Mountain Car Enviorment with HippoGym. 
+Let's get started on an example of using OpenAI's Mountain Car Enviorment with HippoGym provided by [Callie Muslimani](https://apps.ualberta.ca/directory/person/musliman). 
 
 If you navigate the `trial.py` file, we will see its already configured to run mountain car. Here is how you can run it.
 
@@ -303,7 +303,7 @@ If you navigate the `trial.py` file, we will see its already configured to run m
     
 
 
-
+Example demo:
 https://github.com/IRLL/HIPPO_Gym/assets/96555957/1ca0cb22-a761-4fdf-827a-de90f2ec07b5
 
 
@@ -312,6 +312,16 @@ https://github.com/IRLL/HIPPO_Gym/assets/96555957/1ca0cb22-a761-4fdf-827a-de90f2
 Example console output:
 ![Console output](./images/mountaincar-sample-console.png)
 
+
+Other human trial demos:
+
+Lunar Lander:
+
+![Frontend display lunar](./images/lunar_human_demo.gif)
+
+Minigrid:
+
+![Frontend display minigrid](./images/minigrid_human_demo.gif)
 
 
 
