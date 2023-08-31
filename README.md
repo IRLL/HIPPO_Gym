@@ -15,25 +15,61 @@
 5. [Additional Resources](#Additional-Resources)
 
 ## Purpose
-HippoGym is a python library for simplifying human-ai interaction research over the web...
+HippoGym is a Python library designed for researchers and students focusing on human-AI interaction over the web. It simplifies the setup, execution, and management of experiments by providing an easy-to-use interface for [OpenAI Gym](https://gym.openai.com/) and supports custom built enviorments.
+
+
 
 ## System Overview
 ### Websockets
-[Websocket API](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-websocket-api.html) is a powerful tool from [Amazon Web Services](https://aws.amazon.com/) API Gateway that facilitates the bi-directional communication between a server and its corresponding client. In the case of HIPPO Gym, Websocket API is used to send communications between the frontend server hosting our react code for deploying experiments/projects and the backend server trial.py, which serves as the control logic for running and managing trials, sending/receiving WebSocket communications, and optionally receiving/storing trial data for a computer agent. The Websocket class, located in the backend websocket.py, uses methods to allow for seamless integration of websocket communications to ensure students/researchers will not need to go into the hidden layer of the websocket/trial logic used in HippoGym. 
+The [Websocket API](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-websocket-api.html) by [Amazon Web Services](https://aws.amazon.com/) (AWS) provides the backbone for real-time, bi-directional communication between the client and the server in HippoGym. Specifically, it facilitates seamless interaction between the front-end, written in React, and the back-end `trial.py` logic. The `WebSocket` class, part of the back-end architecture, abstracts away the complexity of Websocket communications, allowing users to focus on human-AI interaction research.
+
+In HippoGym, Websocket API enables:
+- Real-time updates: For example, rendering frames in OpenAI Gym environments.
+- Data Exchange: Messages containing experiment data are exchanged between the front-end and back-end.
+- Data saving: Enabling the ability to save step/trial data in live time to allow to be fed into an external learning algorithm use.
+
+With Websockets, you can easily send messages from the front-end to the back-end and vice versa without worrying about the underlying communication protocols.
+
 
 ### System Architecture
-Our current system architechture for connecting a client is as follows:
-We first deploy the given project in our front-end using React where we define the setup for the experiment and define the data we wish to send and receive. Note that AWS credentials are required to make any changes to the front-end component of HIPPO Gym, if you wish for front-end changes to be deployed, please refer to [Additional Resources](#Additional-Resources). To run the project, users must first connect their back-end component (more information on how in [backend setup](#backend-setup)), where their connectionID will be held in the [AWS Lambda server](#aws-lambda-middleware) awaiting for the frontend connection. At the launch of the frontend (after the final step page), the frontend connects to our websocket server, and sends the Lambda handler our uniquely generated userID. This userID get’s passed to the backend server to store and use for future connections to the experiment. Lambda stores the userID in a DynamoDB table to uniquely map each user individually based on their own backend connectionID and frontend connectionID to avoid clashes between systems in our experiment. 
+The architecture operates in the following sequence:
+1. **Front-end Deployment**: Projects are deployed using React, then it can be accessed on the web for a user to connect to.
+2. **Backend Connection**: Users run their custom `trial.py` after reading through the step files and before you enter the game page. 
+3. **AWS Lambda**: The backendConnectionID is held in AWS Lambda server awaiting for the frontend to map to the backend.
+4. **Front-end Launch**: On game launch, the frontend connects to the WebSocket server, sends a unique userID and sends the request to map the user with the backend.
+5. **UserID Storage**: AWS Lambda stores the userID in a DynamoDB table for unique mapping.
 
-An example of how users appear on DynamoDB is shown 
-![DynamoDB](./images/dynamodb-output.png)
-
- Sometimes, clashes arise - please see [The Concurrent Connection Clash Problem](#aws-lambda-middleware) in the Lambda section to learn how to avoid this problem. See below to get a brief overview of the current system design for connecting a client. 
+This architecture ensures unique mapping and seamless communication between frontend and backend.
+See below to get a brief overview of the current system design for connecting a client. 
 
 ![System Architecture](./images/system-design.png)
 
+An example of how users appear on DynamoDB is shown 
+
+![DynamoDB](./images/dynamodb-output.png)
+
+Sometimes, clashes arise - please see [The Concurrent Connection Clash Problem](#aws-lambda-middleware) in the Lambda section to learn how to avoid this problem.
+
 ## RouteKeys
-In AWS Websocket API, Route Keys are a mechanisim for routing our websocket messages to the appropriate Lambda function to handle a message. If an unknown Route Key is passed, Websocket API will not handle the websocket message recieved. Here is a list of the current Route Keys we have in our Websocket API:
+Route Keys serve as a routing mechanism in AWS Websocket API. A message must specify a Route Key to route it to the correct Lambda function. 
+
+Example data:
+```json
+{
+  "routeKey": "save",
+  "data": 
+    {
+        'timestep': 0,
+        'state': 1,
+        'action': 'left'
+    }
+  
+}
+```
+
+*Note routeKeys are case senesitive* 
+
+Here are the current routeKeys we have avaliable:
 
 ![Route Keys](./images/route-keys.png)
 
@@ -131,7 +167,7 @@ We will explore more on how the backend sends this env frame data to the fronten
 ## Contributors
 Originally written by [Nick Nissen](https://nicknissen.com) and Yuan Wang
 
-System upgrades and redesign by [Mohamed Al-Nassirat](https://www.linkedin.com/in/mohamed-al-nassirat-6893b9203/?originalSubdomain=ca) and [Vera Maoued](https://github.com/vmaoued)
+System upgrades and redesign by [Mohamed Al-Nassirat](https://www.linkedin.com/in/mohamed-al-nassirat-6893b9203/?originalSubdomain=ca) and [Vera Maoued](https://github.com/vmaoued) 
 
 Supervised by [Matt Taylor](https://drmatttaylor.net)
 For the Intelligent Robot Learning Laboratory [(IRLL)](https://irll.ca) at the University of Alberta [(UofA)](https://ualberta.ca)
