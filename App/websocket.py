@@ -34,7 +34,7 @@ class Websocket:
         if self.websocket is not None:
             action_data = {"action": routeKey, "userId": self.userID}
             action_data.update(data)
-            print(TAG, "Sending to websocket...", action_data)
+            #print(TAG, "Sending to websocket...", action_data)
             await self.websocket.send(json.dumps(action_data))
             
     async def recieveData(self):
