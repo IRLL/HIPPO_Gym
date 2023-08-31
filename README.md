@@ -2,18 +2,18 @@
 ## Human Input Parsing Platform for OpenAI Gym
 
 ### Table of Contents
-1. [Purpose](#Purpose)
-2. [System Overview](#System-Overview)
-    - [WebSockets](#Websockets)
-    - [System Architecture](#System-Architecture)
-    - [RouteKeys](#RouteKeys)
-    - [AWS Lambda Middleware](#AWS-Lambda-Middleware)
-3. [Setting Up](#Setting-Up)
-    - [Frontend Setup](#Frontend-Setup)
-    - [Backend Setup](#Backend-Setup)
+1. [Purpose](#purpose)
+2. [System Overview](#system-overview)
+    - [WebSockets](#websockets)
+    - [System Architecture](#system-architecture)
+    - [RouteKeys](#routekeys)
+    - [AWS Lambda Middleware](#aws-lambda-middleware)
+3. [Setting Up](#setting-up)
+    - [Frontend Setup](#frontend-setup)
+    - [Backend Setup](#backend-setup)
 4. [The CCC Problem](#the-concurrent-connection-collision-problem-ccc)
-5. [Mountain Car Example](#mountaincar-example)
-6. [Contributors](#Contributors)
+5. [Mountain Car Example](#mountain-car-example)
+6. [Contributors](#contributors)
 
 ## Purpose
 HippoGym is a Python library designed for researchers and students focusing on human-AI interaction over the web. It simplifies the setup, execution, data collection, and management of experiments by providing an easy-to-use interface for [OpenAI Gym](https://gym.openai.com/) and supports custom built environments.
@@ -51,7 +51,7 @@ An example of how users appear on DynamoDB is shown:
 
 Sometimes, clashes arise - please see [The Concurrent Connection Clash Problem](#the-concurrent-connection-collision-problem-ccc) to learn how to avoid this problem.
 
-## RouteKeys
+### RouteKeys
 Route keys serve as a routing mechanism in AWS Websocket API. A message must specify a route key to route it to the correct Lambda function. 
 
 Example data:
@@ -77,7 +77,7 @@ Here are the current route keys we have available:
 When sending a message from either frontend or backend, we must specify a route key from this list, along with any type of data we wish to send over. For more on sending and receiving messages, see [Setting Up](#setting-up).
 
 
-## AWS Lambda Middleware
+### AWS Lambda Middleware
 We use AWS Lambda as middleware for routing our Websocket messages to the relevant service. Lambda detects which user is sending a message, and where its intended destination is, that be the frontend or backend. The displayed route keys above route to our Lambda Websocket handler in which the Lambda reads the route key and the target endpoint.
 
 
@@ -170,7 +170,7 @@ Now it's time to look into the backend; the heart of the experiment lies in the 
 The file defines a Trial class to run an experimental trial that interacts with a WebSocket server through `websocket.py` and an environment provided by an `agent.py` Agent class. 
 It also has functionalities such as configuring the trial tailored to a users needs, handling incoming messages, and extracting data.
 
-### Step-by-step Instructions
+#### Step-by-step Instructions
 
 1. **Clone the Repository**
     ```bash
@@ -280,13 +280,13 @@ To prevent the CCC Problem, it's advised that users connect their backend and fr
 
 Of course, we always have the option to refresh the page and retry again with no loss.
 
-## mountaincar-example
+## Mountain Car Example
 
 Let's get started on an example of using OpenAI's Mountain Car Environment with HippoGym provided by [Callie Muslimani](https://apps.ualberta.ca/directory/person/musliman). 
 
-If you navigate the `trial.py` file, we will see its already configured to run mountain car. Here is how you can run it.
+If we navigate to the `trial.py` file, we will see its already configured to run Mountain Car. Here is how we can run it:
 
-### Step-by-step Instructions
+#### Step-by-step Instructions
 
 1. **Clone the Repository**
     ```bash
@@ -306,7 +306,7 @@ If you navigate the `trial.py` file, we will see its already configured to run m
     Press the 'submit' button.
 
 4. **Run the Program**
-    While you are waiting for the game to load, run the trial.py to avoid the CCC problem.
+    While waiting for the game to load, run the trial.py to avoid the CCC problem.
     ```bash
     python3 trial.py
     ```
@@ -326,11 +326,11 @@ Example console output:
 
 Other human trial demos:
 
-Lunar Lander:
+#### Lunar Lander:
 
 ![Frontend display lunar](./images/lunar_human_demo.gif)
 
-Minigrid:
+#### Minigrid:
 
 ![Frontend display minigrid](./images/minigrid_human_demo.gif)
 
