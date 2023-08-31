@@ -12,7 +12,8 @@
     - [Frontend Setup](#Frontend-Setup)
     - [Backend Setup](#Backend-Setup)
 4. [The CCC Problem](#the-concurrent-connection-collision-problem-ccc)
-4. [Contributors](#Contributors)
+5. [Mountain Car Example](#mountaincar-example)
+6. [Contributors](#Contributors)
 
 ## Purpose
 HippoGym is a Python library designed for researchers and students focusing on human-AI interaction over the web. It simplifies the setup, execution, data collection, and management of experiments by providing an easy-to-use interface for [OpenAI Gym](https://gym.openai.com/) and supports custom built environments.
@@ -278,6 +279,61 @@ This behavior is attributed to AWS Lambda, which holds backend connections until
 To prevent the CCC Problem, it's advised that users connect their backend and frontend components in quick succession, ideally right before the frontend loads. By ensuring the backend connection precedes the frontend connection, the likelihood of timing-related clashes is minimized.
 
 Of course, we always have the option to refresh the page and retry again with no loss.
+
+## mountaincar-example
+
+Let's get started on an example of using OpenAI's Mountain Car Environment with HippoGym provided by [Callie Muslimani](https://apps.ualberta.ca/directory/person/musliman). 
+
+If you navigate the `trial.py` file, we will see its already configured to run mountain car. Here is how you can run it.
+
+### Step-by-step Instructions
+
+1. **Clone the Repository**
+    ```bash
+    git clone https://github.com/IRLL/HIPPO_Gym.git
+    ```
+2. **Install Dependencies**
+    ```bash
+    pip install -r requirements.txt
+    ``` 
+3. **Navigate to Directory**
+    ```bash
+    cd App
+    ```
+4. **Connect to site hosting trial**
+    Connect to the [testing.irll.net](https://testing.irll.net/?projectId=callie_pref_learning2) site and get through the consent form.
+
+    Press the 'submit' button.
+
+4. **Run the Program**
+    While you are waiting for the game to load, run the trial.py to avoid the CCC problem.
+    ```bash
+    python3 trial.py
+    ```
+    The game will now be running the Mountain Car environment.
+    
+
+
+Example demo:
+https://github.com/IRLL/HIPPO_Gym/assets/96555957/1ca0cb22-a761-4fdf-827a-de90f2ec07b5
+
+
+
+
+Example console output:
+![Console output](./images/mountaincar-sample-console.png)
+
+
+Other human trial demos:
+
+Lunar Lander:
+
+![Frontend display lunar](./images/lunar_human_demo.gif)
+
+Minigrid:
+
+![Frontend display minigrid](./images/minigrid_human_demo.gif)
+
 
 
 
