@@ -43,7 +43,7 @@ class Trial():
         self.show_demo = None
         self.total_reward = 0
         self.demo_idx = 1
-        self.action = 'noop'
+        self.action = 0
         self.modality = self.config.get('modality')
         self.framerate = self.config.get('startingFrameRate', 30)
         self.frameId = 0
@@ -250,17 +250,15 @@ class Trial():
         print('Pass this?')
         if command == 'start':
                 self.play = True
-                if self.action == 'increase':
-                    self.demo_idx+=1
-                elif self.action == 'decrease':
-                    self.demo_idx-=1
 
-                print('using demo', self.demo_idx)
-                    
-                # if self.modality == 'pref':
-                #     self.show_demo = True
-                # #await self.render_all_frames()
-                # #await self.render_policy()
+                if self.modality == 'pref':
+                    if self.action == 'increase':
+                        self.demo_idx+=1
+                    elif self.action == 'decrease':
+                        self.demo_idx-=1
+
+                    print('using demo', self.demo_idx)
+
         elif command == 'stop':
             self.end()
         elif command == 'reset':
@@ -272,6 +270,9 @@ class Trial():
         elif command == 'good' or command == 'bad':
             self.handle_feedback(command)
             self.handle_pref(command)
+
+        elif command == 'left' or 'right' or 'up' or 'bad':
+            self.handle_action(command)
 
 
 
@@ -290,6 +291,7 @@ class Trial():
         Translates action to int and resets action buffer if action !=0
         '''
         #action = action.strip().lower()
+        print('inside handle action')
         print(action)
         if self.modality == 'pref':
             if action == 'ArrowRight':
@@ -303,11 +305,7 @@ class Trial():
 
         elif self.modality == 'demo':
             self.action = 0
-            if action == 'KEYDOWN':
-                #print('USER: GOOD')
-                self.action = '0'
-
-            elif action == 'ArrowRight':
+            if action == 'ArrowRight':
                 #print('USER: GOOD')
                 self.action = 2
             elif action == 'ArrowLeft':
@@ -401,8 +399,8 @@ class Trial():
             done = self.agent.step(self.humanfeedback)
 
         elif self.modality == 'demo':
-            print('self.humanAction', self.humanAction)
-            done = self.agent.step(self.humanAction)
+            print('self.humanAction', self.action)
+            done = self.agent.step(self.action)
 
         
 
