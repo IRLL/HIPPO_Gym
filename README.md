@@ -4,7 +4,7 @@
 ### Table of Contents
 1. [Purpose](#Purpose)
 2. [System Overview](#System-Overview)
-    - [Websockets](#Websockets)
+    - [WebSockets](#Websockets)
     - [System Architecture](#System-Architecture)
     - [RouteKeys](#RouteKeys)
     - [AWS Lambda Middleware](#AWS-Lambda-Middleware)
@@ -73,11 +73,21 @@ Here are the current routeKeys we have avaliable:
 
 ![Route Keys](./images/route-keys.png)
 
-When sending a message from either front-end or back-end, we must specify a Route Key from this list, along with any type of data we wish to send over. For more on sending and reciving messages, see [Setting Up](#setting-up).
+When sending a message from either front-end or back-end, we must specify a Route Key from this list, along with any type of data we wish to send over. For more on sending and receiving messages, see [Setting Up](#setting-up).
 
 
 ## AWS Lambda Middleware
 We use AWS Lambda as middleware for routing our websocket messages to the relevant service. Lambda detects which user is sending a message, and where its intended destination is, that be frontend or backend. The displayed Route Keys above route to our lambda websocket handler in which the lambda reads the route key and the "sendTo" message as part of our function definition for sending messages.
+We use AWS Lambda as middleware for routing our websocket messages to the relevant component. Lambda detects which user is sending a message, and where its intended destination is, that be frontend or backend. The displayed Route Keys above route to our lambda websocket handler in which the lambda reads the route key and the "sendTo" message to determine where to send the message. For our example of starting the trial, the frontend sends a start message to the lambda handler that is then routed to the backend for further handling the start of the trial.
+
+### The Concurrent Connection Collision Problem (CCC)
+The Concurrent Connection Clash (CCC) Problem can can arise from the manner in which AWS Lambda handles connections. The CCC Problem emerges when users initiate backend and frontend connections in rapid succession. If a subsequent user's frontend connection occurs before the previous user's frontend connection, unintended session merging can happen.
+
+For example, in a scenario where two users consecutively connect their backend and frontend components, the system might inadvertently merge their sessions. This leads to undesired outcomes such as loading issues and communication disruptions.
+
+This behavior is attributed to AWS Lambda, which holds backend connections until the corresponding frontend connects. If a newer backend connection arrives before the intended frontend, the Lambda prioritizes the most recent backend connection, causing unexpected results.
+
+To prevent the CCC Problem, it's advised that users connect their backend and frontend components in quick succession. By ensuring the backend connection precedes the frontend connection, the likelihood of timing-related clashes is minimized. This approach ensures smooth communication and maintains an uninterrupted user experience.
 
 ## Setting Up
 ### Frontend Setup
@@ -171,8 +181,7 @@ System upgrades and redesign by [Mohamed Al-Nassirat](https://www.linkedin.com/i
 
 Supervised by [Matt Taylor](https://drmatttaylor.net)
 For the Intelligent Robot Learning Laboratory [(IRLL)](https://irll.ca) at the University of Alberta [(UofA)](https://ualberta.ca)
-
-Supported by the Alberta Machine Intelligence Institure [(AMII)](https://amii.ca)
+Supported by the Alberta Machine Intelligence Institute [(AMII)](https://amii.ca)
 
 ## Additional Resources
 (Link to repositories and any other material)
