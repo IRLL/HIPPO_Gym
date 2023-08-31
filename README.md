@@ -204,7 +204,8 @@ Usually in the `__init__` method is where researchers tend to specify how they w
 class Trial():
     def __init__(self):
         print(f'{TAG} Initializing Trial...')
-        self.config = load_config() # ability to load logic data from config file
+        self.config = load_config() # Ability to load trial logic from external config
+        self.trialData = None
         self.data = None
         self.count = 1
         self.websocket = Websocket() # If you wish to specify your own websocket server use it as param
@@ -212,11 +213,14 @@ class Trial():
         self.done = False
         self.play = False
         self.nextEntry = {}
+        self.trialId = shortuuid.uuid()
         self.outfile = None
         self.userId = None
+        self.projectId = self.config.get('projectId')
         self.show_demo = None
         self.total_reward = 0
-        self.demo_idx = 0
+        self.demo_idx = 1
+        self.action = 'noop'
         self.modality = self.config.get('modality')
         self.framerate = self.config.get('startingFrameRate', 30)
         self.frameId = 0
