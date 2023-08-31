@@ -13,7 +13,6 @@
     - [Frontend Setup](#Frontend-Setup)
     - [Backend Setup](#Backend-Setup)
 4. [Contributors](#Contributors)
-5. [Additional Resources](#Additional-Resources)
 
 ## Purpose
 HippoGym is a Python library designed for researchers and students focusing on human-AI interaction over the web. It simplifies the setup, execution, data collection, and management of experiments by providing an easy-to-use interface for [OpenAI Gym](https://gym.openai.com/) and supports custom built enviorments.
@@ -263,7 +262,9 @@ and send messages to a function to parse the data accordingly.
             # Message is recieved from Websocket in JSON Format
             await self.handle_message(message)
 ```
-and here we can choose how we want to handle the actual message. 
+and here we can choose how we want to handle the actual message. If you are curious further about the backend configuration, more specifiacally how `agent.py` and `websocket.py` is configured, you can read through the documented source code.
+
+
 
 
 ## Contributors
@@ -275,5 +276,3 @@ Supervised by [Matt Taylor](https://drmatttaylor.net)
 For the Intelligent Robot Learning Laboratory [(IRLL)](https://irll.ca) at the University of Alberta [(UofA)](https://ualberta.ca)
 Supported by the Alberta Machine Intelligence Institute [(AMII)](https://amii.ca)
 
-## Additional Resources
-(Link to repositories and any other material)
