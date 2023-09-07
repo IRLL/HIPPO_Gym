@@ -27,7 +27,7 @@ project:
     finalStep: exampleThank.html # required, filename can be same as last numbered step
   teamMembers: # str
 trial:
-  modality: demo
+  modality: pref
   actionBufferLifespan: 1 # int
   maxEpisodes: 20 # int
   game: MountainCar-v0 # full environment name

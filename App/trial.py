@@ -104,19 +104,19 @@ class Trial():
             print('waiting for messages')
             print('self.play', self.play)
             print('self.done', self.done)
-            await self.render_all_frames()
-        # while(self.play):
-        #     #print('self.play', self.play)
+            # await self.render_all_frames()
+            while(self.play):
+                print('self.play', self.play)
 
-        #     if self.modality == 'pref':
-        #         await self.render_policy()
-            
-        #     else:
-        #         print('rendering frame')
-        #         render = await self.get_render()
-        #         await self.send_render(render)
-        #         await self.take_step()
-        #         time.sleep(1/self.framerate)
+                if self.modality == 'pref':
+                    await self.render_policy()
+                
+                else:
+                    print('rendering frame')
+                    render = await self.get_render()
+                    await self.send_render(render)
+                    await self.take_step()
+                    time.sleep(1/self.framerate)
 
 
 
@@ -256,6 +256,7 @@ class Trial():
         print(f"{TAG} handle_command function: ", command)
         print('Pass this?')
         if command == 'start':
+
                 self.play = True
 
                 if self.modality == 'pref':
@@ -478,6 +479,7 @@ class Trial():
             #     print('done')
             #     break
         self.play = False
+        self.action = 'None'
         print('self.play is now False')
 async def main():
     trial = Trial()
