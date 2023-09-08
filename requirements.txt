@@ -8,8 +8,11 @@ python-dotenv==0.14.0
 pyYaml==5.4
 joblib==1.0.1
 numpy==1.21.0
-scikit-learn==0.24.2
-scipy==1.7.0
-sklearn==0.0
 threadpoolctl==2.1.0
 pexpect
+setuptools==65.5.0
+wheel<0.40.0
+pyglet==1.5.27
+gymnasium==0.27.1
+gymnasium-notices==0.0.1
+pygame

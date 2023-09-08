@@ -4,7 +4,7 @@ code provided by Calarina Muslimani of the Intelligent Robot Learning Laboratory
 Note to use this code with the default setup simply rename this file to agent.py
 '''
 
-import gym
+import gymnasium as gym
 import time
 import numpy as np
 import itertools
@@ -322,7 +322,7 @@ class Agent():
             - env (Type: OpenAI gym Environment as returned by gym.make())
             Mandatory
         '''
-        self.coach = true
+        self.coach = True
         if self.coach:
             np.random.seed(0)
             self.coachAgent = CoachAgent()

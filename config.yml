@@ -10,11 +10,11 @@ project:
   events:
     startServerStep: 1 # int
     stopServerStep: 12 # int
-  id: callie_pref_learning2 # Letters, Numbers and '-' only!
+  id: videh # Letters, Numbers and '-' only!
   live: true # bool
   maxRuntime: 30 # int in minutes.
-  name: callie_pref_learning # include pilot for control condition
-  researcher: Callie # str
+  name: videh # include pilot for control condition
+  researcher: Videh # str
   # SSL NOT USED ANYMORE, API GATEWAY FOR WEBSOCKETS
   # ssl:
   #   fullchain: SSL/cert.pem # path to fullchain.pem file excluding bucket name
@@ -27,7 +27,7 @@ project:
     finalStep: exampleThank.html # required, filename can be same as last numbered step
   teamMembers: # str
 trial:
-  modality: demo
+  modality: preference
   actionBufferLifespan: 1 # int
   maxEpisodes: 20 # int
   game: MountainCar-v0 # full environment name
@@ -38,7 +38,7 @@ trial:
   minFrameRate: 1 # int Optional if allowFrameRateChange = False
   maxFrameRate: 60 # int Optional if allowFrameRateChange = False
   allowFrameRateChange: False # bool
-  startingFrameRate: 30 # int Required
+  startingFrameRate: 50 # int Required
   ui: # to include ui button set to True, False buttons will not be shown
     left: True
     right: True

@@ -9,13 +9,13 @@ from agent import Agent # this is the Agent/Environment compo provided by the re
 from PIL import Image
 from io import BytesIO
 
-"""Press Start
+'''Press Start
 Shows first demo.
 Right arrow or right UI button, gives next demo. But have to press start to show it.
 Right arrow or right UI button, gives previous demo. But have to press start to show it.
-"""
+'''
 
-TAG = "\033[1;35m[HIPPOGYM]\033[0m" 
+TAG = '\033[1;35m[HIPPOGYM]\033[0m' 
 
 def load_config():
     print(f'{TAG} Loading config from .trialConfig.yml...')
@@ -29,36 +29,34 @@ class Trial():
         print(f'{TAG} Initializing Trial...')
         self.config = load_config()
         self.trialData = None
-        self.data = None
-        self.count = 1
+        self.data = None # not used
+        self.count = 1 # not used
         self.websocket = Websocket() # If you wish to specify your own websocket server use it as param
         self.episode = 0
         self.done = False
         self.play = False
         self.nextEntry = {}
-        self.trialId = shortuuid.uuid()
-        self.outfile = None
+        self.trialId = shortuuid.uuid() # not used
+        self.outfile = None # not used
         self.userId = None
         self.projectId = self.config.get('projectId')
-        self.show_demo = None
-        self.total_reward = 0
-        self.demo_idx = 1
-        self.action = 0
+        self.show_demo = None # not used
+        self.total_reward = 0 # not used
+        self.demo_idx = 0
+        self.human_input = 'None'
         self.modality = self.config.get('modality')
         self.framerate = self.config.get('startingFrameRate', 30)
         self.frameId = 0
-        
+
     async def connect(self):
         await self.websocket.connectClient()
         if self.websocket.websocket is not None:
-            print(f"{TAG} Connected to WebSocket address")
+            print(f'{TAG} Connected to WebSocket address')
             await self.start()
 
     async def start(self):
         self.start_trial()
         await self.run()
-
-
 
     def start_trial(self):
         '''
@@ -70,24 +68,18 @@ class Trial():
         '''
         print(f'{TAG} Starting trial...')
 
-
         if self.modality == 'feedback':
             from tamerAgent import TamerAgent
             self.agent = TamerAgent()
-
-        elif self.modality == 'pref':
+        elif self.modality == 'preference':
             from agent import Agent
             self.agent = Agent()
-
         elif self.modality == 'demo':
             from agent import Agent
             self.agent = Agent()
 
-
         self.agent.start(self.config.get('game'))
-        actionSpace = self.config.get('actionSpace')
         self.agent.reset()
-        #self.start_trial()
 
     async def run(self):
         '''
@@ -95,30 +87,23 @@ class Trial():
         It handles the render-step loop
         '''
         print(f'{TAG} Running trial...')
-        
         while not self.done:
             message = await self.websocket.recieveData()
             await self.handle_message(message)
-
-
             print('waiting for messages')
             print('self.play', self.play)
             print('self.done', self.done)
-            await self.render_all_frames()
-        # while(self.play):
-        #     #print('self.play', self.play)
-
-        #     if self.modality == 'pref':
-        #         await self.render_policy()
-            
-        #     else:
-        #         print('rendering frame')
-        #         render = await self.get_render()
-        #         await self.send_render(render)
-        #         await self.take_step()
-        #         time.sleep(1/self.framerate)
-
-
+            # await self.render_all_frames()
+            if self.play:
+                # print('self.play', self.play)
+                if self.modality == 'preference':
+                    await self.render_policy()
+                else:
+                    print('rendering frame')
+                    render = await self.get_render()
+                    await self.send_render(render)
+                    await self.take_step()
+                    time.sleep(1/self.framerate)
 
     async def check_done(self):
         '''
@@ -135,8 +120,8 @@ class Trial():
         comment the 3 lines below contianing self.outfile and 
         self.create_file.
         '''
-        if self.check_trial_done():
-            print("check_trial_done successful")
+        if self.check_trial_done(): # check if all episodes completed
+            print('check_trial_done successful')
             await self.end()
         else:
             self.agent.reset()
@@ -157,19 +142,15 @@ class Trial():
         whole trial memory in self.record, uncomment the call to self.save_record()
         to write the record to file before closing.
         '''
-        print(f"{TAG} Sending to websocket... :" , "DONE",{"done":"done"})
-        await self.websocket.sendData("DONE",{"message":"done"})
+        print(f'{TAG} Sending to websocket... :' , 'DONE',{'done':'done'})
+        await self.websocket.sendData('DONE',{'message':'done'})
         self.play = False
-
-# """trial.py:260: RuntimeWarning: coroutine 'Trial.end' was never awaited
-# """
 
     async def handle_message(self, message:dict):
         '''
         Reads messages sent from websocket, handles commands as priority then 
         actions. Logs entire message in self.nextEntry
         '''
-        #print(f"{TAG} handle_message function has recieved: ", message)
         #print('inside handle message', message)
         #print('if KeyBoardEvent in message','KeyBoardEvent' in message )
         #print(message.keys())
@@ -179,25 +160,29 @@ class Trial():
         # if 'KeyBoardEvent' in list(message.keys()):
         #     print('message[KeyboardEvent]', message['KeyboardEvent'])
 
+        print(f'{TAG} handle_message function has recieved: ', message)
+
         if not self.userId and 'userId' in message:
             self.userId = message['userId']
-            self.websocket.setID(self.userId)
+            self.websocket.setID(self.userId) # important
             self.projectId = message['projectId']
-            print(f"{TAG} self.userID is now = ", self.userId)
-            print(f"{TAG} self.projectID is now = ", self.projectId)
+            print(f'{TAG} self.userID is now = ', self.userId)
+            print(f'{TAG} self.projectID is now = ', self.projectId)
             with open('./data/trialData.json') as json_file:
                 self.trialData = json.load(json_file)
             await self.send_ui()
 
+        # the 'action' below is different from agent's action in RL
         if 'action' in message and message['action'] == 'command':
             print(f'{TAG} commmand in message recieved.')
             try:
-            #if message['KeyboardEvent']:
-                print('got key board input')
+            # if message['KeyboardEvent']:
+                print('got keyboard input')
                 await self.handle_key_board_events(message['KeyboardEvent'])
             except:
                 print('got a different command')
                 await self.handle_command(message)
+
         # if 'KeyBoardEvent' in message and message['KeyboardEvent']:
         #     print(f'{TAG} commmand in message recieved.')
         #     await self.handle_key_board_events(message)
@@ -205,18 +190,21 @@ class Trial():
         # if 'command' in message and message['command']:
         #     print(f'{TAG} commmand in message recieved.')
         #     await self.handle_command(message)
+
         elif 'save' in message and message['save']:
             self.nextEntry = message['save']
-            print(f"{TAG} saving data in self.nextEntry: ...",self.nextEntry)
+            print(f'{TAG} saving data in self.nextEntry: ...', self.nextEntry)
             self.save_data()
             self.done = True # if we recieve the save message, then trial is done for now, change later to conditional
+
         await self.check_done()
 
     def save_data(self):
         s3upload = self.config.get('s3upload')
         fileName = f'{self.projectId}_{self.userId}.json'
-        if s3upload:
-            print(f"{TAG} S3 UPLOAD DETECTED... UPLOADING NOW....")
+
+        if s3upload: # if want to upload data to aws
+            print(f'{TAG} S3 UPLOAD DETECTED... UPLOADING NOW....')
             s3 = boto3.client('s3')
             data_json = json.dumps(self.nextEntry)
             # Convert the JSON string to bytes
@@ -226,25 +214,22 @@ class Trial():
             try:
                 s3.put_object(Body=data_bytes, Bucket=bucket, Key=fileName)
             except:
-                print(f"{TAG} S3 UPLOAD FAILED....")
-                
-        if not os.path.exists('Trials'):
-             os.makedirs('Trials')
-        
-        file_path = os.path.join('Trials', fileName)
-        with open(file_path, "w") as outfile:
-            json.dump(self.nextEntry, outfile, indent = 2)
+                print(f'{TAG} S3 UPLOAD FAILED....')
+        else: # if want to save data locally
+            if not os.path.exists('Trials'):
+                os.makedirs('Trials')
+            file_path = os.path.join('Trials', fileName)
+            with open(file_path, 'w') as outfile:
+                json.dump(self.nextEntry, outfile, indent = 2)
 
     async def handle_key_board_events(self, message):
-        print('handle_key_board_event message', message)
-        #command = message['KeyboardEvent'].strip().lower()
-        print(f"{TAG} handle_key_board_event function: ", message)
+        # command = message['KeyboardEvent'].strip().lower()
+        print(f'{TAG} handle_key_board_event function: ', message)
         key = list(message.keys())[0]
-        #print('key',key)
+        # print('key',key)
         value = message[key][0]
         self.handle_action(value)
-        print('value', value)
-    
+        # print('value', value)
 
     async def handle_command(self, message):
         '''
@@ -253,19 +238,15 @@ class Trial():
         '''
         # print('message', message)
         command = message['command'].strip().lower()
-        print(f"{TAG} handle_command function: ", command)
-        print('Pass this?')
+        print(f'{TAG} handle_command function: ', command)
         if command == 'start':
-                self.play = True
-
-                if self.modality == 'pref':
-                    if self.action == 'increase':
-                        self.demo_idx+=1
-                    elif self.action == 'decrease':
-                        self.demo_idx-=1
-
-                    print('using demo', self.demo_idx)
-
+            self.play = True
+            if self.modality == 'preference':
+                if self.human_input == 'increase':
+                    self.demo_idx += 1
+                elif self.human_input == 'decrease':
+                    self.demo_idx -= 1
+                print(f'using query {self.demo_idx//2}, trajectory segment = {1 if self.demo_idx % 2 else 0} | idx in list = {self.demo_idx}')
         elif command == 'stop':
             await self.end()
         elif command == 'reset':
@@ -275,117 +256,107 @@ class Trial():
         elif command == 'requestUI':
             self.send_ui()
         elif command == 'good' or command == 'bad':
-            self.handle_feedback(command)
-            self.handle_pref(command)
-
+            if self.modality == 'feedback':
+                self.handle_feedback(command)
+            elif self.modality == 'preference':
+                self.handle_preference(command)
+            else:
+                raise Exception('Modality not supported as of now!')
         elif command == 'left' or command == 'right' or command ==  'up' or command == 'down':
             self.handle_action(command)
 
-
-
     async def render_all_frames(self):
         while(self.play):
-            #print('self.play', self.play)
-
-            if self.modality == 'pref':
+            # print('self.play', self.play)
+            if self.modality == 'preference':
                 await self.render_policy()
-            
             else:
                 print('rendering frame')
                 render = await self.get_render()
                 await self.send_render(render)
                 await self.take_step()
                 time.sleep(1/self.framerate)
-            
-
-            
     
-    def handle_action(self, action:str):
+    def handle_action(self, human_input:str):
         '''
-        Translates action to int and resets action buffer if action !=0
-
-        T
+        Translates action to int and resets action buffer if action != 0
         '''
         #action = action.strip().lower()
         print('inside handle action')
-        print(action)
-        if self.modality == 'pref':
-            if action == 'ArrowRight':
-                self.action = 'increase'
-                #self.demo_idx+=1
-                #self.play=True
-            elif action == 'ArrowLeft':
-                self.action = 'decrease'
-                #self.demo_idx-=1
-                #self.play=True
+        print(f'{TAG} handle_action: ', human_input)
+
+        # handling navigating back and forth between different trajectory segments in preference modality
+        if self.modality == 'preference':
+            if human_input == 'ArrowRight' or human_input == 'right':
+                self.human_input = 'increase' # go to the next trajectory segment
+                # self.demo_idx += 1
+                # self.play = True
+            elif human_input == 'ArrowLeft' or human_input == 'left':
+                self.human_input = 'decrease' # go to the previous trajectory segment
+                # self.demo_idx -= 1
+                # self.play = True
 
         elif self.modality == 'demo':
-            self.action = 0
-
             if self.config.get('game') == 'MountainCar-v0':
-                if action == 'ArrowRight' or action == 'right':
-                    #print('USER: GOOD')
-                    self.action = 2
+                if human_input == 'ArrowRight' or human_input == 'right':
+                    # print('USER: GOOD')
+                    self.human_input = 2 # accelerate right
                     self.play = True
-                elif action == 'ArrowLeft' or action == 'left':
-                    self.action = 1
+                elif human_input == 'ArrowLeft' or human_input == 'left':
+                    self.human_input = 0 # accelerate left
+                    self.play = True
+                else:
+                    self.human_input = 1 # do not accelerate
                     self.play = True
 
             elif self.config.get('game') == 'LunarLander-v2':
-                if action == 'ArrowRight' or action == 'right':
-                    self.action = 3
-                elif action == 'ArrowLeft' or action == 'left':
-                    self.action = 1
-                elif action == 'ArrowUp' or action == 'up':
-                    self.action = 2
+                if human_input == 'ArrowRight' or human_input == 'right':
+                    self.human_input = 3 # fire right orientation engine
+                elif human_input == 'ArrowLeft' or human_input == 'left':
+                    self.human_input = 1 # fire left orientation engine
+                elif human_input == 'ArrowUp' or human_input == 'up':
+                    self.human_input = 2 # fire main engine
+                else:
+                    self.human_input = 1 # do nothing
 
             elif self.config.get('game') == 'CarRacing-v2':
-                if action == 'ArrowRight' or action == 'right':
-                    self.action = 1
-                elif action == 'ArrowLeft' or action == 'left':
-                    self.action = 2
-                elif action == 'ArrowUp' or action == 'up':
-                    action = 3
-                elif action == 'ArrowDown' or action == 'down':
-                    action = 4
+                if human_input == 'ArrowRight' or human_input == 'right':
+                    self.human_input = 2 # steer right
+                elif human_input == 'ArrowLeft' or human_input == 'left':
+                    self.human_input = 1 # steer left
+                elif human_input == 'ArrowUp' or human_input == 'up':
+                    self.human_input = 3 # gas
+                elif human_input == 'ArrowDown' or human_input == 'down':
+                    self.human_input = 4 # brake
+                else:
+                    self.human_input = 0 # do nothing
 
-        #add to array 
     def handle_feedback(self, feedback:str):
         '''
-        Translates action to int and resets action buffer if action !=0
+        Translates action to int and resets action buffer if action != 0
         '''
         feedback = feedback.strip().lower()
-        self.humanfeedback = "None"
+        self.human_feedback = 'None'
         if feedback == 'good':
-            #print('USER: GOOD')
-            self.humanfeedback = 'good'
+            # print('USER: GOOD')
+            self.human_feedback = 'good'
         elif feedback == 'bad':
-            self.humanfeedback = 'bad'
-    def handle_feedback(self, feedback:str):
-        '''
-        Translates action to int and resets action buffer if action !=0
-        '''
-        feedback = feedback.strip().lower()
-        self.humanfeedback = "None"
-        if feedback == 'good':
-            #print('USER: GOOD')
-            self.humanfeedback = 'good'
-        elif feedback == 'bad':
-            self.humanfeedback = 'bad'
-    def handle_pref(self, feedback:str):
-        '''
-        Translates action to int and resets action buffer if action !=0
-        '''
-        feedback = feedback.strip().lower()
-        self.human_pref = "None"
-        if feedback == 'good':
-            #print('USER: GOOD')
-            self.human_pref = 'good'
-        elif feedback == 'bad':
-            self.human_pref = 'bad'
+            self.human_feedback = 'bad'
 
-        self.nextEntry = {'preference':[self.demo_idx, self.human_pref]}
-        print(self.nextEntry)
+    def handle_preference(self, feedback:str):
+        '''
+        Translates action to int and resets action buffer if action !=0
+        '''
+        feedback = feedback.strip().lower()
+        self.human_preference = 'None'
+        if feedback == 'good':
+            # print('USER: GOOD')
+            self.human_preference = 'good' # means first segment is better than the second
+        elif feedback == 'bad':
+            self.human_preference = 'bad' # means second segment is better than the first
+
+        self.nextEntry[f'preference | query idx = {self.demo_idx//2}'] = self.human_preference
+        print(f'{TAG} self.nextEntry is now: ', self.nextEntry)
         self.save_data()
 
     async def get_render(self):
@@ -394,37 +365,33 @@ class Trial():
         Translates the npArray into a jpeg image and then base64 encodes the 
         image for transmission in json message.
         '''
-        #print('inside get render')
-       
+        # print('inside get render')
         # self.agent.reset()
         render = self.agent.render()
-        #print('render', render)
         try:
-            
             img = Image.fromarray(render)
             fp = BytesIO()
             img.save(fp,'JPEG')
             frame = base64.b64encode(fp.getvalue()).decode('utf-8')
             fp.close()
         except: 
-            raise TypeError("Render failed. Is env.render('rgb_array') being called\
-                            With the correct arguement?")
+            raise TypeError("Render failed. Is env.render('rgb_array') being called with the correct arguement?")
         self.frameId += 1
-        #print('got the render', frame, self.frameId)
+        # print('got the render', frame, self.frameId)
         return {'frame': frame, 'frameId': self.frameId}
       
     async def send_ui(self):
-        defaultUI = ['left','right','up','down','start','pause']
+        defaultUI = ['left', 'right', 'up', 'down', 'start', 'pause']
         try:
-            print( self.config.get('ui', defaultUI))
+            print(self.config.get('ui', defaultUI))
             await self.websocket.sendData('UI', {'UI': self.config.get('ui', defaultUI)})
             render = await self.get_render()
             await self.send_render(render)
         except:
-            raise TypeError("Render Dictionary is not JSON serializable")
+            raise TypeError('Render Dictionary is not JSON serializable')
 
     async def send_render(self, render:dict):
-        await self.websocket.sendData('UI', {'env':render})
+        await self.websocket.sendData('UI', {'env': render})
 
     async def take_step(self):
         '''
@@ -433,40 +400,30 @@ class Trial():
         Checks for DONE from Agent/Env
         '''
         if self.modality == 'feedback':
-            print('self.humanfeedback', self.humanfeedback)
-            done = self.agent.step(self.humanfeedback)
-
+            print(f'self.human_feedback = {self.human_feedback}')
+            done = self.agent.step(self.human_feedback)
         elif self.modality == 'demo':
-            print('self.humanAction', self.action)
-            done = self.agent.step(self.action)
-            self.action = 0
+            print(f'self.human_input = action {self.human_input}')
+            done = self.agent.step(self.human_input)
+            self.human_input = 0
             print('agent done', done)
-
-        
+        else:
+            raise Exception('Modality not supported as of now!')
 
         if done:
             await self.reset()
- 
 
     async def render_policy(self):
-
-        
         demo = self.agent.replay_buffer_of_demos[self.demo_idx]
-        print(demo)
-        print('len of demo', len(demo))
-        #print(self.agent.short_replay_buffer_of_demos[1])
-        #print('type of demo', type(demo))
-        print('demo number', self.demo_idx)
-        print('just reset the agent env')
+        print(f'{TAG} render_policy demo information: \n demo = {demo}, len of demo = {len(demo)}, demo number = {self.demo_idx}')
+        print(f'{TAG} resetting agent..')
         self.agent.reset()
-        
-        print('len of demo', len(demo))
         for idx, action in enumerate(demo):
-            print(demo)
-            print(f'idx {idx} out of {len(demo)}')
-            print(action)
+            # print(demo)
+            # print(f'idx {idx} out of {len(demo)}')
+            # print(action)
             done = self.agent.step(action)
-            #print(envState, type(envState))
+            # print(envState, type(envState))
             # self.update_entry(envState)
             # self.save_entry()
             render = await self.get_render()
@@ -478,7 +435,9 @@ class Trial():
             #     print('done')
             #     break
         self.play = False
-        print('self.play is now False')
+        self.human_input = 'None'
+        print(f'{TAG} self.play is now False')
+
 async def main():
     trial = Trial()
     await trial.connect()
